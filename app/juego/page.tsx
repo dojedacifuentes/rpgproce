@@ -29,6 +29,8 @@ function getRango(nivel: number) {
 export default function Juego() {
   const router = useRouter();
   const { personaje, logros, finalizado, xp, nivel, monedas, misionesCompletadas } = useGame();
+  const xpEnNivel = xp % 100;
+  const xpParaSiguiente = 100;
   const [showMisiones, setShowMisiones] = useState(false);
 
   useEffect(() => {
@@ -82,9 +84,24 @@ export default function Juego() {
               <h1 className="font-display-grave text-lg md:text-2xl text-doc-aged leading-tight">
                 {personaje.nombre}
               </h1>
-              <p className="text-[9px] font-mono-terminal text-doc-aged/40 uppercase">
-                {personaje.rol.replace(/_/g, " ")} · {personaje.origen.replace(/_/g, " ")}
-              </p>
+              <div className="flex items-center gap-3 mt-1">
+                <p className="text-[9px] font-mono-terminal text-doc-aged/40 uppercase">
+                  {personaje.rol.replace(/_/g, " ")}
+                </p>
+                <span className="text-[9px] font-mono-terminal text-zona-prueba">⭐ {xp} XP</span>
+                <span className="text-[9px] font-mono-terminal text-zona-competencia">🪙 {monedas}</span>
+              </div>
+              {/* XP bar dentro del nivel */}
+              <div className="mt-1.5 w-32 h-0.5 bg-bg-steel rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-700"
+                  style={{
+                    width: `${(xpEnNivel / xpParaSiguiente) * 100}%`,
+                    background: rango.color,
+                    boxShadow: `0 0 6px ${rango.color}60`,
+                  }}
+                />
+              </div>
             </div>
           </div>
 
@@ -146,7 +163,7 @@ export default function Juego() {
               </div>
               <button
                 onClick={() => setShowMisiones(!showMisiones)}
-                onMouseEnter={() => sfx.hover?.()}
+                onMouseEnter={() => sfx.hover()}
                 className="btn text-[10px] px-3 py-1.5"
               >
                 {showMisiones ? "🗺 Mapa" : "📋 Misiones"}
@@ -192,54 +209,63 @@ export default function Juego() {
               ))}
             </div>
 
-            {/* Accesos rápidos */}
-            <div className="terminal p-3 space-y-2">
+            {/* Acciones rápidas */}
+            <div className="terminal p-3 space-y-1.5">
               <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-prueba mb-2">
-                ACCESO RÁPIDO
+                ACCIONES
               </div>
               {[
-                { href: "/expansion", label: "Sistemas Expansión", icon: "★", color: "recursos" },
-                { href: "/oral", label: "Boss Rush", icon: "⚔", color: "oralidad" },
-                { href: "/codex", label: "Codex Legal", icon: "📜", color: "cosajuzgada" },
-                { href: "/inventario", label: "Inventario", icon: "📦", color: "cautelares" },
+                { href: "/expansion", label: "Modos de Juego", sub: "Campaña · Examen · Casos", icon: "🎮", color: "recursos" },
+                { href: "/oral", label: "Boss Rush", sub: "9 instancias · comisión", icon: "⚔️", color: "oralidad" },
+                { href: "/codex", label: "Codex Legal", sub: "Referencia normativa", icon: "📜", color: "cosajuzgada" },
+                { href: "/inventario", label: "Inventario", sub: `${logros.length} logros desbloqueados`, icon: "📦", color: "cautelares" },
               ].map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={() => sfx.click?.()}
-                  onMouseEnter={() => sfx.hover?.()}
-                  className="flex items-center gap-3 p-2 border border-transparent hover:border-zona-competencia/20 rounded transition-all group"
+                  onClick={() => sfx.click()}
+                  onMouseEnter={() => sfx.hover()}
+                  className="flex items-center gap-2 p-2 border border-transparent hover:border-doc-aged/15 transition-all group rounded"
                 >
-                  <span className="text-lg">{item.icon}</span>
-                  <span className="font-mono-terminal text-[10px] text-doc-aged/70 group-hover:text-doc-aged transition-colors">
-                    {item.label}
-                  </span>
+                  <span className="text-base shrink-0">{item.icon}</span>
+                  <div className="min-w-0">
+                    <div className="font-display-grave text-xs text-doc-aged group-hover:text-white transition-colors">{item.label}</div>
+                    <div className="font-mono-terminal text-[7px] text-doc-aged/35 truncate">{item.sub}</div>
+                  </div>
                 </Link>
               ))}
             </div>
 
             {/* Logros */}
             <div className="terminal p-3">
-              <div className="font-mono-terminal text-[9px] text-zona-cautelares uppercase tracking-widest mb-2">
-                LOGROS: {logros.length}
+              <div className="flex items-center justify-between mb-2">
+                <div className="font-mono-terminal text-[9px] text-zona-cautelares uppercase tracking-widest">
+                  LOGROS
+                </div>
+                <span className="font-mono-terminal text-[8px] text-doc-aged/40">{logros.length} desbloqueados</span>
               </div>
-              <div className="flex flex-wrap gap-1">
-                {logros.slice(0, 6).map((l) => (
-                  <div
-                    key={l.id}
-                    title={l.titulo}
-                    className="w-6 h-6 border border-zona-cautelares/40 flex items-center justify-center text-xs"
-                    style={{ background: "rgba(88,245,176,0.05)" }}
-                  >
-                    ✓
-                  </div>
-                ))}
-                {logros.length > 6 && (
-                  <div className="font-mono-terminal text-[8px] text-doc-aged/40 flex items-center px-1">
-                    +{logros.length - 6}
-                  </div>
-                )}
-              </div>
+              {logros.length === 0 ? (
+                <div className="text-[9px] font-mono-terminal text-doc-aged/25 italic">
+                  Completa misiones para desbloquear logros.
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {logros.slice(0, 4).map((l) => (
+                    <div
+                      key={l.id}
+                      className="flex items-center gap-2 py-0.5"
+                    >
+                      <span className="text-zona-cautelares text-[9px]">✓</span>
+                      <span className="font-mono-terminal text-[9px] text-doc-aged/70 truncate">{l.titulo}</span>
+                    </div>
+                  ))}
+                  {logros.length > 4 && (
+                    <div className="font-mono-terminal text-[8px] text-doc-aged/30">
+                      + {logros.length - 4} más
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -314,7 +340,7 @@ function MisionesPanel({ misionesCompletadas }: { misionesCompletadas: string[] 
   const router = useRouter();
 
   const handleJugar = (href?: string, moduloId?: string, tipo?: string) => {
-    sfx.click?.();
+    sfx.click();
     if (href) { router.push(href); return; }
     if (moduloId) { router.push(`/expansion?m=${moduloId}`); return; }
     if (tipo === "boss") { router.push("/oral"); return; }
@@ -374,7 +400,7 @@ function MisionesPanel({ misionesCompletadas }: { misionesCompletadas: string[] 
                     ) : (
                       <button
                         onClick={() => handleJugar(mision.href, mision.moduloId, mision.tipo)}
-                        onMouseEnter={() => sfx.hover?.()}
+                        onMouseEnter={() => sfx.hover()}
                         className="shrink-0 text-[8px] font-mono-terminal px-2 py-1 border border-zona-competencia/40 text-zona-competencia hover:border-zona-competencia hover:brightness-125 transition-all"
                       >
                         JUGAR

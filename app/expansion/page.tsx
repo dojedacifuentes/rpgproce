@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { sfx } from "@/lib/audio";
 import SeleccionBuild from "@/components/SeleccionBuild";
 import ExpedienteVivo from "@/components/ExpedienteVivo";
 import PreclusionTimer from "@/components/PreclusionTimer";
@@ -22,6 +24,12 @@ import SubmundosPanel from "@/components/SubmundosPanel";
 import NPCInteractionPanel from "@/components/NPCInteractionPanel";
 import WorldSelector from "@/components/WorldSelector";
 import { CASOS_INVESTIGATIVOS } from "@/data/casos-investigativos";
+
+// ============================================================================
+// HUB EXPANSIÓN — v6.0
+// Reorganizado en 4 categorías con jerarquía visual clara.
+// CAMPAÑA (primario) → COMBATE → HERRAMIENTAS → SISTEMA
+// ============================================================================
 
 type Modulo =
   | "menu"
@@ -46,187 +54,318 @@ type Modulo =
   | "npcs"
   | "mundos";
 
-const MODULOS: {
+interface ModuloMeta {
   id: Modulo;
   titulo: string;
   subtitulo: string;
   descripcion: string;
   zona: string;
-  numeral: string;
-  nuevo?: boolean;
-}[] = [
+  icono: string;
+}
+
+// ─── CAMPAÑA PRINCIPAL (large hero cards) ──────────────────────────────────
+
+const MODULOS_CAMPAÑA: ModuloMeta[] = [
   {
     id: "ejecutivo_full",
     titulo: "Campaña Ejecutiva",
     subtitulo: "10 ETAPAS · ÁRBOL DECISIONAL",
-    descripcion: "Juicio ejecutivo completo: del título al remate. Verificación de art. 434, gestión preparatoria, mandamiento, embargo (con bienes inembargables del 445), excepciones tasadas del 464, fallo, apremio y tercerías. Mecánica de vida y reputación.",
+    descripcion: "Juicio ejecutivo completo: del título al remate. Verificación art. 434, mandamiento, embargo, excepciones del 464, fallo y tercerías. Mecánica de vida y reputación.",
     zona: "ejecutivo",
-    numeral: "EJE.01",
-    nuevo: true,
+    icono: "💼",
   },
   {
     id: "examen",
     titulo: "Examen de Grado",
-    subtitulo: "CÉDULA ORAL · ALTERNATIVAS DIFÍCILES",
-    descripcion: `${15}+ cédulas con respuesta académica modelo. ${12}+ alternativas de opción múltiple con distractores basados en errores reales. Análisis normativo completo. Simula comisión examinadora.`,
+    subtitulo: "CÉDULA ORAL · ALTERNATIVAS",
+    descripcion: "15+ cédulas con respuesta académica modelo. 12+ alternativas difíciles con distractores basados en errores reales. Análisis normativo completo.",
     zona: "nulidad",
-    numeral: "EXA.01",
-    nuevo: true,
+    icono: "📋",
   },
   {
     id: "investigacion",
     titulo: "Casos Investigativos",
-    subtitulo: "INVESTIGACIÓN · DEDUCCIÓN",
-    descripcion: "Resuelve casos procedurales descubriendo pistas, conectando evidencia, y deduciendo vicios ocultos. Emplazamiento Fantasma · Sentencia Ultra Petita · Preclusión Oculta. Sistema de hipótesis con validación.",
-    zona: "cosa_juzgada",
-    numeral: "INV.01",
-    nuevo: true,
-  },
-  {
-    id: "submundos",
-    titulo: "Submundos Ocultos",
-    subtitulo: "CONTENIDO SECRETO · DESBLOQUEABLES",
-    descripcion: "Historias de vicios procesales que nunca se escriben. El Archivo Secreto · Las Cámaras Ocultas · La Doctrina Apócrifa. Desbloquea con logros.",
-    zona: "nulidad",
-    numeral: "SUB.01",
-    nuevo: true,
-  },
-  {
-    id: "mundos",
-    titulo: "Mundos Visuales",
-    subtitulo: "5 MUNDOS · IDENTIDAD PROPIA",
-    descripcion: "Cyber Valparaíso · Tribunal Gótico · Plataformas Jurídicas · Orbital RTS · Reino Medieval. Cada mundo transforma la estética completa del juego.",
-    zona: "competencia",
-    numeral: "MND.01",
-    nuevo: true,
+    subtitulo: "DEDUCCIÓN · PISTAS OCULTAS",
+    descripcion: "Resuelve casos descubriendo pistas y deduciendo vicios procesales ocultos. Emplazamiento Fantasma · Ultra Petita · Preclusión Encubierta.",
+    zona: "cosajuzgada",
+    icono: "🔍",
   },
   {
     id: "npcs",
     titulo: "Mentoría Procesal",
-    subtitulo: "ARCOS NARRATIVOS · 10 MENTORES",
-    descripcion: "Aprende directamente de expertos. Dra. Noemí · Juez Silva · Receptor Castro · 7 más. Cada mentor ofrece 3 etapas de aprendizaje + desafío final. Relaciones NPC y dependencias.",
+    subtitulo: "10 MENTORES · 3 ETAPAS",
+    descripcion: "Aprende de Dra. Noemí, Juez Silva, Receptor Castro y 7 mentores más. Cada uno con arco narrativo, actividades y desafío final.",
     zona: "recursos",
-    numeral: "NPC.01",
-    nuevo: true,
+    icono: "🧑‍⚖️",
   },
-  {
-    id: "grimorio",
-    titulo: "Grimorio de Skills",
-    subtitulo: "HABILIDADES COLECCIONABLES",
-    descripcion: "11 habilidades procesales que se desbloquean al cumplir logros. Escudo del 768, Preclusión Inversa, Blindaje del 44, Casación de Oficio Simulada, Embargo Express, Cosa Juzgada Aparente y más.",
-    zona: "recursos",
-    numeral: "GRI.01",
-    nuevo: true,
-  },
-  {
-    id: "cartas",
-    titulo: "Sistema de Cartas",
-    subtitulo: "EXCEPCIONES · RECURSOS · PRUEBAS",
-    descripcion: "20 tarjetas jurídicas representando excepciones ejecutivas, recursos, medios de prueba, incidentes y estrategias. Cada carta tiene efecto, riesgo y humor negro normativo. Agregalas a tu mano y juégalas tácticamente.",
-    zona: "nulidad",
-    numeral: "CAR.01",
-    nuevo: true,
-  },
-  {
-    id: "timeline",
-    titulo: "Timeline Ordenamiento",
-    subtitulo: "DRAG & DROP · ORDEN LEGAL",
-    descripcion: "3 escenarios (ejecutivo, ordinario, caos). Reconstruye el orden correcto de actos procesales. Respetar orden = validez. Saltarse pasos = nulidad (art. 768 N°9).",
-    zona: "ejecutivo",
-    numeral: "ARC.03",
-    nuevo: true,
-  },
-  {
-    id: "duelo",
-    titulo: "Duelo de Medios de Prueba",
-    subtitulo: "COMBATE · TÁCTICO",
-    descripcion: "5 medios de prueba (documental, testimonial, confesión, presunción, pericial). Selecciona tu medio vs oponente al azar. 3 rondas. Gana quien tenga mayor fuerza.",
-    zona: "prueba",
-    numeral: "ARC.04",
-    nuevo: true,
-  },
-  {
-    id: "ataque",
-    titulo: "Ataque de Repreguntas",
-    subtitulo: "ARCADE · CONTRA-RELOJ",
-    descripcion: "8 preguntas de procedimiento con 30 segundos cada una. Presión máxima. Velocidad + precisión doctrinaria. Aprende bajo presión.",
-    zona: "oralidad",
-    numeral: "ARC.05",
-    nuevo: true,
-  },
+];
+
+// ─── COMBATE / ARCADE (medium cards) ───────────────────────────────────────
+
+const MODULOS_COMBATE: ModuloMeta[] = [
   {
     id: "arcade",
     titulo: "Arcade Clasificador",
-    subtitulo: "MODO RAPIDO · COMBO",
-    descripcion: "Resoluciones · recursos · excepciones · competencia · notificaciones · ejecutivo. Velocidad creciente. Combo multiplicador. Ranking S-A-B-C-D.",
+    subtitulo: "COMBO · VELOCIDAD · RANKING",
+    descripcion: "Resoluciones · recursos · excepciones · competencia. Velocidad creciente. Combo multiplicador. Ranking S-A-B-C-D.",
     zona: "ejecutivo",
-    numeral: "ARC.01",
+    icono: "🎮",
   },
   {
     id: "vof",
     titulo: "Verdadero o Falso",
     subtitulo: "PRESIÓN TEMPORAL · TRAMPAS",
-    descripcion: "70+ enunciados tramposos en 3 niveles de dificultad. La respuesta intuitiva suele ser la incorrecta. Glitch visual al fallar.",
+    descripcion: "70+ enunciados tramposos. La respuesta intuitiva suele ser incorrecta. Glitch visual al fallar.",
     zona: "oralidad",
-    numeral: "ARC.02",
+    icono: "❓",
+  },
+  {
+    id: "duelo",
+    titulo: "Duelo de Medios",
+    subtitulo: "COMBATE · 3 RONDAS",
+    descripcion: "5 medios de prueba se enfrentan. Documental, testimonial, confesión, presunción, pericial. 3 rondas de combate.",
+    zona: "prueba",
+    icono: "⚔️",
+  },
+  {
+    id: "ataque",
+    titulo: "Repreguntas",
+    subtitulo: "8 PREGUNTAS · 30 SEG",
+    descripcion: "Ocho preguntas de procedimiento con 30 segundos cada una. Presión máxima. Velocidad + precisión doctrinaria.",
+    zona: "oralidad",
+    icono: "⚡",
+  },
+];
+
+// ─── HERRAMIENTAS PROCESALES (compact cards) ────────────────────────────────
+
+const MODULOS_HERRAMIENTAS: ModuloMeta[] = [
+  {
+    id: "inhibitoria",
+    titulo: "Inhibitoria / Declinatoria",
+    subtitulo: "ART. 101-112 CPC",
+    descripcion: "Cuestiones de competencia. Identifica el medio y el tribunal correcto.",
+    zona: "competencia",
+    icono: "🏛",
+  },
+  {
+    id: "timeline",
+    titulo: "Timeline Procesal",
+    subtitulo: "DRAG & DROP · ORDEN LEGAL",
+    descripcion: "Reconstruye el orden correcto de actos procesales. Art. 768 N°9.",
+    zona: "ejecutivo",
+    icono: "📅",
+  },
+  {
+    id: "comparecencia",
+    titulo: "Comparecencia",
+    subtitulo: "LEY 18.120 · PATROCINIO",
+    descripcion: "Los 7 requisitos del primer escrito. La secretaria no perdona.",
+    zona: "incidentes",
+    icono: "✍️",
+  },
+  {
+    id: "preclusion",
+    titulo: "Preclusión Real",
+    subtitulo: "ART. 64 CPC · FATAL",
+    descripcion: "Timer en tiempo real. Si vencés el plazo, la preclusión es irreversible.",
+    zona: "ejecutivo",
+    icono: "⏳",
+  },
+  {
+    id: "abandono",
+    titulo: "Abandono",
+    subtitulo: "ART. 152 CPC · 6 MESES",
+    descripcion: "Solo gestiones útiles interrumpen el plazo. Las administrativas no.",
+    zona: "incidentes",
+    icono: "🗂",
   },
   {
     id: "sentencia",
     titulo: "Sala de Sentencia",
     subtitulo: "HORROR JUDICIAL",
-    descripcion: "Esperá el dictamen. El estrado holográfico observa. Las frases del tribunal pulsan en el tiempo. Veredicto aleatorio con efectos.",
+    descripcion: "El estrado holográfico observa. Veredicto aleatorio con efectos.",
     zona: "cosajuzgada",
-    numeral: "INST.16",
+    icono: "⚖️",
   },
   {
     id: "expediente",
     titulo: "Expediente Vivo",
     subtitulo: "SALUD PROCESAL",
-    descripcion: "El expediente se degrada con cada vicio. Glitch progresivo según el daño. Si llega a 0: nulidad latente del 768 N°9.",
+    descripcion: "El expediente se degrada con cada vicio. Art. 768 N°9.",
     zona: "nulidad",
-    numeral: "INST.04",
+    icono: "📁",
+  },
+];
+
+// ─── SISTEMA / META-GAME (pill buttons) ─────────────────────────────────────
+
+const MODULOS_SISTEMA: ModuloMeta[] = [
+  {
+    id: "submundos",
+    titulo: "Submundos Ocultos",
+    subtitulo: "SECRETOS · DESBLOQUEABLES",
+    descripcion: "Historias de vicios procesales que nunca se escriben.",
+    zona: "nulidad",
+    icono: "🌑",
   },
   {
-    id: "preclusion",
-    titulo: "Preclusión Real",
-    subtitulo: "PLAZOS FATALES",
-    descripcion: "Timer en tiempo real. Si vencés el plazo, la preclusión es irreversible. Art. 64 CPC en su versión más cruel.",
-    zona: "ejecutivo",
-    numeral: "INST.06",
-  },
-  {
-    id: "inhibitoria",
-    titulo: "Inhibitoria vs Declinatoria",
-    subtitulo: "CUESTIONES DE COMPETENCIA",
-    descripcion: "Identificá medio + tribunal correcto. Arts. 101-112 CPC. Los conflictos suspenden el principal (art. 112).",
+    id: "mundos",
+    titulo: "Mundos Visuales",
+    subtitulo: "5 IDENTIDADES",
+    descripcion: "Transforma la estética completa del juego.",
     zona: "competencia",
-    numeral: "INST.01",
+    icono: "🌍",
   },
   {
-    id: "abandono",
-    titulo: "Abandono del Procedimiento",
-    subtitulo: "TIMER DE 6 MESES",
-    descripcion: "Mantené el expediente vivo. Solo gestiones útiles interrumpen el plazo. Las administrativas no sirven. Art. 152 CPC.",
-    zona: "incidentes",
-    numeral: "INST.18",
+    id: "grimorio",
+    titulo: "Grimorio de Skills",
+    subtitulo: "11 HABILIDADES",
+    descripcion: "Desbloquea habilidades procesales especiales.",
+    zona: "recursos",
+    icono: "📖",
   },
   {
-    id: "comparecencia",
-    titulo: "Comparecencia",
-    subtitulo: "PATROCINIO · LEY 18.120",
-    descripcion: "Validá los 7 requisitos del primer escrito. La secretaria tribunalicia rechaza con humor seco. Olvidar patrocinio = humillación inmediata.",
-    zona: "incidentes",
-    numeral: "INST.19",
+    id: "cartas",
+    titulo: "Sistema de Cartas",
+    subtitulo: "20 CARTAS JURÍDICAS",
+    descripcion: "Excepciones, recursos y medidas como cartas tácticas.",
+    zona: "nulidad",
+    icono: "🃏",
   },
   {
     id: "build",
     titulo: "Especialización",
-    subtitulo: "BUILD · 6 CLASES",
-    descripcion: "Litigante agresivo · monstruo casacional · formalista extremo · estratega cautelar · operador práctico · doctrinario.",
+    subtitulo: "6 CLASES RPG",
+    descripcion: "Litigante · Casacional · Formalista · Estratega · Práctico · Doctrinario.",
     zona: "recursos",
-    numeral: "RPG.01",
+    icono: "🎯",
   },
 ];
+
+// ─── COMPONENTES UI ──────────────────────────────────────────────────────────
+
+function SectionLabel({ children, tag }: { children: React.ReactNode; tag?: string }) {
+  return (
+    <div className="flex items-center gap-3 mb-4">
+      <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-doc-aged/40">
+        {children}
+      </div>
+      {tag && (
+        <div className="h-px flex-1 bg-doc-aged/10" />
+      )}
+    </div>
+  );
+}
+
+interface CampañaCardProps {
+  mod: ModuloMeta;
+  completada?: boolean;
+  onClick: () => void;
+}
+
+function CampañaCard({ mod, completada, onClick }: CampañaCardProps) {
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => sfx.hover()}
+      className="zona-card p-6 text-left relative group transition-all duration-200"
+      style={{ "--zona-color": `var(--zona-${mod.zona})` } as React.CSSProperties}
+    >
+      {completada && (
+        <div className="absolute top-3 right-3 text-[8px] font-mono-terminal text-zona-cautelares border border-zona-cautelares/40 px-2 py-0.5">
+          ✓ VISITADO
+        </div>
+      )}
+      <div className="flex items-start gap-4 mb-4">
+        <span className="text-4xl">{mod.icono}</span>
+        <div>
+          <div
+            className="text-[9px] font-mono-terminal uppercase tracking-widest mb-1 opacity-70"
+            style={{ color: `var(--zona-${mod.zona})` }}
+          >
+            {mod.subtitulo}
+          </div>
+          <h3 className="font-display-grave text-xl text-doc-aged leading-tight">
+            {mod.titulo}
+          </h3>
+        </div>
+      </div>
+      <p className="text-doc-aged/55 text-xs leading-relaxed font-mono-terminal">
+        {mod.descripcion}
+      </p>
+      <div
+        className="mt-4 text-[9px] font-mono-terminal uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity"
+        style={{ color: `var(--zona-${mod.zona})` }}
+      >
+        ENTRAR →
+      </div>
+    </button>
+  );
+}
+
+interface CombateCardProps {
+  mod: ModuloMeta;
+  onClick: () => void;
+}
+
+function CombateCard({ mod, onClick }: CombateCardProps) {
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => sfx.hover()}
+      className="p-4 text-left border transition-all duration-150 hover:brightness-110"
+      style={{
+        borderColor: `var(--zona-${mod.zona})30`,
+        background: `var(--zona-${mod.zona})08`,
+      }}
+    >
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-2xl">{mod.icono}</span>
+        <div>
+          <div className="font-display-grave text-sm text-doc-aged">{mod.titulo}</div>
+          <div
+            className="text-[8px] font-mono-terminal uppercase tracking-widest"
+            style={{ color: `var(--zona-${mod.zona})` }}
+          >
+            {mod.subtitulo}
+          </div>
+        </div>
+      </div>
+      <p className="text-doc-aged/45 text-[10px] font-mono-terminal leading-relaxed">
+        {mod.descripcion}
+      </p>
+    </button>
+  );
+}
+
+interface HerramientaCardProps {
+  mod: ModuloMeta;
+  onClick: () => void;
+}
+
+function HerramientaCard({ mod, onClick }: HerramientaCardProps) {
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => sfx.hover()}
+      className="flex items-center gap-3 p-3 border border-doc-aged/10 text-left hover:border-doc-aged/25 transition-colors group"
+    >
+      <span className="text-xl shrink-0">{mod.icono}</span>
+      <div className="min-w-0">
+        <div className="font-display-grave text-xs text-doc-aged truncate">{mod.titulo}</div>
+        <div
+          className="text-[8px] font-mono-terminal truncate"
+          style={{ color: `var(--zona-${mod.zona})` }}
+        >
+          {mod.subtitulo}
+        </div>
+      </div>
+    </button>
+  );
+}
+
+// ─── MAIN ────────────────────────────────────────────────────────────────────
 
 export default function ExpansionHub() {
   const [m, setM] = useState<Modulo>("menu");
@@ -238,21 +377,20 @@ export default function ExpansionHub() {
     const param = new URLSearchParams(window.location.search).get("m") as Modulo | null;
     if (param && param !== "menu") {
       setM(param);
-      // Limpiar el param de la URL sin redirigir
       const url = new URL(window.location.href);
       url.searchParams.delete("m");
       window.history.replaceState({}, "", url.pathname);
     }
   }, []);
 
-  // Render Investigación con selector de casos
+  // ─── Módulo Investigación con selector de casos ───────────────────────────
   if (m === "investigacion") {
     if (!casoSeleccionado) {
       return (
         <main className="min-h-screen px-4 md:px-8 py-6 max-w-6xl mx-auto">
           <div className="flex justify-between mb-6 flex-wrap gap-2">
-            <button className="btn" onClick={() => setM("menu")}>◂ Hub Expansión</button>
-            <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
+            <button className="btn text-xs" onClick={() => { sfx.click(); setM("menu"); }}>◂ Volver</button>
+            <Link href="/juego" className="btn text-xs">◂ Ciudad Judicial</Link>
           </div>
           <div className="space-y-6">
             <div>
@@ -262,25 +400,34 @@ export default function ExpansionHub() {
               <h2 className="font-display-grave text-3xl text-doc-aged mb-2">
                 Selecciona un Caso
               </h2>
-              <p className="text-doc-aged/70 font-serif-juridica">
-                Resuelve casos procedurales descubriendo pistas y deduciendo vicios procesales ocultos.
+              <p className="text-doc-aged/60 font-serif-juridica text-sm">
+                Descubre pistas. Conecta evidencia. Deduce el vicio procesal antes de que la prescripción actúe.
               </p>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               {CASOS_INVESTIGATIVOS.map((caso) => (
                 <button
                   key={caso.id}
-                  onClick={() => setCasoSeleccionado(caso.id)}
+                  onClick={() => { sfx.confirm(); setCasoSeleccionado(caso.id); }}
+                  onMouseEnter={() => sfx.hover()}
                   className="zona-card p-6 text-left"
                   style={{ "--zona-color": `var(--zona-${caso.zona})` } as React.CSSProperties}
                 >
-                  <h3 className="font-display-grave text-lg text-doc-aged mb-2">{caso.titulo}</h3>
-                  <p className="text-[9px] font-mono-terminal text-doc-aged/50 mb-3">
-                    DIFICULTAD: {"⭐".repeat(caso.dificultad)}
-                  </p>
-                  <p className="font-serif-juridica text-doc-aged/70 text-sm leading-relaxed">
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="font-display-grave text-lg text-doc-aged leading-tight">{caso.titulo}</h3>
+                    <div className="font-mono-terminal text-[9px] shrink-0 ml-3" style={{ color: `var(--zona-${caso.zona})` }}>
+                      {"⭐".repeat(caso.dificultad)}
+                    </div>
+                  </div>
+                  <p className="font-serif-juridica text-doc-aged/60 text-sm leading-relaxed">
                     {caso.descripcion}
                   </p>
+                  <div
+                    className="mt-3 text-[8px] font-mono-terminal uppercase tracking-widest"
+                    style={{ color: `var(--zona-${caso.zona})` }}
+                  >
+                    {caso.pistas.length} PISTAS · ART. {caso.solucion.articuloClave}
+                  </div>
                 </button>
               ))}
             </div>
@@ -289,15 +436,14 @@ export default function ExpansionHub() {
       );
     }
 
-    // Mostrar caso seleccionado
     const casoActual = CASOS_INVESTIGATIVOS.find((c) => c.id === casoSeleccionado);
     if (!casoActual) return null;
 
     return (
       <main className="min-h-screen px-4 md:px-8 py-6 max-w-6xl mx-auto">
         <div className="flex justify-between mb-6 flex-wrap gap-2">
-          <button className="btn" onClick={() => setCasoSeleccionado(null)}>◂ Casos</button>
-          <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
+          <button className="btn text-xs" onClick={() => { sfx.click(); setCasoSeleccionado(null); }}>◂ Casos</button>
+          <Link href="/juego" className="btn text-xs">◂ Ciudad Judicial</Link>
         </div>
         <CasoInvestigativo
           caso={casoActual}
@@ -310,12 +456,13 @@ export default function ExpansionHub() {
     );
   }
 
+  // ─── Módulo específico activo ─────────────────────────────────────────────
   if (m !== "menu") {
     return (
       <main className="min-h-screen px-4 md:px-8 py-6 max-w-6xl mx-auto">
         <div className="flex justify-between mb-6 flex-wrap gap-2">
-          <button className="btn" onClick={() => setM("menu")}>◂ Hub Expansión</button>
-          <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
+          <button className="btn text-xs" onClick={() => { sfx.click(); setM("menu"); }}>◂ Volver</button>
+          <Link href="/juego" className="btn text-xs">◂ Ciudad Judicial</Link>
         </div>
         {m === "ejecutivo_full" && <JuicioEjecutivoCompleto />}
         {m === "examen" && <ExamenGrado />}
@@ -340,76 +487,139 @@ export default function ExpansionHub() {
     );
   }
 
+  // ─── MENÚ PRINCIPAL ───────────────────────────────────────────────────────
+  const openMod = (id: Modulo) => { sfx.confirm(); setM(id); };
+
   return (
     <main className="min-h-screen px-4 md:px-8 py-6 max-w-6xl mx-auto">
-      <header className="flex justify-between mb-8 flex-wrap gap-2">
-        <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
-        <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-zona-recursos">
-          HUB EXPANSIÓN v5.1 · {MODULOS.length + 1} SISTEMAS (incl. MODO ORAL + SUBMUNDOS)
+
+      {/* HEADER */}
+      <header className="flex items-center justify-between mb-8 flex-wrap gap-2">
+        <Link href="/juego" className="btn text-xs">◂ Ciudad Judicial</Link>
+        <div className="flex items-center gap-4 text-[9px] font-mono-terminal text-doc-aged/40">
+          <span>HUB EXPANSIÓN</span>
+          <span className="text-zona-competencia">{MODULOS_CAMPAÑA.length + MODULOS_COMBATE.length + MODULOS_HERRAMIENTAS.length + MODULOS_SISTEMA.length} MÓDULOS</span>
         </div>
       </header>
 
-      <div className="mb-8">
-        <div className="font-mono-terminal text-[10px] uppercase tracking-[.4em] text-zona-recursos mb-2">SUBSISTEMAS</div>
-        <h1 className="font-display-grave text-4xl md:text-5xl text-doc-aged mb-3">Arquitectura Avanzada</h1>
-        <p className="text-doc-aged/60 text-sm font-mono-terminal max-w-2xl">
-          Doce sistemas modulares para entrenamiento de examen de grado. Cada uno simula una institución del Derecho Procesal chileno con mecánicas propias. Los nuevos módulos están marcados con ✦.
-        </p>
-      </div>
+      {/* ─── CAMPAÑA PRINCIPAL ─── */}
+      <section className="mb-10">
+        <SectionLabel tag="divider">CAMPAÑA PRINCIPAL</SectionLabel>
+        <motion.div
+          className="grid md:grid-cols-2 gap-4"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {MODULOS_CAMPAÑA.map((mod) => (
+            <CampañaCard
+              key={mod.id}
+              mod={mod}
+              onClick={() => openMod(mod.id)}
+            />
+          ))}
+        </motion.div>
+      </section>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {MODULOS.map((mod) => (
-          <button
-            key={mod.id}
-            onClick={() => setM(mod.id)}
-            className="zona-card p-5 text-left relative"
-            style={{ "--zona-color": `var(--zona-${mod.zona})` } as React.CSSProperties}
-          >
-            {mod.nuevo && (
-              <div
-                className="absolute top-3 right-3 text-[8px] font-mono-terminal px-2 py-0.5 border"
-                style={{ borderColor: `var(--zona-${mod.zona})`, color: `var(--zona-${mod.zona})` }}
-              >
-                ✦ NUEVO
-              </div>
-            )}
-            <div className="flex justify-between items-start mb-3">
-              <span className="font-display-grave text-3xl opacity-40" style={{ color: `var(--zona-${mod.zona})` }}>
-                {mod.numeral.split(".")[0]}
-              </span>
-              <span className="text-[9px] uppercase tracking-widest font-mono-terminal opacity-50" style={{ color: `var(--zona-${mod.zona})` }}>
-                {mod.numeral}
-              </span>
-            </div>
-            <h3 className="font-display-grave text-lg text-doc-aged tracking-wider mb-1">{mod.titulo}</h3>
-            <div className="text-[10px] uppercase tracking-widest font-mono-terminal mb-2" style={{ color: `var(--zona-${mod.zona})` }}>
-              {mod.subtitulo}
-            </div>
-            <p className="text-doc-aged/55 text-xs leading-relaxed font-mono-terminal">{mod.descripcion}</p>
-          </button>
-        ))}
-
-        {/* CTA al Modo Oral */}
+      {/* ─── BOSS RUSH ─── */}
+      <section className="mb-10">
+        <SectionLabel tag="divider">BOSS RUSH</SectionLabel>
         <Link
           href="/oral"
-          className="zona-card p-5 text-left block"
-          style={{ "--zona-color": "var(--zona-oralidad)" } as React.CSSProperties}
+          onMouseEnter={() => sfx.hover()}
+          className="block border transition-all duration-200 hover:brightness-110 p-5"
+          style={{
+            borderColor: "var(--zona-oralidad)40",
+            background: "var(--zona-oralidad)06",
+          }}
         >
-          <div className="flex justify-between items-start mb-3">
-            <span className="font-display-grave text-3xl opacity-40 text-zona-oralidad">XX</span>
-            <span className="text-[9px] uppercase tracking-widest font-mono-terminal opacity-50 text-zona-oralidad">
-              INST.20
-            </span>
+          <div className="flex items-center gap-4">
+            <span className="text-4xl">⚔️</span>
+            <div className="flex-1">
+              <div className="font-display-grave text-xl text-doc-aged mb-1">Modo Oral — Boss Rush</div>
+              <div className="text-[9px] font-mono-terminal text-zona-oralidad uppercase tracking-widest mb-2">
+                9 INSTANCIAS · COMISIÓN EXAMINADORA · CADENAS DE DERIVACIÓN
+              </div>
+              <p className="text-doc-aged/50 text-xs font-mono-terminal leading-relaxed">
+                Anfiteatro judicial. Ataques: directo · puente · trampa · repregunta. Cada boss es un arquetipo de examinador. Vida y reputación en juego.
+              </p>
+            </div>
+            <div className="shrink-0 text-[9px] font-mono-terminal text-zona-oralidad border border-zona-oralidad/40 px-3 py-2 hover:border-zona-oralidad transition-colors">
+              ENTRAR →
+            </div>
           </div>
-          <h3 className="font-display-grave text-lg text-doc-aged tracking-wider mb-1">Modo Oral</h3>
-          <div className="text-[10px] uppercase tracking-widest font-mono-terminal text-zona-oralidad mb-2">
-            BOSSES · 9 INSTANCIAS
-          </div>
-          <p className="text-doc-aged/55 text-xs leading-relaxed font-mono-terminal">
-            Anfiteatro judicial. Comisión examinadora con cadenas de derivación. Ataques: directo / puente / trampa / repregunta. 9 bosses desbloqueables.
-          </p>
         </Link>
-      </div>
+      </section>
+
+      {/* ─── ARENA DE COMBATE ─── */}
+      <section className="mb-10">
+        <SectionLabel tag="divider">ARENA DE COMBATE</SectionLabel>
+        <motion.div
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
+          {MODULOS_COMBATE.map((mod) => (
+            <CombateCard
+              key={mod.id}
+              mod={mod}
+              onClick={() => openMod(mod.id)}
+            />
+          ))}
+        </motion.div>
+      </section>
+
+      {/* ─── HERRAMIENTAS PROCESALES ─── */}
+      <section className="mb-10">
+        <SectionLabel tag="divider">HERRAMIENTAS PROCESALES</SectionLabel>
+        <motion.div
+          className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.15 }}
+        >
+          {MODULOS_HERRAMIENTAS.map((mod) => (
+            <HerramientaCard
+              key={mod.id}
+              mod={mod}
+              onClick={() => openMod(mod.id)}
+            />
+          ))}
+        </motion.div>
+      </section>
+
+      {/* ─── SISTEMA ─── */}
+      <section className="mb-6">
+        <SectionLabel tag="divider">SISTEMA</SectionLabel>
+        <motion.div
+          className="flex flex-wrap gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          {MODULOS_SISTEMA.map((mod) => (
+            <button
+              key={mod.id}
+              onClick={() => openMod(mod.id)}
+              onMouseEnter={() => sfx.hover()}
+              className="flex items-center gap-2 px-4 py-2 border border-doc-aged/15 hover:border-doc-aged/35 text-left transition-colors group"
+            >
+              <span className="text-base">{mod.icono}</span>
+              <div>
+                <div className="font-display-grave text-xs text-doc-aged">{mod.titulo}</div>
+                <div
+                  className="text-[7px] font-mono-terminal uppercase tracking-wider"
+                  style={{ color: `var(--zona-${mod.zona})` }}
+                >
+                  {mod.subtitulo}
+                </div>
+              </div>
+            </button>
+          ))}
+        </motion.div>
+      </section>
+
     </main>
   );
 }
