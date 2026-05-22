@@ -231,7 +231,10 @@ export type Mundo =
   | "recursos"
   | "juicio_ejecutivo"
   | "cautelares"
-  | "examen";
+  | "examen"
+  | "submundo_archivo_secreto"
+  | "submundo_camaras_ocultas"
+  | "submundo_doctrina_apocifa";
 
 export type Logro = {
   id: string;

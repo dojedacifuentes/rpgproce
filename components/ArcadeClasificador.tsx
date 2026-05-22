@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGame } from "@/store/useGame";
+import { shuffleOptions } from "@/lib/shuffleOptions";
 
 // ============================================================================
 // CLASIFICADOR ARCADE — minijuego rápido con combo/multiplicador/streak
@@ -297,6 +298,12 @@ export default function ArcadeClasificador() {
   // ─────────────────────────────── PANTALLA DE JUEGO
   if (!cuestionActual) return null;
   const colorRama = COLOR_RAMA[cuestionActual.rama];
+
+  // Shuffle opciones cada vez que cambia la pregunta
+  const shuffled = useMemo(
+    () => shuffleOptions(cuestionActual.opciones, "correcta"),
+    [cuestionActual.id]
+  );
   const tiempoPct = (tiempo / tiempoMaximoRef.current) * 100;
   const multiplicador = 1 + Math.floor(combo / 3);
 
@@ -349,7 +356,7 @@ export default function ArcadeClasificador() {
           </div>
           <div className="font-display-grave text-2xl text-doc-aged mb-5 leading-tight">{cuestionActual.enunciado}</div>
           <div className="space-y-2">
-            {cuestionActual.opciones.map((op, i) => {
+            {shuffled.options.map((op, i) => {
               const elegido = respuestaIdx === i;
               const reveal = respuestaIdx !== null;
               return (

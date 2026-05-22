@@ -512,6 +512,374 @@ const CASO_003: CasoInvestigativo = {
 };
 
 // ============================================================================
+// CASO 4: EMBARGO SIN FUNDAMENTO
+// ============================================================================
+
+const CASO_004: CasoInvestigativo = {
+  id: "inv_004",
+  titulo: "Caso 38D — Embargo Sin Fundamento",
+  descripcion:
+    "Se decretó una medida cautelar de embargo antes de que existiera sentencia condenatoria. El bien del demandado fue embargado preemptivamente sin los requisitos legales.",
+  zona: "cautelares",
+  dificultad: 2,
+
+  pistas: [
+    {
+      id: "p4_001",
+      titulo: "Solicitud de Medida Cautelar",
+      tipo: "documento",
+      contenido:
+        "Demandante solicita embargo preventivo alegando 'riesgo de insolvencia del demandado y ocultamiento de bienes.'",
+      articulos: ["Art. 273 CPC"],
+      descubierta: true,
+      revelaSobre: "medida solicitada",
+    },
+    {
+      id: "p4_002",
+      titulo: "Resolución de Decreto de Embargo",
+      tipo: "documento",
+      contenido:
+        "Juzgado decreta embargo de fundo 'Las Margaritas' sin requerir caución alguna. Se ordena al Conservador anotar embargo.",
+      articulos: ["Art. 299 CPC"],
+      descubierta: true,
+      revelaSobre: "resolución",
+    },
+    {
+      id: "p4_003",
+      titulo: "Art. 299 CPC - Requisitos de Caución",
+      tipo: "articulo",
+      contenido:
+        "Art. 299 CPC: Para medidas cautelares, el tribunal puede imponer caución a demandante para garantizar daño y perjuicio al demandado.",
+      articulos: ["Art. 299 CPC"],
+      descubierta: false,
+      revelaSobre: "requisito omitido",
+    },
+    {
+      id: "p4_004",
+      titulo: "Evaluación de Solvencia Demandado",
+      tipo: "documento",
+      contenido:
+        "Perito valuador: 'Demandado posee 5 propiedades, ingresos mensuales de $5M, sin antecedentes de insolvencia. Riesgo bajo.'",
+      articulos: ["Art. 273 CPC"],
+      descubierta: false,
+      revelaSobre: "ausencia de riesgo",
+    },
+    {
+      id: "p4_005",
+      titulo: "Diálogo del Demandante",
+      tipo: "dialogo",
+      contenido:
+        "'Solo sospecho que podría vender el fundo. No tengo prueba de que lo va a hacer, pero mejor prevenir.'",
+      articulos: ["Art. 298 CPC"],
+      descubierta: false,
+      revelaSobre: "falta fundamentación",
+    },
+    {
+      id: "p4_006",
+      titulo: "Art. 273 CPC - Periculum in Mora",
+      tipo: "articulo",
+      contenido:
+        "Art. 273 CPC: Medida cautelar solo procedente si hay apariencia de derecho y peligro en la mora (riesgo inminente y grave).",
+      articulos: ["Art. 273 CPC"],
+      descubierta: false,
+      revelaSobre: "estándar legal",
+    },
+  ],
+
+  problema: {
+    titulo: "Embargo Decretado Sin Riesgo de Insolvencia Acreditado",
+    descripcion:
+      "El embargo fue impuesto sin que demandante acreditara peligro en la mora. Solo sospecha, sin fundamento fáctico.",
+    articulosInvolucrados: [
+      "Art. 273 CPC (requisitos medida cautelar)",
+      "Art. 298 CPC (periculum in mora)",
+      "Art. 299 CPC (caución)",
+    ],
+    nivelDeDaño: 2,
+  },
+
+  solucion: {
+    explicacion:
+      "El embargo es nulo por violación del art. 273: falta de peligro en la mora. La sospecha no es suficiente; requiere riesgo inminente y grave de insolvencia o disposición de bienes.",
+    recursoAplicable: "Levantamiento de Embargo + Indemnización",
+    articuloClave: "Art. 273 CPC",
+    pasosCorrectionales: [
+      "1. Verificar que no existe acreditación de riesgo",
+      "2. Invocar falta de periculum in mora (art. 298)",
+      "3. Solicitar levantamiento de embargo",
+      "4. Accionar por indemnización por daño y perjuicio",
+    ],
+  },
+
+  hipótesis: [
+    {
+      titulo: "El demandante siempre puede embargar preventivamente",
+      pistas_requieren: ["p4_001"],
+      es_correcta: false,
+      explicacion:
+        "Incorrecto. Las medidas cautelares no son automáticas; requieren riesgo inminente acreditado.",
+    },
+    {
+      titulo: "Sospecha de insolvencia es suficiente para embargo",
+      pistas_requieren: ["p4_005"],
+      es_correcta: false,
+      explicacion:
+        "Incorrecto. Sospecha ≠ periculum in mora. Requiere riesgo grave y acreditado.",
+    },
+    {
+      titulo: "Embargo nulo por falta de periculum in mora — Art. 273 CPC",
+      pistas_requieren: ["p4_002", "p4_003", "p4_004", "p4_006"],
+      es_correcta: true,
+      explicacion:
+        "Correcto. Sin acreditación de riesgo real de insolvencia, embargo viola art. 273. Demandante solo sospecha sin prueba.",
+    },
+  ],
+};
+
+// ============================================================================
+// CASO 5: COSA JUZGADA APARENTE
+// ============================================================================
+
+const CASO_005: CasoInvestigativo = {
+  id: "inv_005",
+  titulo: "Caso 38E — Cosa Juzgada Aparente",
+  descripcion:
+    "Un nuevo juicio se interpone sobre la misma materia. Demandado alega cosa juzgada, pero la sentencia anterior nunca fue ejecutoriada (recursos pendientes).",
+  zona: "cosa_juzgada",
+  dificultad: 3,
+
+  pistas: [
+    {
+      id: "p5_001",
+      titulo: "Sentencia del Juicio Anterior",
+      tipo: "documento",
+      contenido:
+        "Sentencia 1 (2023): Se rechaza demanda original de cobro de $10M. Demandante no acredita contrato.",
+      articulos: ["Art. 158 CPC"],
+      descubierta: true,
+      revelaSobre: "fallo anterior",
+    },
+    {
+      id: "p5_002",
+      titulo: "Apelación Pendiente",
+      tipo: "documento",
+      contenido:
+        "Apelación interpuesta por demandante el 15.07.2023. Estado: 'Pendiente de vista de causa en Corte de Apelaciones.' Aún no se dicta sentencia de apelación.",
+      articulos: ["Art. 187 CPC"],
+      descubierta: false,
+      revelaSobre: "recurso no resuelto",
+    },
+    {
+      id: "p5_003",
+      titulo: "Nueva Demanda del Mismo Demandante",
+      tipo: "documento",
+      contenido:
+        "Demanda 2 (2024): Demandante vuelve con nueva acción por MISMO CONTRATO y MISMA cantidad ($10M), pero bajo nuevo fundamento: 'Enriquecimiento injustificado.'",
+      articulos: ["Art. 81 CPC"],
+      descubierta: true,
+      revelaSobre: "demanda duplicada",
+    },
+    {
+      id: "p5_004",
+      titulo: "Art. 81 CPC - Cosa Juzgada Formal y Material",
+      tipo: "articulo",
+      contenido:
+        "Art. 81 CPC: Cosa juzgada formal = sentencia no puede modificarse. Cosa juzgada material = no puede renovarse demanda. Ambas SOLO cuando sentencia EJECUTORIADA.",
+      articulos: ["Art. 81 CPC"],
+      descubierta: false,
+      revelaSobre: "definición exacta",
+    },
+    {
+      id: "p5_005",
+      titulo: "Estado del Juicio Anterior",
+      tipo: "fechas",
+      contenido:
+        "Sentencia 1 dictada 10.07.2023. Apelación interpuesta 15.07.2023. Hoy es 03.2024. Apelación AÚN PENDIENTE. Sentencia NO ejecutoriada.",
+      articulos: ["Art. 174 CPC"],
+      descubierta: false,
+      revelaSobre: "sentencia pendiente",
+    },
+    {
+      id: "p5_006",
+      titulo: "Cambio de Fundamento en Demanda 2",
+      tipo: "dialogo",
+      contenido:
+        "Demandante argumenta: 'Ahora lo demando por enriquecimiento, no por incumplimiento de contrato. Es DISTINTA acción.'",
+      articulos: ["Art. 81 CPC"],
+      descubierta: false,
+      revelaSobre: "estrategia",
+    },
+  ],
+
+  problema: {
+    titulo: "Cosa Juzgada Aparente — Sentencia No Ejecutoriada",
+    descripcion:
+      "Demandante intenta renovar demanda bajo nuevo fundamento, pero la sentencia anterior no está ejecutoriada (apelación pendiente).",
+    articulosInvolucrados: [
+      "Art. 81 CPC (cosa juzgada material)",
+      "Art. 174 CPC (ejecutoria de sentencia)",
+    ],
+    nivelDeDaño: 3,
+  },
+
+  solucion: {
+    explicacion:
+      "No existe cosa juzgada porque la sentencia anterior NO está ejecutoriada. La apelación aún está pendiente. La cosa juzgada solo existe cuando la sentencia se ejecutoria.",
+    recursoAplicable: "Rechazo de Demanda por Falta de Cosa Juzgada (después ejecutoria)",
+    articuloClave: "Art. 81 CPC (en relación Art. 174 CPC)",
+    pasosCorrectionales: [
+      "1. Constatar que apelación está pendiente",
+      "2. Invocar que sentencia NO está ejecutoriada",
+      "3. Cosa juzgada solo existe con sentencia ejecutoriada",
+      "4. Demanda No. 2 puede prosperar solo DESPUÉS que Demanda No. 1 se ejecutorie",
+    ],
+  },
+
+  hipótesis: [
+    {
+      titulo: "Cosa juzgada existe porque hubo sentencia",
+      pistas_requieren: ["p5_001"],
+      es_correcta: false,
+      explicacion: "Incorrecto. Cosa juzgada requiere sentencia EJECUTORIADA, no solo dictada.",
+    },
+    {
+      titulo: "Cambio de fundamento hace que sea acción distinta",
+      pistas_requieren: ["p5_006"],
+      es_correcta: false,
+      explicacion:
+        "Incorrecto. Identidad de partes y materia = misma acción, aunque fundamento cambie.",
+    },
+    {
+      titulo: "No hay cosa juzgada porque sentencia NO está ejecutoriada — Art. 81 CPC",
+      pistas_requieren: ["p5_001", "p5_002", "p5_004", "p5_005"],
+      es_correcta: true,
+      explicacion:
+        "Correcto. Apelación pendiente = sentencia NO ejecutoriada = NO existe cosa juzgada aún. Demanda No. 2 debe esperar.",
+    },
+  ],
+};
+
+// ============================================================================
+// CASO 6: TERCERÍA NO INTERPUESTA
+// ============================================================================
+
+const CASO_006: CasoInvestigativo = {
+  id: "inv_006",
+  titulo: "Caso 38F — Tercería No Interpuesta",
+  descripcion:
+    "En un juicio ejecutivo, se embargó un bien que pertenece a un tercero, no al demandado. El tercero no interpuso tercería a tiempo.",
+  zona: "ejecutivo",
+  dificultad: 2,
+
+  pistas: [
+    {
+      id: "p6_001",
+      titulo: "Mandamiento y Embargo de Inmueble",
+      tipo: "documento",
+      contenido:
+        "Se embarga inmueble ubicado en Calle Principal 123. Acreedor demanda pago de $50M. El inmueble está a nombre del demandado.",
+      articulos: ["Art. 440 CPC"],
+      descubierta: true,
+      revelaSobre: "embargo",
+    },
+    {
+      id: "p6_002",
+      titulo: "Tercería de Dominio Presentada Tardía",
+      tipo: "documento",
+      contenido:
+        "Tercero presenta tercería de dominio 45 días DESPUÉS del embargo. Alegaalmacén: 'Ese inmueble me pertenece, se lo compré al demandado.'",
+      articulos: ["Art. 517 CPC"],
+      descubierta: false,
+      revelaSobre: "plazo tercería",
+    },
+    {
+      id: "p6_003",
+      titulo: "Art. 517 CPC - Plazo de Tercería",
+      tipo: "articulo",
+      contenido:
+        "Art. 517 CPC: Tercería debe interponerse DENTRO DE 15 DÍAS contados desde el embargo o acto de ejecución.",
+      articulos: ["Art. 517 CPC"],
+      descubierta: false,
+      revelaSobre: "requisito plazo",
+    },
+    {
+      id: "p6_004",
+      titulo: "Conocimiento del Tercero",
+      tipo: "dialogo",
+      contenido:
+        "Tercero declara: 'Recién me enteré del embargo cuando el ejecutor fue al inmueble a hacerlo efectivo. Fue sorpresa.'",
+      articulos: ["Art. 517 CPC"],
+      descubierta: false,
+      revelaSobre: "responsabilidad tercero",
+    },
+    {
+      id: "p6_005",
+      titulo: "Protocolización de Compra",
+      tipo: "documento",
+      contenido:
+        "Contrato de compraventa del inmueble fechado 01.10.2023. Fue debidamente inscrito en Registro de Propiedad.",
+      articulos: ["Art. 52 LMH"],
+      descubierta: false,
+      revelaSobre: "derecho tercero",
+    },
+    {
+      id: "p6_006",
+      titulo: "Citación al Demandado",
+      tipo: "fechas",
+      contenido:
+        "Demandado citado a juicio ejecutivo el 15.11.2023. Embargo realizado el 20.11.2023. Tercería presentada el 05.01.2024 (45 días después).",
+      articulos: ["Art. 517 CPC"],
+      descubierta: false,
+      revelaSobre: "timeline",
+    },
+  ],
+
+  problema: {
+    titulo: "Tercería de Dominio Rechazada por Extemporaneidad",
+    descripcion:
+      "Tercero presentó tercería después de vencido el plazo de 15 días. Aunque tiene derecho sobre el bien, perdió la acción por extemporaneidad.",
+    articulosInvolucrados: ["Art. 517 CPC (plazo de tercería)"],
+    nivelDeDaño: 2,
+  },
+
+  solucion: {
+    explicacion:
+      "Tercería se rechaza por extemporaneidad. Aunque tercero tiene documentos que prueban su dominio, presentó tercería 45 días después del embargo, violando plazo de 15 días del art. 517.",
+    recursoAplicable: "Tercería Rechazada + Recurso de Casación (si lo hay)",
+    articuloClave: "Art. 517 CPC",
+    pasosCorrectionales: [
+      "1. Constatar fecha del embargo: 20.11.2023",
+      "2. Tercería presentada: 05.01.2024 (45 días después)",
+      "3. Plazo legal: 15 días (vencido el 05.12.2023)",
+      "4. Tercería extemporánea = rechazo",
+    ],
+  },
+
+  hipótesis: [
+    {
+      titulo: "Tercero tiene derecho, así que tercería debe acogerse",
+      pistas_requieren: ["p6_005"],
+      es_correcta: false,
+      explicacion:
+        "Incorrecto. Derecho sustancial ≠ derecho procesal. Perdiósimplemente por no cumplir plazo.",
+    },
+    {
+      titulo: "Tercería puede presentarse dentro de 30 días",
+      pistas_requieren: ["p6_003"],
+      es_correcta: false,
+      explicacion: "Incorrecto. El art. 517 dice 15 días, no 30.",
+    },
+    {
+      titulo: "Tercería rechazada por extemporaneidad — Art. 517 CPC",
+      pistas_requieren: ["p6_002", "p6_003", "p6_004", "p6_006"],
+      es_correcta: true,
+      explicacion:
+        "Correcto. Aunque tercero probó su dominio, presentó tercería 45 días después (plazo era 15). Extemporaneidad = rechazo automático.",
+    },
+  ],
+};
+
+// ============================================================================
 // EXPORTAR
 // ============================================================================
 
@@ -519,4 +887,7 @@ export const CASOS_INVESTIGATIVOS: CasoInvestigativo[] = [
   CASO_001,
   CASO_002,
   CASO_003,
+  CASO_004,
+  CASO_005,
+  CASO_006,
 ];

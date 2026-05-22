@@ -1,8 +1,20 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/audio";
 import { useGame } from "@/store/useGame";
+
+// Fisher-Yates shuffle
+function shuffleArray<T>(arr: T[]): { shuffled: T[]; originalIndices: number[] } {
+  const indices = arr.map((_, i) => i);
+  const shuffled = [...arr];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  return { shuffled, originalIndices: indices };
+}
 
 interface Pregunta {
   id: string;
@@ -101,6 +113,14 @@ export default function AtaqueRepreguntas() {
 
   const pregunta_actual = PREGUNTAS[indice_pregunta];
 
+  // Shuffle opciones para cada pregunta
+  const shuffled = useMemo(() => {
+    const { shuffled: opciones_shuffled, originalIndices } = shuffleArray(pregunta_actual.opciones);
+    // Encontrar el nuevo índice de la respuesta correcta
+    const nuevo_idx_correcto = originalIndices.indexOf(pregunta_actual.correcta);
+    return { opciones: opciones_shuffled, correcta: nuevo_idx_correcto };
+  }, [pregunta_actual.id]);
+
   useEffect(() => {
     if (respondida || timeout) return;
 
@@ -123,7 +143,7 @@ export default function AtaqueRepreguntas() {
     sfx.click();
 
     setSeleccion(opcion);
-    const es_correcta = opcion === pregunta_actual.correcta;
+    const es_correcta = opcion === shuffled.correcta;
 
     if (es_correcta) {
       sfx.oralCorrecta();
@@ -192,11 +212,11 @@ export default function AtaqueRepreguntas() {
 
         {/* OPCIONES */}
         <div className="space-y-2">
-          {pregunta_actual.opciones.map((opcion, idx) => {
+          {shuffled.opciones.map((opcion, idx) => {
             let cls = "w-full text-left p-3 border-2 transition-all ";
             if (!respondida && !timeout) {
               cls += "border-doc-aged/20 text-doc-aged/70 hover:border-doc-aged/60 hover:text-doc-aged cursor-pointer";
-            } else if (idx === pregunta_actual.correcta) {
+            } else if (idx === shuffled.correcta) {
               cls += "border-zona-cautelares bg-zona-cautelares/10 text-zona-cautelares";
             } else if (idx === seleccion) {
               cls += "border-zona-nulidad bg-zona-nulidad/10 text-zona-nulidad";
@@ -215,8 +235,8 @@ export default function AtaqueRepreguntas() {
                   {String.fromCharCode(65 + idx)}.
                 </span>
                 <span className="ml-2 font-serif-juridica text-[11px]">{opcion}</span>
-                {respondida && idx === pregunta_actual.correcta && <span className="text-[9px] ml-2">✓</span>}
-                {respondida && idx === seleccion && idx !== pregunta_actual.correcta && <span className="text-[9px] ml-2">✗</span>}
+                {respondida && idx === shuffled.correcta && <span className="text-[9px] ml-2">✓</span>}
+                {respondida && idx === seleccion && idx !== shuffled.correcta && <span className="text-[9px] ml-2">✗</span>}
               </button>
             );
           })}
@@ -231,7 +251,7 @@ export default function AtaqueRepreguntas() {
               className="p-3 bg-zona-nulidad/10 border border-zona-nulidad/20"
             >
               <div className="text-zona-nulidad font-mono-terminal text-[9px] uppercase">⏱ TIEMPO AGOTADO</div>
-              <p className="text-[10px] text-doc-aged/70 mt-1">No respondiste a tiempo. La respuesta correcta era: {pregunta_actual.opciones[pregunta_actual.correcta]}</p>
+              <p className="text-[10px] text-doc-aged/70 mt-1">No respondiste a tiempo. La respuesta correcta era: {shuffled.opciones[shuffled.correcta]}</p>
             </motion.div>
           )}
         </AnimatePresence>
