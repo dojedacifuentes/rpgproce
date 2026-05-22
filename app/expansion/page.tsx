@@ -18,6 +18,7 @@ import TimelineOrdenamiento from "@/components/TimelineOrdenamiento";
 import DueloMediosPrueba from "@/components/DueloMediosPrueba";
 import AtaqueRepreguntas from "@/components/AtaqueRepreguntas";
 import CasoInvestigativo from "@/components/CasoInvestigativo";
+import SubmundosPanel from "@/components/SubmundosPanel";
 import { CASOS_INVESTIGATIVOS } from "@/data/casos-investigativos";
 
 type Modulo =
@@ -38,7 +39,8 @@ type Modulo =
   | "timeline"
   | "duelo"
   | "ataque"
-  | "investigacion";
+  | "investigacion"
+  | "submundos";
 
 const MODULOS: {
   id: Modulo;
@@ -74,6 +76,15 @@ const MODULOS: {
     descripcion: "Resuelve casos procedurales descubriendo pistas, conectando evidencia, y deduciendo vicios ocultos. Emplazamiento Fantasma · Sentencia Ultra Petita · Preclusión Oculta. Sistema de hipótesis con validación.",
     zona: "cosa_juzgada",
     numeral: "INV.01",
+    nuevo: true,
+  },
+  {
+    id: "submundos",
+    titulo: "Submundos Ocultos",
+    subtitulo: "CONTENIDO SECRETO · DESBLOQUEABLES",
+    descripcion: "Historias de vicios procesales que nunca se escriben. El Archivo Secreto · Las Cámaras Ocultas · La Doctrina Apócrifa. Desbloquea con logros.",
+    zona: "nulidad",
+    numeral: "SUB.01",
     nuevo: true,
   },
   {
@@ -280,6 +291,7 @@ export default function ExpansionHub() {
         {m === "duelo" && <DueloMediosPrueba />}
         {m === "ataque" && <AtaqueRepreguntas />}
         {m === "arcade" && <ArcadeClasificador />}
+        {m === "submundos" && <SubmundosPanel />}
         {m === "vof" && <SpeedrunVoF />}
         {m === "sentencia" && <SalaSentencia />}
         {m === "expediente" && <ExpedienteVivo />}
@@ -297,7 +309,7 @@ export default function ExpansionHub() {
       <header className="flex justify-between mb-8 flex-wrap gap-2">
         <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
         <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-zona-recursos">
-          HUB EXPANSIÓN v5.0 · {MODULOS.length + 1} SISTEMAS (incl. MODO ORAL)
+          HUB EXPANSIÓN v5.1 · {MODULOS.length + 1} SISTEMAS (incl. MODO ORAL + SUBMUNDOS)
         </div>
       </header>
 
