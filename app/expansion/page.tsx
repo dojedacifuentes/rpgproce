@@ -25,6 +25,7 @@ import CasoInvestigativo from "@/components/CasoInvestigativo";
 import SubmundosPanel from "@/components/SubmundosPanel";
 import NPCInteractionPanel from "@/components/NPCInteractionPanel";
 import WorldSelector from "@/components/WorldSelector";
+import InventarioPanel from "@/components/InventarioPanel";
 import { CASOS_INVESTIGATIVOS } from "@/data/casos-investigativos";
 
 // ============================================================================
@@ -54,7 +55,8 @@ type Modulo =
   | "investigacion"
   | "submundos"
   | "npcs"
-  | "mundos";
+  | "mundos"
+  | "inventario";
 
 interface ModuloMeta {
   id: Modulo;
@@ -203,6 +205,14 @@ const MODULOS_HERRAMIENTAS: ModuloMeta[] = [
 // ─── SISTEMA / META-GAME (pill buttons) ─────────────────────────────────────
 
 const MODULOS_SISTEMA: ModuloMeta[] = [
+  {
+    id: "inventario",
+    titulo: "Reliquias Procesales",
+    subtitulo: "INVENTARIO · PASIVOS",
+    descripcion: "Compra y equipa artefactos jurídicos que otorgan bonificaciones pasivas.",
+    zona: "prueba",
+    icono: "⚗️",
+  },
   {
     id: "submundos",
     titulo: "Submundos Ocultos",
@@ -502,6 +512,7 @@ export default function ExpansionHub() {
         {m === "duelo" && <DueloMediosPrueba />}
         {m === "ataque" && <AtaqueRepreguntas />}
         {m === "arcade" && <ArcadeClasificador />}
+        {m === "inventario" && <InventarioPanel />}
         {m === "submundos" && <SubmundosPanel />}
         {m === "npcs" && <NPCInteractionPanel />}
         {m === "mundos" && <WorldSelector onClose={() => setM("menu")} />}

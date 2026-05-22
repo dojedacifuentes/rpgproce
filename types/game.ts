@@ -325,4 +325,7 @@ export type SaveState = {
   misionesCompletadas: string[];
   finalizado?: boolean;
   epilogo?: string;
+  // Sistema de inventario — reliquias procesales
+  relicsEquipadas: string[];   // IDs de reliquias actualmente equipadas (máx. 3)
+  relicsCompradas: string[];   // IDs de reliquias compradas (historial)
 };

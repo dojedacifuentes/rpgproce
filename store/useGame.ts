@@ -6,6 +6,7 @@ import type {
   Escrito, Resolucion, RecursoInterpuesto, Prueba, Tribunal, CasoResuelto, CasoEnProgreso,
   ProgresionNpc, EstadoNpc, MundoVisual,
 } from "@/types/game";
+import { getRelicById, MAX_RELICS_EQUIPADAS } from "@/data/relics";
 
 type Store = SaveState & {
   setPersonaje: (p: Personaje) => void;
@@ -34,6 +35,11 @@ type Store = SaveState & {
   desbloquearLogro: (l: Logro) => void;
   iniciarCaso: (caso: CasoEnProgreso) => void;
   resolverCaso: (caseId: string, resuelto: CasoResuelto, efectos?: { reputacion?: number; trauma?: number; conocimiento?: number }) => void;
+  // Relic System
+  comprarRelic: (relicId: string, costo: number) => boolean;
+  equiparRelic: (relicId: string) => boolean;
+  desequiparRelic: (relicId: string) => void;
+  hasRelicEquipada: (relicId: string) => boolean;
   // NPC System
   iniciarArcoNpc: (npcId: string) => void;
   avanzoNpc: (npcId: string, accion: "completar_actividad" | "pasar_etapa" | "iniciar_desafio") => void;
@@ -81,6 +87,8 @@ const INIT: SaveState = {
   mundoVisual: "cybervalpo",
   misionActiva: undefined,
   misionesCompletadas: [],
+  relicsEquipadas: [],
+  relicsCompradas: [],
 };
 
 export const useGame = create<Store>()(
@@ -134,7 +142,17 @@ export const useGame = create<Store>()(
       ajustarReputacion: (delta) =>
         set((s) => ({ personaje: { ...s.personaje, reputacion: Math.max(-100, Math.min(100, s.personaje.reputacion + delta)) } })),
       ajustarTrauma: (delta) =>
-        set((s) => ({ personaje: { ...s.personaje, trauma: Math.max(0, Math.min(100, s.personaje.trauma + delta)) } })),
+        set((s) => {
+          // Apply relic trauma reduction (only for positive delta = damage)
+          let efectivo = delta;
+          if (delta > 0) {
+            for (const relicId of s.relicsEquipadas) {
+              const r = getRelicById(relicId);
+              if (r?.mecanica.tipo === "trauma_redux") efectivo = Math.max(0, efectivo - r.mecanica.valor);
+            }
+          }
+          return { personaje: { ...s.personaje, trauma: Math.max(0, Math.min(100, s.personaje.trauma + efectivo)) } };
+        }),
       desbloquearLogro: (l) =>
         set((s) => (s.logros.find((x) => x.id === l.id) ? s : { logros: [...s.logros, { ...l, desbloqueado: true, fecha: Date.now() }] })),
       iniciarCaso: (caso) =>
@@ -276,13 +294,29 @@ export const useGame = create<Store>()(
         }),
       gainXp: (amount) =>
         set((s) => {
-          const newXp = s.xp + amount;
+          // Apply relic XP bonuses
+          let bonus = amount;
+          for (const relicId of s.relicsEquipadas) {
+            const r = getRelicById(relicId);
+            if (!r) continue;
+            if (r.mecanica.tipo === "xp_bonus") bonus += amount * r.mecanica.valor;
+            if (r.mecanica.tipo === "xp_flat") bonus += r.mecanica.valor;
+          }
+          const newXp = s.xp + Math.round(bonus);
           const xpPerLevel = 100;
           const newNivel = Math.min(20, Math.floor(newXp / xpPerLevel) + 1);
           return { xp: newXp, nivel: newNivel, ultimoGuardado: Date.now() };
         }),
       gainMonedas: (amount) =>
-        set((s) => ({ monedas: s.monedas + amount, ultimoGuardado: Date.now() })),
+        set((s) => {
+          // Apply relic monedas bonuses
+          let bonus = amount;
+          for (const relicId of s.relicsEquipadas) {
+            const r = getRelicById(relicId);
+            if (r?.mecanica.tipo === "monedas_bonus") bonus += amount * r.mecanica.valor;
+          }
+          return { monedas: s.monedas + Math.round(bonus), ultimoGuardado: Date.now() };
+        }),
       spendMonedas: (amount) => {
         const monedas = get().monedas;
         if (monedas < amount) return false;
@@ -306,6 +340,34 @@ export const useGame = create<Store>()(
             ultimoGuardado: Date.now(),
           };
         }),
+      // ── RELIC SYSTEM ──────────────────────────────────────────────────────
+      comprarRelic: (relicId, costo) => {
+        const s = get();
+        if (s.relicsCompradas.includes(relicId)) return false; // ya comprada
+        if (s.monedas < costo) return false;
+        set({
+          monedas: s.monedas - costo,
+          relicsCompradas: [...s.relicsCompradas, relicId],
+          ultimoGuardado: Date.now(),
+        });
+        return true;
+      },
+      equiparRelic: (relicId) => {
+        const s = get();
+        if (!s.relicsCompradas.includes(relicId)) return false;
+        if (s.relicsEquipadas.includes(relicId)) return false;
+        if (s.relicsEquipadas.length >= MAX_RELICS_EQUIPADAS) return false;
+        set({ relicsEquipadas: [...s.relicsEquipadas, relicId], ultimoGuardado: Date.now() });
+        return true;
+      },
+      desequiparRelic: (relicId) => {
+        set((s) => ({
+          relicsEquipadas: s.relicsEquipadas.filter((id) => id !== relicId),
+          ultimoGuardado: Date.now(),
+        }));
+      },
+      hasRelicEquipada: (relicId) => get().relicsEquipadas.includes(relicId),
+      // ──────────────────────────────────────────────────────────────────────
       finalizar: (texto) => set({ finalizado: true, epilogo: texto }),
       nuevoCicloProcesal: () =>
         set((s) => ({
