@@ -70,11 +70,11 @@ export default function InhibitoriaDeclinatoria() {
   if (!caso) {
     return (
       <div className="terminal p-6">
-        <h2 className="label-art text-neon-blue text-xl mb-3">Cuestiones de competencia: completado</h2>
-        <p className="text-parchment/70 text-sm">
-          Aciertos: <b className="text-neon-cyan">{aciertos}</b> / {CASOS.length}.
+        <h2 className="label-art text-zona-notificaciones text-xl mb-3">Cuestiones de competencia: completado</h2>
+        <p className="text-doc-aged/70 text-sm">
+          Aciertos: <b className="text-zona-competencia">{aciertos}</b> / {CASOS.length}.
         </p>
-        <p className="text-parchment/60 text-xs mt-2">
+        <p className="text-doc-aged/60 text-xs mt-2">
           Recuerda: inhibitoria → tribunal que crees competente. Declinatoria → tribunal que crees incompetente. CPC 101-112.
         </p>
       </div>
@@ -105,21 +105,21 @@ export default function InhibitoriaDeclinatoria() {
 
   return (
     <div className="space-y-4">
-      <h2 className="label-art text-neon-blue text-xl">Inhibitoria vs Declinatoria (arts. 101-112 CPC)</h2>
-      <p className="text-parchment/60 text-xs">
+      <h2 className="label-art text-zona-notificaciones text-xl">Inhibitoria vs Declinatoria (arts. 101-112 CPC)</h2>
+      <p className="text-doc-aged/60 text-xs">
         Dos medios para impugnar competencia. Distinguelos por (1) ante qué tribunal y (2) qué se pide. Mientras pende, el juicio principal se suspende (art. 112).
       </p>
 
       <div className="terminal p-5">
         <div className="tag mb-2">CASO {i + 1} / {CASOS.length}</div>
-        <p className="text-parchment text-sm">{caso.hechos}</p>
+        <p className="text-doc-aged text-sm">{caso.hechos}</p>
       </div>
 
       <div className="terminal p-4">
         <div className="label-art text-neon-violet text-sm mb-2">1) ¿Qué medio elegís?</div>
         <div className="grid grid-cols-2 gap-2">
           {(["inhibitoria", "declinatoria"] as const).map((m) => (
-            <button key={m} disabled={!!feedback} onClick={() => setMedio(m)} className={`p-3 border text-xs uppercase ${medio === m ? "border-neon-blue bg-neon-blue/10 text-neon-blue" : "border-ink-400"}`}>
+            <button key={m} disabled={!!feedback} onClick={() => setMedio(m)} className={`p-3 border text-xs uppercase ${medio === m ? "border-neon-blue bg-neon-blue/10 text-zona-notificaciones" : "border-ink-400"}`}>
               {m}
             </button>
           ))}
@@ -129,10 +129,10 @@ export default function InhibitoriaDeclinatoria() {
       <div className="terminal p-4">
         <div className="label-art text-neon-violet text-sm mb-2">2) ¿Ante qué tribunal lo presentás?</div>
         <div className="grid grid-cols-2 gap-2">
-          <button disabled={!!feedback} onClick={() => setTribunal("presunto_competente")} className={`p-3 border text-xs ${tribunal === "presunto_competente" ? "border-neon-blue bg-neon-blue/10 text-neon-blue" : "border-ink-400"}`}>
+          <button disabled={!!feedback} onClick={() => setTribunal("presunto_competente")} className={`p-3 border text-xs ${tribunal === "presunto_competente" ? "border-neon-blue bg-neon-blue/10 text-zona-notificaciones" : "border-ink-400"}`}>
             Tribunal que CREO competente (otro)
           </button>
-          <button disabled={!!feedback} onClick={() => setTribunal("tribunal_actual_incompetente")} className={`p-3 border text-xs ${tribunal === "tribunal_actual_incompetente" ? "border-neon-blue bg-neon-blue/10 text-neon-blue" : "border-ink-400"}`}>
+          <button disabled={!!feedback} onClick={() => setTribunal("tribunal_actual_incompetente")} className={`p-3 border text-xs ${tribunal === "tribunal_actual_incompetente" ? "border-neon-blue bg-neon-blue/10 text-zona-notificaciones" : "border-ink-400"}`}>
             Tribunal ACTUAL incompetente
           </button>
         </div>
@@ -143,10 +143,10 @@ export default function InhibitoriaDeclinatoria() {
       <AnimatePresence>
         {feedback && (
           <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`terminal p-4 ${feedback.okMedio && feedback.okTribunal ? "border-neon-blue" : "border-neon-red"}`}>
-            <div className={`label-art ${feedback.okMedio && feedback.okTribunal ? "text-neon-blue" : "text-neon-red"}`}>
+            <div className={`label-art ${feedback.okMedio && feedback.okTribunal ? "text-zona-notificaciones" : "text-zona-nulidad"}`}>
               Medio: {feedback.okMedio ? "✓" : "✗"} · Tribunal: {feedback.okTribunal ? "✓" : "✗"}
             </div>
-            <p className="text-parchment/80 text-xs mt-2">{feedback.explicacion}</p>
+            <p className="text-doc-aged/80 text-xs mt-2">{feedback.explicacion}</p>
             <div className="tag tag-violet mt-2">{feedback.art}</div>
             <button className="btn mt-3" onClick={siguiente}>▸ Siguiente caso</button>
           </motion.div>

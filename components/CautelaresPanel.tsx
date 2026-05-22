@@ -39,14 +39,14 @@ export default function CautelaresPanel() {
 
   return (
     <div className="space-y-4">
-      <h2 className="label-art text-neon-blue text-xl">Medidas prejudiciales y precautorias (arts. 273-302 CPC)</h2>
-      <p className="text-parchment/60 text-sm">
+      <h2 className="label-art text-zona-notificaciones text-xl">Medidas prejudiciales y precautorias (arts. 273-302 CPC)</h2>
+      <p className="text-doc-aged/60 text-sm">
         Prejudiciales (273-289): pueden ser preparatorias, probatorias o precautorias. Precautorias propiamente tales (290-302): solicitadas durante el juicio para asegurar el resultado.
       </p>
 
       <div className="terminal p-4 space-y-3">
         <div>
-          <label className="text-xs uppercase tracking-widest text-neon-cyan mb-1 block">Clase</label>
+          <label className="text-xs uppercase tracking-widest text-zona-competencia mb-1 block">Clase</label>
           <select className="bg-ink-700 border border-neon-blue/30 p-2 w-full" value={clase} onChange={(e) => setClase(e.target.value as any)}>
             <option value="prejudicial">Prejudicial precautoria (arts. 279, 287 CPC)</option>
             <option value="precautoria">Precautoria propiamente tal (arts. 290-302 CPC)</option>
@@ -55,13 +55,13 @@ export default function CautelaresPanel() {
         </div>
 
         <div>
-          <label className="text-xs uppercase tracking-widest text-neon-cyan mb-1 block">Tipo (art. 290 CPC)</label>
+          <label className="text-xs uppercase tracking-widest text-zona-competencia mb-1 block">Tipo (art. 290 CPC)</label>
           <div className="grid sm:grid-cols-2 gap-2">
             {TIPOS.map((t) => (
               <button key={t.tipo} onClick={() => setTipo(t.tipo)} className={`p-3 border text-left text-xs ${tipo === t.tipo ? "border-neon-blue bg-neon-blue/10" : "border-ink-400"}`}>
-                <div className="text-neon-cyan">{t.nombre}</div>
+                <div className="text-zona-competencia">{t.nombre}</div>
                 <div className="tag tag-violet mt-1">{t.art}</div>
-                <div className="text-parchment/60 text-[10px] mt-2">{t.desc}</div>
+                <div className="text-doc-aged/60 text-[10px] mt-2">{t.desc}</div>
               </button>
             ))}
           </div>

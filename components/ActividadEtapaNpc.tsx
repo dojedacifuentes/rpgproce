@@ -89,7 +89,7 @@ export default function ActividadEtapaNpc({
 
           {/* Contexto */}
           {esMisionFinal && mision && (
-            <div className="border-l-4 border-neon-orange pl-4">
+            <div className="border-l-4 border-zona-ejecutivo pl-4">
               <p className="font-serif-juridica text-doc-aged/80 leading-relaxed">
                 {mision.contexto}
               </p>
@@ -97,8 +97,8 @@ export default function ActividadEtapaNpc({
           )}
 
           {/* Requisitos / Tipo */}
-          <div className="bg-terminal-darker/50 p-6 rounded border border-parchment/20">
-            <div className="font-mono-terminal text-[9px] text-parchment/50 uppercase tracking-wider mb-3">
+          <div className="bg-bg-deep/50 p-6 rounded border border-doc-aged/20">
+            <div className="font-mono-terminal text-[9px] text-doc-aged/50 uppercase tracking-wider mb-3">
               {esMisionFinal ? "TIPO DE DESAFÍO" : "TIPO DE ACTIVIDAD"}
             </div>
             <div className="font-mono-terminal text-doc-aged/75 capitalize">
@@ -155,7 +155,7 @@ export default function ActividadEtapaNpc({
         </h2>
 
         {/* Placeholder de contenido */}
-        <div className="bg-terminal-darker/50 p-8 rounded border border-parchment/20 space-y-4">
+        <div className="bg-bg-deep/50 p-8 rounded border border-doc-aged/20 space-y-4">
           <p className="font-serif-juridica text-doc-aged/70">
             {esMisionFinal
               ? `Sistema de ${mision?.tipo} no implementado aún`

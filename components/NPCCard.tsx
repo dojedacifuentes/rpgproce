@@ -24,12 +24,12 @@ const estadoTexto: Record<EstadoNpc, string> = {
 
 const estadoColor: Record<EstadoNpc, string> = {
   "no_iniciada": "text-doc-aged/50",
-  "en_progreso_etapa_1": "text-neon-blue",
-  "en_progreso_etapa_2": "text-neon-blue",
-  "en_progreso_etapa_3": "text-neon-blue",
-  "desafio_final": "text-neon-orange",
-  "completada": "text-neon-green",
-  "fallida": "text-neon-red",
+  "en_progreso_etapa_1": "text-zona-notificaciones",
+  "en_progreso_etapa_2": "text-zona-notificaciones",
+  "en_progreso_etapa_3": "text-zona-notificaciones",
+  "desafio_final": "text-zona-ejecutivo",
+  "completada": "text-zona-cautelares",
+  "fallida": "text-zona-nulidad",
 };
 
 export default function NPCCard({
@@ -102,7 +102,7 @@ export default function NPCCard({
                 key={num}
                 className={`h-2 flex-1 rounded-full transition-colors ${
                   etapaActual >= num
-                    ? "bg-neon-green"
+                    ? "bg-zona-cautelares"
                     : "bg-doc-aged/20"
                 }`}
               />
@@ -110,7 +110,7 @@ export default function NPCCard({
             <div
               className={`h-2 flex-1 rounded-full transition-colors ${
                 estado === "desafio_final" || estado === "completada"
-                  ? "bg-neon-orange"
+                  ? "bg-zona-ejecutivo"
                   : "bg-doc-aged/20"
               }`}
             />

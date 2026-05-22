@@ -63,9 +63,9 @@ export default function ExamenPage() {
       <main className="min-h-screen px-6 py-16 max-w-2xl mx-auto">
         <div className="terminal p-8 text-center">
           <div className="tag mb-3">CÉDULA FINAL</div>
-          <h1 className="label-art text-3xl text-neon-blue mb-4">Nota: {nota.toFixed(1)}</h1>
-          <p className="text-parchment/70">Aciertos: {aciertos} / {PREGUNTAS.length}</p>
-          <p className="text-parchment/60 text-sm mt-4">{nota >= 4.0 ? "Aprobado. La comisión hace una mueca de respeto procesal." : "Reprobado. Vuelve al Codex: arts. 158, 187, 766, 767."}</p>
+          <h1 className="label-art text-3xl text-zona-notificaciones mb-4">Nota: {nota.toFixed(1)}</h1>
+          <p className="text-doc-aged/70">Aciertos: {aciertos} / {PREGUNTAS.length}</p>
+          <p className="text-doc-aged/60 text-sm mt-4">{nota >= 4.0 ? "Aprobado. La comisión hace una mueca de respeto procesal." : "Reprobado. Vuelve al Codex: arts. 158, 187, 766, 767."}</p>
           <Link href="/juego" className="btn mt-6 inline-block">◂ Volver al mapa</Link>
         </div>
       </main>
@@ -80,7 +80,7 @@ export default function ExamenPage() {
       </div>
 
       <div className="terminal p-6">
-        <h2 className="label-art text-neon-cyan mb-4">{p.q}</h2>
+        <h2 className="label-art text-zona-competencia mb-4">{p.q}</h2>
         <div className="space-y-2">
           {p.opciones.map((op, idx) => {
             const correcto = idx === p.correcta;
@@ -89,8 +89,8 @@ export default function ExamenPage() {
               <button key={idx} disabled={respuesta !== null} onClick={() => contestar(idx)}
                 className={`block w-full text-left p-3 border text-sm ${
                   respuesta === null ? "border-ink-400 hover:border-neon-blue"
-                  : correcto ? "border-neon-blue bg-neon-blue/10 text-neon-blue"
-                  : elegido ? "border-neon-red bg-neon-red/10 text-neon-red" : "border-ink-400 opacity-50"
+                  : correcto ? "border-neon-blue bg-neon-blue/10 text-zona-notificaciones"
+                  : elegido ? "border-neon-red bg-neon-red/10 text-zona-nulidad" : "border-ink-400 opacity-50"
                 }`}>
                 {op}
               </button>
@@ -99,7 +99,7 @@ export default function ExamenPage() {
         </div>
         {respuesta !== null && (
           <div className="mt-4 border-t border-ink-400 pt-4 text-sm">
-            <p className="text-parchment/80">{p.explicacion}</p>
+            <p className="text-doc-aged/80">{p.explicacion}</p>
             <div className="tag tag-violet mt-2">{p.art}</div>
             <button className="btn mt-4" onClick={avanzar}>▸ Siguiente</button>
           </div>

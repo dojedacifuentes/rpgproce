@@ -72,16 +72,16 @@ export default function Creacion() {
       <p className="text-doc-aged/50 text-xs font-serif-juridica italic mb-6">«Toda comparecencia exige patrocinio, poder y voluntad de sufrir.»</p>
 
       <section className="terminal p-6 mb-6">
-        <label className="text-xs uppercase tracking-widest text-neon-cyan">Nombre del comparecente</label>
+        <label className="text-xs uppercase tracking-widest text-zona-competencia">Nombre del comparecente</label>
         <input autoFocus value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Apellido, Nombre"
-          className="mt-2 w-full bg-ink-700 border border-neon-blue/30 text-parchment p-3 focus:outline-none focus:border-neon-blue" />
+          className="mt-2 w-full bg-ink-700 border border-neon-blue/30 text-doc-aged p-3 focus:outline-none focus:border-neon-blue" />
       </section>
 
       <section className="terminal p-5 mb-6">
-        <label className="text-xs uppercase tracking-widest text-neon-cyan block mb-3">Sexo</label>
+        <label className="text-xs uppercase tracking-widest text-zona-competencia block mb-3">Sexo</label>
         <div className="grid grid-cols-2 gap-3">
           {(["femenino", "masculino"] as const).map((s) => (
-            <button key={s} onClick={() => setSexo(s)} className={`p-3 border ${sexo === s ? "border-neon-blue bg-neon-blue/10 text-neon-blue" : "border-ink-400"} uppercase tracking-widest text-sm`}>{s}</button>
+            <button key={s} onClick={() => setSexo(s)} className={`p-3 border ${sexo === s ? "border-neon-blue bg-neon-blue/10 text-zona-notificaciones" : "border-ink-400"} uppercase tracking-widest text-sm`}>{s}</button>
           ))}
         </div>
       </section>
@@ -92,8 +92,8 @@ export default function Creacion() {
           <div className="space-y-2">
             {ORIGEN.map((o) => (
               <button key={o.id} onClick={() => setOrigen(o.id)} className={`w-full text-left p-3 border ${origen === o.id ? "border-neon-blue bg-neon-blue/10" : "border-ink-400"}`}>
-                <div className="text-neon-blue text-sm">{o.nombre}</div>
-                <div className="text-parchment/60 text-xs">{o.desc}</div>
+                <div className="text-zona-notificaciones text-sm">{o.nombre}</div>
+                <div className="text-doc-aged/60 text-xs">{o.desc}</div>
               </button>
             ))}
           </div>
@@ -104,7 +104,7 @@ export default function Creacion() {
           <div className="space-y-2">
             {ROL.map((r) => (
               <button key={r.id} onClick={() => setRol(r.id)} className={`w-full text-left p-3 border ${rol === r.id ? "border-neon-blue bg-neon-blue/10" : "border-ink-400"}`}>
-                <div className="text-neon-blue text-sm">{r.nombre}</div>
+                <div className="text-zona-notificaciones text-sm">{r.nombre}</div>
               </button>
             ))}
           </div>
@@ -112,15 +112,15 @@ export default function Creacion() {
       </section>
 
       <section className="terminal p-5 mt-6">
-        <h2 className="label-art text-neon-cyan mb-3">Atributos resultantes</h2>
+        <h2 className="label-art text-zona-competencia mb-3">Atributos resultantes</h2>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
           {(Object.entries(atributos) as [keyof Atributos, number][]).map(([k, v]) => (
             <div key={k} className="border border-ink-400 p-3">
-              <div className="text-xs uppercase tracking-widest text-parchment/70">{k.replace(/_/g, " ")}</div>
+              <div className="text-xs uppercase tracking-widest text-doc-aged/70">{k.replace(/_/g, " ")}</div>
               <div className="h-2 bg-ink-700 mt-2">
                 <motion.div initial={{ width: 0 }} animate={{ width: `${v * 10}%` }} transition={{ duration: .8 }} className="h-full barfill" />
               </div>
-              <div className="text-neon-blue text-right text-xs mt-1">{v}/10</div>
+              <div className="text-zona-notificaciones text-right text-xs mt-1">{v}/10</div>
             </div>
           ))}
         </div>

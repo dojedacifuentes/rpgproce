@@ -44,13 +44,13 @@ export default function ExpedienteVivo() {
 
   const dañoTotal = vicios.reduce((s, v) => s + (v.gravedad === "letal" ? 30 : v.gravedad === "grave" ? 15 : 5), 0);
   const salud = Math.max(0, 100 - dañoTotal);
-  const colorSalud = salud > 70 ? "text-neon-blue" : salud > 40 ? "text-neon-amber" : "text-neon-red";
+  const colorSalud = salud > 70 ? "text-zona-notificaciones" : salud > 40 ? "text-neon-amber" : "text-zona-nulidad";
   const glitch = salud < 50;
 
   return (
     <div className="space-y-4">
-      <h2 className="label-art text-neon-blue text-xl">Expediente vivo — Salud procesal</h2>
-      <p className="text-parchment/60 text-sm">
+      <h2 className="label-art text-zona-notificaciones text-xl">Expediente vivo — Salud procesal</h2>
+      <p className="text-doc-aged/60 text-sm">
         Simulá vicios en el expediente y observá cómo se degrada. Salud crítica (&lt;40) habilita riesgo de casación (768) o nulidad (795).
       </p>
 
@@ -59,10 +59,10 @@ export default function ExpedienteVivo() {
           <div>
             <div className="tag mb-2">EXPEDIENTE C-2025</div>
             <div className="label-art text-lg">Rol C-1725/2026</div>
-            <div className="text-xs text-parchment/60">Materia: contractual · Procedimiento: ordinario · Cuantía: 100 UTM</div>
+            <div className="text-xs text-doc-aged/60">Materia: contractual · Procedimiento: ordinario · Cuantía: 100 UTM</div>
           </div>
           <div className="text-right">
-            <div className="text-xs uppercase tracking-widest text-parchment/70">Salud procesal</div>
+            <div className="text-xs uppercase tracking-widest text-doc-aged/70">Salud procesal</div>
             <div className={`text-3xl ${colorSalud} ${glitch ? "glitch-text" : ""}`}>{salud}/100</div>
           </div>
         </div>
@@ -75,12 +75,12 @@ export default function ExpedienteVivo() {
         </div>
 
         {vicios.length === 0 && (
-          <p className="text-parchment/40 italic text-xs mt-4">Expediente limpio. Por ahora.</p>
+          <p className="text-doc-aged/40 italic text-xs mt-4">Expediente limpio. Por ahora.</p>
         )}
         {vicios.length > 0 && (
           <div className="mt-4 space-y-1">
             {vicios.map((v) => (
-              <div key={v.id} className={`text-xs flex justify-between border-b border-ink-400 py-2 ${v.gravedad === "letal" ? "text-neon-red" : v.gravedad === "grave" ? "text-neon-amber" : "text-parchment/70"}`}>
+              <div key={v.id} className={`text-xs flex justify-between border-b border-ink-400 py-2 ${v.gravedad === "letal" ? "text-zona-nulidad" : v.gravedad === "grave" ? "text-neon-amber" : "text-doc-aged/70"}`}>
                 <span>{v.descripcion}</span>
                 <span className="flex items-center gap-2">
                   <span className="tag">{v.gravedad}</span>
@@ -93,12 +93,12 @@ export default function ExpedienteVivo() {
         )}
 
         {salud < 40 && (
-          <div className="mt-4 p-3 border border-neon-red text-neon-red text-xs">
+          <div className="mt-4 p-3 border border-neon-red text-zona-nulidad text-xs">
             ⚠ SALUD CRÍTICA. La contraparte puede deducir casación en la forma con probabilidad de éxito. La sentencia se balancea sobre el 768.
           </div>
         )}
         {salud === 0 && (
-          <div className="mt-2 p-3 border border-neon-red text-neon-red text-xs glitch-text">
+          <div className="mt-2 p-3 border border-neon-red text-zona-nulidad text-xs glitch-text">
             ☠ NULIDAD LATENTE. El procedimiento colapsa. Riesgo de invalidación del 768 N°9 (795).
           </div>
         )}
@@ -109,8 +109,8 @@ export default function ExpedienteVivo() {
         <div className="grid md:grid-cols-2 gap-2">
           {VICIOS_DISPONIBLES.map((v) => (
             <button key={v.tipo} onClick={() => agregarVicio(v.tipo)} className="p-3 border border-ink-400 hover:border-neon-red text-left text-xs">
-              <div className="text-neon-cyan">{v.nombre}</div>
-              <div className="text-parchment/60 mt-1">{v.desc}</div>
+              <div className="text-zona-competencia">{v.nombre}</div>
+              <div className="text-doc-aged/60 mt-1">{v.desc}</div>
               <div className="flex gap-1 mt-2"><span className="tag">{v.gravedad}</span><span className="tag tag-violet">{v.articulo}</span></div>
             </button>
           ))}

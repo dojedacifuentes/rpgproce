@@ -32,8 +32,8 @@ export default function EmplazamientoPanel() {
 
   return (
     <div className="space-y-4">
-      <h2 className="label-art text-neon-blue text-xl">Notificación y plazos de contestación (arts. 40-54, 258-259 CPC)</h2>
-      <p className="text-parchment/60 text-sm">
+      <h2 className="label-art text-zona-notificaciones text-xl">Notificación y plazos de contestación (arts. 40-54, 258-259 CPC)</h2>
+      <p className="text-doc-aged/60 text-sm">
         El emplazamiento es trámite esencial. Su omisión causa nulidad procesal (art. 768 N°9 CPC) y, en su caso, casación en la forma.
       </p>
 
@@ -42,8 +42,8 @@ export default function EmplazamientoPanel() {
         <div className="grid sm:grid-cols-2 gap-2">
           {FORMAS.map((f) => (
             <button key={f.id} onClick={() => setForma(f.id)} className={`p-3 border text-left text-xs ${forma === f.id ? "border-neon-blue bg-neon-blue/10" : "border-ink-400"}`}>
-              <div className="text-neon-cyan">{f.nombre}</div>
-              <div className="text-parchment/60 mt-1">{f.cuando}</div>
+              <div className="text-zona-competencia">{f.nombre}</div>
+              <div className="text-doc-aged/60 mt-1">{f.cuando}</div>
               <div className="tag tag-violet mt-1">{f.art}</div>
             </button>
           ))}
@@ -67,7 +67,7 @@ export default function EmplazamientoPanel() {
           )}
         </div>
         <div className="mt-3 text-sm">
-          Plazo aplicable: <b className="text-neon-blue">{plazo.dias} días</b> <span className="tag tag-violet ml-2">{plazo.articulo}</span>
+          Plazo aplicable: <b className="text-zona-notificaciones">{plazo.dias} días</b> <span className="tag tag-violet ml-2">{plazo.articulo}</span>
         </div>
       </div>
 
@@ -75,8 +75,8 @@ export default function EmplazamientoPanel() {
 
       {confirmado && (
         <div className="terminal p-4 border-neon-blue">
-          <div className="label-art text-neon-blue">✓ Emplazamiento practicado</div>
-          <p className="text-parchment/80 text-xs mt-2">El demandado tiene {plazo.dias} días para contestar o reaccionar (deducir excepciones dilatorias del 303).</p>
+          <div className="label-art text-zona-notificaciones">✓ Emplazamiento practicado</div>
+          <p className="text-doc-aged/80 text-xs mt-2">El demandado tiene {plazo.dias} días para contestar o reaccionar (deducir excepciones dilatorias del 303).</p>
         </div>
       )}
     </div>

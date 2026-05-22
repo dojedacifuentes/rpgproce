@@ -29,8 +29,8 @@ export default function DemandaPanel() {
 
   return (
     <div className="space-y-4">
-      <h2 className="label-art text-neon-blue text-xl">Confección de la demanda (art. 254 CPC)</h2>
-      <p className="text-parchment/60 text-sm">
+      <h2 className="label-art text-zona-notificaciones text-xl">Confección de la demanda (art. 254 CPC)</h2>
+      <p className="text-doc-aged/60 text-sm">
         Marca los requisitos que efectivamente cumple tu demanda. Si falta alguno, el demandado podrá oponer la excepción dilatoria del art. 303 N°4 (ineptitud del libelo) y suspender el juicio hasta subsanar (305-308 CPC).
       </p>
 
@@ -39,8 +39,8 @@ export default function DemandaPanel() {
           <label key={r.n} className="flex items-start gap-3 text-sm">
             <input type="checkbox" checked={checks[i]} onChange={() => toggle(i)} className="mt-1" />
             <div>
-              <div className="text-parchment">N°{r.n}. {r.t}</div>
-              <div className="text-parchment/50 text-[10px]">{r.articulo}</div>
+              <div className="text-doc-aged">N°{r.n}. {r.t}</div>
+              <div className="text-doc-aged/50 text-[10px]">{r.articulo}</div>
             </div>
           </label>
         ))}
@@ -50,14 +50,14 @@ export default function DemandaPanel() {
 
       {feedback === "ok" && (
         <div className="terminal p-4 border-neon-blue">
-          <div className="label-art text-neon-blue">✓ Demanda admisible</div>
-          <p className="text-parchment/80 text-xs mt-2">El tribunal proveerá "traslado". El emplazamiento empieza a correr.</p>
+          <div className="label-art text-zona-notificaciones">✓ Demanda admisible</div>
+          <p className="text-doc-aged/80 text-xs mt-2">El tribunal proveerá "traslado". El emplazamiento empieza a correr.</p>
         </div>
       )}
       {feedback === "ineptitud" && (
         <div className="terminal p-4 border-neon-red">
-          <div className="label-art text-neon-red">✗ Riesgo de ineptitud del libelo</div>
-          <p className="text-parchment/80 text-xs mt-2">El demandado puede oponer excepción dilatoria del art. 303 N°4 CPC.</p>
+          <div className="label-art text-zona-nulidad">✗ Riesgo de ineptitud del libelo</div>
+          <p className="text-doc-aged/80 text-xs mt-2">El demandado puede oponer excepción dilatoria del art. 303 N°4 CPC.</p>
         </div>
       )}
     </div>

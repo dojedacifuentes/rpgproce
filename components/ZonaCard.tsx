@@ -4,108 +4,143 @@ import { motion } from "framer-motion";
 import { getNpcsInZona } from "@/data/npcs";
 import { getEventosInZona } from "@/data/eventos-mundo";
 
+// ============================================================================
+// ZONA CARD — v3 visual system
+// Card de zona con NPCs y eventos. Usa CSS variables para colores.
+// ============================================================================
+
 interface ZonaCardProps {
   zonaId: string;
   zonaNombre: string;
   descripcion: string;
   href: string;
-  color: string;
   emoji: string;
 }
+
+const EVENTO_TIPO_ICONS: Record<string, string> = {
+  encuentro_npc: "👤",
+  noticia_jurisprudencia: "📜",
+  peligro_nulidad: "⚠️",
+  oportunidad_caso: "💼",
+  cambio_clima_juridico: "🌪️",
+  conflicto_con_adversario: "⚔️",
+  descubrimiento_doctrinal: "💡",
+  crisis_economia: "📉",
+};
 
 export default function ZonaCard({
   zonaId,
   zonaNombre,
   descripcion,
   href,
-  color,
   emoji,
 }: ZonaCardProps) {
   const npcs = getNpcsInZona(zonaId);
   const eventos = getEventosInZona(zonaId);
+  const zonaColor = `var(--zona-${zonaId})`;
 
   return (
     <motion.div
-      whileHover={{ scale: 1.03, y: -4 }}
-      transition={{ type: "spring", damping: 15 }}
+      whileHover={{ scale: 1.02, y: -3 }}
+      transition={{ type: "spring", damping: 18 }}
     >
       <Link
         href={href}
-        className={`block zona-card p-5 relative border-2 border-${color}/40 hover:border-${color}/80 transition-colors`}
-        style={{ "--zona-color": `var(--zona-${zonaId})` } as React.CSSProperties}
+        className="block zona-card p-5 relative transition-all"
+        style={{ "--zona-color": zonaColor } as React.CSSProperties}
       >
-        {/* Header con emoji y nombre */}
-        <div className="flex items-start justify-between mb-4">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
             <span className="text-4xl">{emoji}</span>
             <div>
-              <h3 className={`font-display-grave text-lg text-${color}`}>{zonaNombre}</h3>
-              <p className="text-xs text-parchment/50 font-mono-terminal">{zonaId.toUpperCase()}</p>
+              <h3
+                className="font-display-grave text-lg"
+                style={{ color: zonaColor }}
+              >
+                {zonaNombre}
+              </h3>
+              <p
+                className="text-[9px] font-mono-terminal uppercase tracking-widest text-doc-aged/40"
+              >
+                {zonaId.replace(/_/g, " ")}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Descripción */}
-        <p className="text-parchment/70 text-xs leading-relaxed mb-4">{descripcion}</p>
+        {/* Description */}
+        <p className="text-doc-aged/70 text-xs leading-relaxed mb-4 font-serif-juridica">
+          {descripcion}
+        </p>
 
         {/* NPCs */}
         {npcs.length > 0 && (
-          <div className="mb-3 pb-3 border-b border-parchment/10">
-            <div className="text-xs font-mono-terminal text-parchment/50 mb-1">👥 PERSONAJES ({npcs.length})</div>
+          <div className="mb-3 pb-3 border-b border-doc-aged/10">
+            <div className="text-[9px] font-mono-terminal text-doc-aged/40 mb-1">
+              👥 PERSONAJES ({npcs.length})
+            </div>
             <div className="flex flex-wrap gap-1">
               {npcs.map((npc) => (
-                <motion.div
+                <span
                   key={npc.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className={`text-xs px-2 py-1 rounded bg-${color}/10 border border-${color}/40 text-${color} font-mono-terminal`}
+                  className="text-[9px] font-mono-terminal px-2 py-0.5 border"
+                  style={{
+                    borderColor: `${zonaColor}40`,
+                    color: `${zonaColor}cc`,
+                    background: `${zonaColor}06`,
+                  }}
                   title={npc.nombre}
                 >
                   {npc.emoji} {npc.nombre.split(" ")[0]}
-                </motion.div>
+                </span>
               ))}
             </div>
           </div>
         )}
 
-        {/* Eventos */}
+        {/* Events */}
         {eventos.length > 0 && (
           <div className="pb-3">
-            <div className="text-xs font-mono-terminal text-parchment/50 mb-1">📌 EVENTOS ({eventos.length})</div>
+            <div className="text-[9px] font-mono-terminal text-doc-aged/40 mb-1">
+              📌 EVENTOS ({eventos.length})
+            </div>
             <div className="space-y-1">
               {eventos.slice(0, 2).map((evento) => (
-                <motion.div
+                <div
                   key={evento.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-xs text-parchment/60 flex items-center gap-2"
+                  className="text-[10px] text-doc-aged/55 flex items-center gap-2 font-mono-terminal"
                 >
-                  <span className="text-lg">
-                    {evento.tipo === "encuentro_npc" && "👤"}
-                    {evento.tipo === "noticia_jurisprudencia" && "📜"}
-                    {evento.tipo === "peligro_nulidad" && "⚠️"}
-                    {evento.tipo === "oportunidad_caso" && "💼"}
-                    {evento.tipo === "cambio_clima_juridico" && "🌪️"}
-                    {evento.tipo === "conflicto_con_adversario" && "⚔️"}
-                    {evento.tipo === "descubrimiento_doctrinal" && "💡"}
-                    {evento.tipo === "crisis_economia" && "📉"}
-                  </span>
-                  <span>{evento.titulo}</span>
-                </motion.div>
+                  <span>{EVENTO_TIPO_ICONS[evento.tipo] ?? "•"}</span>
+                  <span className="line-clamp-1">{evento.titulo}</span>
+                </div>
               ))}
               {eventos.length > 2 && (
-                <div className="text-xs text-parchment/40 italic">+ {eventos.length - 2} más</div>
+                <div className="text-[9px] text-doc-aged/30 italic font-mono-terminal">
+                  + {eventos.length - 2} más
+                </div>
               )}
             </div>
           </div>
         )}
 
-        {/* CTA */}
-        <div className={`mt-4 pt-3 border-t border-${color}/20 flex items-center justify-between`}>
-          <span className={`text-xs font-mono-terminal text-${color}/70`}>
+        {/* CTA footer */}
+        <div
+          className="mt-4 pt-3 border-t flex items-center justify-between"
+          style={{ borderColor: `${zonaColor}20` }}
+        >
+          <span
+            className="text-[9px] font-mono-terminal"
+            style={{ color: `${zonaColor}80` }}
+          >
             {npcs.length + eventos.length} encuentros posibles
           </span>
-          <span className={`text-sm font-display-grave text-${color}`}>▸</span>
+          <span
+            className="text-sm font-display-grave"
+            style={{ color: zonaColor }}
+          >
+            ▸
+          </span>
         </div>
       </Link>
     </motion.div>

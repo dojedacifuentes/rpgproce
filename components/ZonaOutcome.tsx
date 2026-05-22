@@ -91,17 +91,17 @@ export default function ZonaOutcome({
         initial={{ opacity: 0, scale: 0.8, y: 40 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: "spring", damping: 20 }}
-        className="bg-terminal-darker border-2 border-neon-purple/60 rounded max-w-2xl w-full shadow-2xl overflow-hidden"
+        className="bg-bg-deep border-2 border-zona-recursos/60 rounded max-w-2xl w-full shadow-2xl overflow-hidden"
       >
         {/* Header */}
-        <div className="bg-terminal-darker border-b border-neon-purple/40 p-6">
+        <div className="bg-bg-deep border-b border-zona-recursos/40 p-6">
           <div className="flex items-center gap-3 mb-2">
             <span className="text-4xl">{narrativa.npc}</span>
             <div>
-              <h2 className="font-display-grave text-2xl text-neon-purple">
+              <h2 className="font-display-grave text-2xl text-zona-recursos">
                 {narrativa.titulo}
               </h2>
-              <p className="text-sm text-parchment/50 font-mono-terminal">
+              <p className="text-sm text-doc-aged/50 font-mono-terminal">
                 ZONA: {mundo.toUpperCase()}
               </p>
             </div>
@@ -117,13 +117,13 @@ export default function ZonaOutcome({
             transition={{ delay: 0.2 }}
             className={`p-4 border rounded ${
               tasaAcierto >= 0.7
-                ? "border-neon-green/40 bg-neon-green/5"
+                ? "border-zona-cautelares/40 bg-zona-cautelares/5"
                 : "border-neon-red/40 bg-neon-red/5"
             }`}
           >
             <div
               className={`text-xs font-mono-terminal uppercase tracking-widest mb-2 ${
-                tasaAcierto >= 0.7 ? "text-neon-green" : "text-neon-red"
+                tasaAcierto >= 0.7 ? "text-zona-cautelares" : "text-zona-nulidad"
               }`}
             >
               RESULTADO
@@ -131,7 +131,7 @@ export default function ZonaOutcome({
             <p className="font-serif-juridica italic text-doc-aged/90 text-base">
               {narrativa.resultado}
             </p>
-            <p className="text-xs text-parchment/70 mt-2">{narrativa.frase}</p>
+            <p className="text-xs text-doc-aged/70 mt-2">{narrativa.frase}</p>
           </motion.div>
 
           {/* Stats */}
@@ -142,26 +142,26 @@ export default function ZonaOutcome({
             className="grid grid-cols-3 gap-3"
           >
             <div className="terminal p-3 text-center">
-              <div className="text-xl font-display-grave text-neon-cyan">
+              <div className="text-xl font-display-grave text-zona-competencia">
                 {Math.round(tasaAcierto * 100)}%
               </div>
-              <div className="text-xs text-parchment/50 font-mono-terminal">
+              <div className="text-xs text-doc-aged/50 font-mono-terminal">
                 Acierto
               </div>
             </div>
             <div className="terminal p-3 text-center">
-              <div className="text-xl font-display-grave text-neon-yellow">
+              <div className="text-xl font-display-grave text-zona-prueba">
                 {tiempoMinutos}m
               </div>
-              <div className="text-xs text-parchment/50 font-mono-terminal">
+              <div className="text-xs text-doc-aged/50 font-mono-terminal">
                 Tiempo
               </div>
             </div>
             <div className="terminal p-3 text-center">
-              <div className="text-xl font-display-grave text-neon-purple">
+              <div className="text-xl font-display-grave text-zona-recursos">
                 {tasaAcierto >= 0.8 ? "S" : tasaAcierto >= 0.6 ? "A" : "B"}
               </div>
-              <div className="text-xs text-parchment/50 font-mono-terminal">
+              <div className="text-xs text-doc-aged/50 font-mono-terminal">
                 Rango
               </div>
             </div>
@@ -173,15 +173,15 @@ export default function ZonaOutcome({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="p-4 border border-neon-purple/50 bg-neon-purple/10 rounded"
+              className="p-4 border border-zona-recursos/50 bg-zona-recursos/10 rounded"
             >
-              <div className="text-lg font-display-grave text-neon-purple mb-1">
+              <div className="text-lg font-display-grave text-zona-recursos mb-1">
                 {secretEvent.titulo}
               </div>
-              <div className="text-xs font-mono-terminal text-neon-purple/70 mb-2">
+              <div className="text-xs font-mono-terminal text-zona-recursos/70 mb-2">
                 {secretEvent.descripcion}
               </div>
-              <p className="text-xs text-parchment/70 italic">
+              <p className="text-xs text-doc-aged/70 italic">
                 {secretEvent.detalle}
               </p>
             </motion.div>
@@ -197,7 +197,7 @@ export default function ZonaOutcome({
             <button
               onClick={onVolver}
               onMouseEnter={() => sfx.hover?.()}
-              className="flex-1 btn bg-neon-purple text-terminal-darker font-bold"
+              className="flex-1 btn bg-zona-recursos text-bg-deep font-bold"
             >
               Volver al Mapa
             </button>
@@ -212,8 +212,8 @@ export default function ZonaOutcome({
         </div>
 
         {/* Footer — Reflexión */}
-        <div className="bg-terminal-darker border-t border-parchment/10 p-4">
-          <p className="text-xs text-parchment/40 italic font-mono-terminal text-center">
+        <div className="bg-bg-deep border-t border-doc-aged/10 p-4">
+          <p className="text-xs text-doc-aged/40 italic font-mono-terminal text-center">
             "La Ciudad Judicial continúa sin ti. Otros litigantes toman tus plazos."
           </p>
         </div>

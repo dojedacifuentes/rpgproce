@@ -20,7 +20,7 @@ export default function DialogoEscena({ escena, onFin }: { escena: Escena; onFin
   if (!escena || !Array.isArray(escena.lineas) || escena.lineas.length === 0) {
     return (
       <div className="terminal p-6">
-        <p className="text-parchment/60 italic text-sm">Escena no disponible.</p>
+        <p className="text-doc-aged/60 italic text-sm">Escena no disponible.</p>
         <button className="btn mt-3" onClick={onFin}>▸ Continuar</button>
       </div>
     );
@@ -71,13 +71,13 @@ export default function DialogoEscena({ escena, onFin }: { escena: Escena; onFin
   return (
     <div className="terminal p-6 max-w-3xl mx-auto">
       <div className="tag mb-3">{escena.titulo}</div>
-      <p className="text-parchment/60 italic text-sm mb-4">{escena.ambientacion}</p>
+      <p className="text-doc-aged/60 italic text-sm mb-4 font-serif-juridica">{escena.ambientacion}</p>
       {escena.articulo && (
-        <div className="border-l-2 border-neon-violet pl-3 mb-4 text-xs text-neon-violet">
+        <div className="border-l-2 border-zona-recursos pl-3 mb-4 text-xs text-zona-recursos font-mono-terminal">
           ART. {escena.articulo.n} — {escena.articulo.t}
         </div>
       )}
-      {escena.speaker && <div className="text-neon-cyan label-art mb-2">{escena.speaker}</div>}
+      {escena.speaker && <div className="text-zona-competencia label-art mb-2">{escena.speaker}</div>}
 
       <AnimatePresence mode="wait">
         <motion.p
@@ -85,14 +85,14 @@ export default function DialogoEscena({ escena, onFin }: { escena: Escena; onFin
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
-          className="text-parchment text-base leading-relaxed min-h-[5rem]"
+          className="text-doc-aged text-base leading-relaxed min-h-[5rem] font-serif-juridica"
         >
           {lineaActual}
         </motion.p>
       </AnimatePresence>
 
       <div className="mt-6 flex justify-between items-center">
-        <div className="text-xs text-parchment/40">{safeIdx + 1} / {escena.lineas.length}</div>
+        <div className="text-xs text-doc-aged/40 font-mono-terminal">{safeIdx + 1} / {escena.lineas.length}</div>
         {!finLineas && (
           <button className="btn" onClick={() => setIdx((i) => i + 1)}>▸ Siguiente</button>
         )}
@@ -107,7 +107,10 @@ export default function DialogoEscena({ escena, onFin }: { escena: Escena; onFin
               <button
                 key={i}
                 onClick={() => elegir(i)}
-                className={`block w-full text-left p-3 border ${chequeo.ok ? "border-neon-blue/40 hover:bg-neon-blue/10" : "border-neon-red/40 text-neon-red/60"}`}
+                className="block w-full text-left p-3 border font-mono-terminal text-sm transition-all"
+                style={chequeo.ok
+                  ? { borderColor: "rgba(75,231,255,.35)", color: "var(--doc-aged, #e8e0c8)" }
+                  : { borderColor: "rgba(217,74,74,.35)", color: "var(--zona-nulidad)", opacity: 0.7, cursor: "not-allowed" }}
               >
                 {op.texto}
                 {op.requiere && (
@@ -132,7 +135,7 @@ export default function DialogoEscena({ escena, onFin }: { escena: Escena; onFin
       {eligio !== null && (
         <div className="mt-6">
           <div className="divider mb-3" />
-          <p className="text-neon-cyan text-sm">› {opciones[eligio]?.efectos?.log || "Decisión registrada."}</p>
+          <p className="text-zona-competencia text-sm font-mono-terminal">› {opciones[eligio]?.efectos?.log || "Decisión registrada."}</p>
           <button className="btn mt-4" onClick={onFin}>▸ Continuar</button>
         </div>
       )}

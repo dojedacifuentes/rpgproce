@@ -46,7 +46,7 @@ const TRANSICION_TEMPLATES: Record<
   jurisprudencia_contradict: {
     titulo: "Jurisprudencia Contradictoria",
     icono: "⚖️",
-    color: "neon-purple",
+    color: "zona-recursos",
     frase_intro: "La Corte Suprema publica una sentencia sorprendente.",
   },
   plazo_vencido: {
@@ -58,7 +58,7 @@ const TRANSICION_TEMPLATES: Record<
   tercero_reclama: {
     titulo: "Tercero Interviene",
     icono: "🔔",
-    color: "neon-orange",
+    color: "zona-ejecutivo",
     frase_intro: "Un tercero reclama derecho sobre el bien en disputa.",
   },
 };
@@ -85,7 +85,7 @@ export default function TransicionEvento({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className={`bg-terminal-darker border-b border-${template.color}/40 p-6`}
+          className={`bg-bg-deep border-b border-${template.color}/40 p-6`}
         >
           <div className="flex items-start gap-4">
             <motion.span
@@ -99,7 +99,7 @@ export default function TransicionEvento({
               <h2 className={`font-display-grave text-2xl text-${template.color} mb-1`}>
                 {titulo || template.titulo}
               </h2>
-              <p className="text-xs text-parchment/50 font-mono-terminal italic">
+              <p className="text-xs text-doc-aged/50 font-mono-terminal italic">
                 {template.frase_intro}
               </p>
             </div>
@@ -130,7 +130,7 @@ export default function TransicionEvento({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="text-xs text-parchment/40 italic font-mono-terminal"
+            className="text-xs text-doc-aged/40 italic font-mono-terminal"
           >
             Los expedientes continúan moviéndose. Con o sin ti.
           </motion.p>
@@ -141,7 +141,7 @@ export default function TransicionEvento({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="p-4 bg-terminal-darker border-t border-parchment/10"
+          className="p-4 bg-bg-deep border-t border-doc-aged/10"
         >
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -150,7 +150,7 @@ export default function TransicionEvento({
               onCerrar();
             }}
             onMouseEnter={() => sfx.hover?.()}
-            className={`w-full btn bg-${template.color} text-terminal-darker font-bold`}
+            className={`w-full btn bg-${template.color} text-bg-deep font-bold`}
           >
             Continuar →
           </motion.button>

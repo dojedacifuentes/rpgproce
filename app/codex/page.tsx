@@ -56,7 +56,7 @@ export default function Codex() {
       <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
         <div>
           <div className="tag mb-2">CODEX PROCESAL</div>
-          <h1 className="label-art text-3xl text-neon-blue">Articulado mínimo y temas clave</h1>
+          <h1 className="label-art text-3xl text-zona-notificaciones">Articulado mínimo y temas clave</h1>
         </div>
         <Link href="/" className="btn">◂ Inicio</Link>
       </div>
@@ -67,7 +67,7 @@ export default function Codex() {
         <div className="label-art text-neon-violet mb-2 text-sm">Artículos destacados ({ARTICULOS_DESTACADOS.length})</div>
         <div className="grid sm:grid-cols-2 gap-1 text-xs">
           {ARTICULOS_DESTACADOS.map((a) => (
-            <div key={a.n}><b className="text-neon-cyan">{a.n}</b> — {a.t}</div>
+            <div key={a.n}><b className="text-zona-competencia">{a.n}</b> — {a.t}</div>
           ))}
         </div>
       </div>
@@ -77,7 +77,7 @@ export default function Codex() {
         <div className="text-xs space-y-2">
           {CLASIFICACION_RESOLUCIONES.map((r) => (
             <div key={r.tipo} className="border-b border-ink-400 pb-2">
-              <b className="text-neon-cyan">{r.tipo.replace(/_/g, " ")}</b> — {r.definicion}
+              <b className="text-zona-competencia">{r.tipo.replace(/_/g, " ")}</b> — {r.definicion}
               <span className="tag tag-violet ml-2">{r.articulo}</span>
             </div>
           ))}
@@ -89,9 +89,9 @@ export default function Codex() {
         <div className="text-xs space-y-2">
           {TABLA_RECURSOS.map((r) => (
             <details key={r.recurso} className="border-b border-ink-400 pb-2">
-              <summary className="cursor-pointer"><b className="text-neon-cyan">{r.nombre}</b> · <span className="tag tag-violet">{r.articulo}</span></summary>
-              <p className="mt-1 text-parchment/80">{r.descripcion}</p>
-              <p className="mt-1 text-parchment/60">Plazo: {r.plazoDias} días · Conoce: {r.tribunalQueConoce} · Efectos: {r.efectos}</p>
+              <summary className="cursor-pointer"><b className="text-zona-competencia">{r.nombre}</b> · <span className="tag tag-violet">{r.articulo}</span></summary>
+              <p className="mt-1 text-doc-aged/80">{r.descripcion}</p>
+              <p className="mt-1 text-doc-aged/60">Plazo: {r.plazoDias} días · Conoce: {r.tribunalQueConoce} · Efectos: {r.efectos}</p>
             </details>
           ))}
         </div>
@@ -102,7 +102,7 @@ export default function Codex() {
         <div className="text-xs space-y-2">
           {MEDIOS_PRUEBA.map((m) => (
             <div key={m.medio} className="border-b border-ink-400 pb-2">
-              <b className="text-neon-cyan">{m.nombre}</b> — {m.valor}
+              <b className="text-zona-competencia">{m.nombre}</b> — {m.valor}
               <span className="tag tag-violet ml-2">{m.arts}</span>
             </div>
           ))}
@@ -126,14 +126,14 @@ export default function Codex() {
       <div className="space-y-3">
         {filtrados.map((t) => (
           <details key={t.titulo} className="terminal p-4">
-            <summary className="label-art text-neon-cyan cursor-pointer">{t.titulo}</summary>
-            <p className="mt-2 text-parchment/80 text-sm leading-relaxed">{t.cuerpo}</p>
+            <summary className="label-art text-zona-competencia cursor-pointer">{t.titulo}</summary>
+            <p className="mt-2 text-doc-aged/80 text-sm leading-relaxed">{t.cuerpo}</p>
             <div className="mt-2 flex gap-1 flex-wrap">
               {t.tags.map((tag) => <span key={tag} className="tag">{tag}</span>)}
             </div>
           </details>
         ))}
-        {filtrados.length === 0 && <p className="text-parchment/40 italic">Sin resultados para "{q}".</p>}
+        {filtrados.length === 0 && <p className="text-doc-aged/40 italic">Sin resultados para "{q}".</p>}
       </div>
     </main>
   );

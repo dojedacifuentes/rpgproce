@@ -67,8 +67,8 @@ export default function PreclusionTimer() {
 
   return (
     <div className="space-y-4">
-      <h2 className="label-art text-neon-blue text-xl">Preclusión — Plazos fatales (art. 64 CPC)</h2>
-      <p className="text-parchment/60 text-sm">
+      <h2 className="label-art text-zona-notificaciones text-xl">Preclusión — Plazos fatales (art. 64 CPC)</h2>
+      <p className="text-doc-aged/60 text-sm">
         Simulación de plazos fatales: 1 segundo = 1 día simulado. Si vencés, la preclusión es irreversible.
         El art. 64 CPC: <i>"los plazos que señala este Código son fatales, cualquiera sea la forma en que se exprese, salvo aquellos establecidos para la realización de actuaciones propias del tribunal."</i>
       </p>
@@ -79,8 +79,8 @@ export default function PreclusionTimer() {
           <div className="grid md:grid-cols-2 gap-2">
             {PLAZOS_CATALOGO.map((p) => (
               <button key={p.id} onClick={() => iniciarPlazo(p)} className="p-3 border border-ink-400 hover:border-neon-blue text-left text-xs">
-                <div className="text-neon-cyan">{p.nombre}</div>
-                <div className="text-parchment/60 mt-1">{p.diasHabiles} días · {p.articulo}</div>
+                <div className="text-zona-competencia">{p.nombre}</div>
+                <div className="text-doc-aged/60 mt-1">{p.diasHabiles} días · {p.articulo}</div>
               </button>
             ))}
           </div>
@@ -90,13 +90,13 @@ export default function PreclusionTimer() {
       {activo && (
         <div className={`terminal p-5 ${segundosRestantes < 3 && !resultado ? "border-neon-red animate-glitch" : ""}`}>
           <div className="tag mb-2">PLAZO ACTIVO · {activo.articulo}</div>
-          <h3 className="label-art text-xl text-neon-cyan">{activo.nombre}</h3>
-          <p className="text-parchment/70 text-xs mt-1">Si precluye: {activo.consecuenciaSiPrecluye}</p>
+          <h3 className="label-art text-xl text-zona-competencia">{activo.nombre}</h3>
+          <p className="text-doc-aged/70 text-xs mt-1">Si precluye: {activo.consecuenciaSiPrecluye}</p>
 
           <div className="mt-4">
             <div className="flex justify-between text-xs mb-1">
               <span>Días restantes</span>
-              <span className={`text-3xl ${segundosRestantes < 3 ? "text-neon-red" : segundosRestantes < activo.diasHabiles / 2 ? "text-neon-amber" : "text-neon-blue"}`}>
+              <span className={`text-3xl ${segundosRestantes < 3 ? "text-zona-nulidad" : segundosRestantes < activo.diasHabiles / 2 ? "text-neon-amber" : "text-zona-notificaciones"}`}>
                 {segundosRestantes}
               </span>
             </div>
@@ -116,13 +116,13 @@ export default function PreclusionTimer() {
           )}
 
           {resultado === "cumplido" && (
-            <div className="mt-4 p-3 border border-neon-blue text-neon-blue text-xs">
+            <div className="mt-4 p-3 border border-neon-blue text-zona-notificaciones text-xs">
               ✓ Escrito presentado dentro de plazo. +1 diligencia.
               <button className="btn ml-3" onClick={() => setActivo(null)}>▸ Otro plazo</button>
             </div>
           )}
           {resultado === "precluido" && (
-            <div className="mt-4 p-3 border border-neon-red text-neon-red text-xs glitch-text">
+            <div className="mt-4 p-3 border border-neon-red text-zona-nulidad text-xs glitch-text">
               ☠ PRECLUSIÓN. {activo.consecuenciaSiPrecluye} El art. 64 CPC cumplió su voluntad.
               <button className="btn btn-danger ml-3" onClick={() => setActivo(null)}>▸ Volver a empezar</button>
             </div>

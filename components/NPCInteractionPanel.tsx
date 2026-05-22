@@ -111,7 +111,7 @@ export default function NPCInteractionPanel() {
 
           {/* Arco narrativo */}
           <div className="border-l-4 border-neon-blue pl-4">
-            <div className="font-mono-terminal text-[9px] text-neon-blue/70 uppercase tracking-wider mb-2">
+            <div className="font-mono-terminal text-[9px] text-zona-notificaciones/70 uppercase tracking-wider mb-2">
               Arco Narrativo
             </div>
             <h3 className="font-display-grave text-xl text-doc-aged mb-2">
@@ -126,7 +126,7 @@ export default function NPCInteractionPanel() {
                 key={e.numero}
                 className={`p-4 rounded border transition-colors ${
                   idx < progresoActual.etapaActual - 1
-                    ? "bg-neon-green/5 border-neon-green/30"
+                    ? "bg-zona-cautelares/5 border-zona-cautelares/30"
                     : idx === progresoActual.etapaActual - 1
                     ? "bg-neon-blue/5 border-neon-blue/30"
                     : "bg-doc-aged/5 border-doc-aged/20"
@@ -136,9 +136,9 @@ export default function NPCInteractionPanel() {
                   <div
                     className={`text-lg font-bold flex-shrink-0 ${
                       idx < progresoActual.etapaActual - 1
-                        ? "text-neon-green"
+                        ? "text-zona-cautelares"
                         : idx === progresoActual.etapaActual - 1
-                        ? "text-neon-blue"
+                        ? "text-zona-notificaciones"
                         : "text-doc-aged/40"
                     }`}
                   >
@@ -151,7 +151,7 @@ export default function NPCInteractionPanel() {
                     <p className="text-doc-aged/70 text-sm font-serif-juridica mt-1">
                       {e.descripcion}
                     </p>
-                    <p className="text-[10px] font-mono-terminal text-neon-purple/70 mt-2 uppercase tracking-wider">
+                    <p className="text-[10px] font-mono-terminal text-zona-recursos/70 mt-2 uppercase tracking-wider">
                       Aprendizaje: {e.aprendizaje}
                     </p>
                     <p className="text-[9px] font-mono-terminal text-doc-aged/50 mt-1">
@@ -166,9 +166,9 @@ export default function NPCInteractionPanel() {
             <div
               className={`p-4 rounded border transition-colors ${
                 progresoActual.estado === "desafio_final"
-                  ? "bg-neon-orange/5 border-neon-orange/30"
+                  ? "bg-zona-ejecutivo/5 border-zona-ejecutivo/30"
                   : progresoActual.estado === "completada"
-                  ? "bg-neon-green/5 border-neon-green/30"
+                  ? "bg-zona-cautelares/5 border-zona-cautelares/30"
                   : "bg-doc-aged/5 border-doc-aged/20"
               }`}
             >
@@ -176,9 +176,9 @@ export default function NPCInteractionPanel() {
                 <div
                   className={`text-lg font-bold flex-shrink-0 ${
                     progresoActual.estado === "completada"
-                      ? "text-neon-green"
+                      ? "text-zona-cautelares"
                       : progresoActual.estado === "desafio_final"
-                      ? "text-neon-orange"
+                      ? "text-zona-ejecutivo"
                       : "text-doc-aged/40"
                   }`}
                 >
@@ -191,7 +191,7 @@ export default function NPCInteractionPanel() {
                   <p className="text-doc-aged/70 text-sm font-serif-juridica mt-1">
                     {npcActual.arco_principal.mision_final.descripcion}
                   </p>
-                  <p className="text-[9px] font-mono-terminal text-neon-purple/70 mt-2 uppercase tracking-wider">
+                  <p className="text-[9px] font-mono-terminal text-zona-recursos/70 mt-2 uppercase tracking-wider">
                     Tipo: {npcActual.arco_principal.mision_final.tipo}
                   </p>
                 </div>
@@ -233,8 +233,8 @@ export default function NPCInteractionPanel() {
           )}
 
           {progresoActual.estado === "completada" && (
-            <div className="p-4 bg-neon-green/5 border border-neon-green/30 rounded text-center">
-              <p className="font-mono-terminal text-neon-green text-sm">
+            <div className="p-4 bg-zona-cautelares/5 border border-zona-cautelares/30 rounded text-center">
+              <p className="font-mono-terminal text-zona-cautelares text-sm">
                 ✓ Arco Completado
               </p>
             </div>

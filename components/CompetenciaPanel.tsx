@@ -96,8 +96,8 @@ export default function CompetenciaPanel() {
   if (!caso) {
     return (
       <div className="terminal p-6">
-        <h2 className="label-art text-neon-blue text-xl mb-3">Clasificación de competencia completa</h2>
-        <p className="text-parchment/70 text-sm">Aciertos: <b className="text-neon-cyan">{aciertos}</b> / {CASOS.length}.</p>
+        <h2 className="label-art text-zona-notificaciones text-xl mb-3">Clasificación de competencia completa</h2>
+        <p className="text-doc-aged/70 text-sm">Aciertos: <b className="text-zona-competencia">{aciertos}</b> / {CASOS.length}.</p>
       </div>
     );
   }
@@ -126,30 +126,30 @@ export default function CompetenciaPanel() {
 
   return (
     <div className="space-y-4">
-      <h2 className="label-art text-neon-blue text-xl">Competencia absoluta y relativa (arts. 45, 50, 115-148, 181-187 COT)</h2>
-      <p className="text-parchment/60 text-xs">
+      <h2 className="label-art text-zona-notificaciones text-xl">Competencia absoluta y relativa (arts. 45, 50, 115-148, 181-187 COT)</h2>
+      <p className="text-doc-aged/60 text-xs">
         Tres preguntas: ¿materia? ¿fuero? ¿territorio? La cuantía civil ordinaria de juzgados de letras subsiste para procedimiento (ordinario {">"} 10 UTM, mínima cuantía ≤ 10 UTM, art. 703 CPC).
       </p>
 
       <div className="terminal p-5">
         <div className="tag mb-2">CASO {i + 1} / {CASOS.length}</div>
-        <div className="text-parchment text-lg label-art">{caso.nombre}</div>
-        <div className="text-xs text-parchment/60 mt-1">
+        <div className="text-doc-aged text-lg label-art">{caso.nombre}</div>
+        <div className="text-xs text-doc-aged/60 mt-1">
           Materia: <b>{caso.materia}</b> · Demandado: <b>{caso.domicilioDemandado}</b> · Tribunal propuesto: <b>{caso.tribunalPropuesto.replace(/_/g, " ")}</b> · Asiento: <b>{caso.asientoTribunal}</b>{caso.hayFuero ? " · CON FUERO" : ""}{caso.prorrogaConsentida ? " · prórroga pactada" : ""}
         </div>
         <div className="text-neon-violet text-xs italic mt-3">Pista: {caso.pista}</div>
       </div>
 
       <div className="grid grid-cols-2 gap-2">
-        <button disabled={!!feedback} onClick={() => elegir("competente")} className="p-3 border border-neon-blue text-neon-blue text-xs uppercase tracking-widest disabled:opacity-40">El tribunal ES competente</button>
-        <button disabled={!!feedback} onClick={() => elegir("incompetente")} className="p-3 border border-neon-red text-neon-red text-xs uppercase tracking-widest disabled:opacity-40">El tribunal NO es competente</button>
+        <button disabled={!!feedback} onClick={() => elegir("competente")} className="p-3 border border-neon-blue text-zona-notificaciones text-xs uppercase tracking-widest disabled:opacity-40">El tribunal ES competente</button>
+        <button disabled={!!feedback} onClick={() => elegir("incompetente")} className="p-3 border border-neon-red text-zona-nulidad text-xs uppercase tracking-widest disabled:opacity-40">El tribunal NO es competente</button>
       </div>
 
       <AnimatePresence>
         {feedback && (
           <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`terminal p-4 ${feedback.ok ? "border-neon-blue" : "border-neon-red"}`}>
-            <div className={`label-art ${feedback.ok ? "text-neon-blue" : "text-neon-red"}`}>{feedback.ok ? "✓ Correcto" : "✗ Incorrecto"}</div>
-            <p className="text-parchment/80 text-xs mt-2">{feedback.razon}</p>
+            <div className={`label-art ${feedback.ok ? "text-zona-notificaciones" : "text-zona-nulidad"}`}>{feedback.ok ? "✓ Correcto" : "✗ Incorrecto"}</div>
+            <p className="text-doc-aged/80 text-xs mt-2">{feedback.razon}</p>
             <div className="tag tag-violet mt-2">{feedback.art}</div>
             <button className="btn mt-3" onClick={() => { setFeedback(null); setI((x) => x + 1); }}>▸ Siguiente caso</button>
           </motion.div>

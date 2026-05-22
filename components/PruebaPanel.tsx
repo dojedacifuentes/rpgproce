@@ -37,14 +37,14 @@ export default function PruebaPanel() {
 
   return (
     <div className="space-y-4">
-      <h2 className="label-art text-neon-blue text-xl">Etapa probatoria (arts. 318-433 CPC)</h2>
-      <p className="text-parchment/60 text-sm">
+      <h2 className="label-art text-zona-notificaciones text-xl">Etapa probatoria (arts. 318-433 CPC)</h2>
+      <p className="text-doc-aged/60 text-sm">
         El auto de prueba (art. 318) fija los hechos sustanciales, pertinentes y controvertidos. Término probatorio ordinario: 20 días (art. 328). Extraordinarios: arts. 329-330. Especial: art. 339.
       </p>
 
       <div className="terminal p-4">
         <div className="label-art text-neon-violet mb-2 text-sm">Hechos a probar (puntos del auto)</div>
-        <ul className="text-xs space-y-1 text-parchment/70">
+        <ul className="text-xs space-y-1 text-doc-aged/70">
           {hechos.map((h, i) => <li key={i}>{i + 1}. {h}</li>)}
         </ul>
       </div>
@@ -54,9 +54,9 @@ export default function PruebaPanel() {
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2">
           {MEDIOS_PRUEBA.map((m) => (
             <button key={m.medio} onClick={() => setMedio(m.medio)} className={`p-3 border text-left text-xs ${medio === m.medio ? "border-neon-blue bg-neon-blue/10" : "border-ink-400"}`}>
-              <div className="text-neon-cyan">{m.nombre}</div>
+              <div className="text-zona-competencia">{m.nombre}</div>
               <div className="tag tag-violet mt-1">{m.arts}</div>
-              <div className="text-parchment/60 text-[10px] mt-2">{m.valor}</div>
+              <div className="text-doc-aged/60 text-[10px] mt-2">{m.valor}</div>
             </button>
           ))}
         </div>
@@ -66,10 +66,10 @@ export default function PruebaPanel() {
 
       {pruebasOfrecidas.length > 0 && (
         <div className="terminal p-4">
-          <div className="label-art text-neon-cyan mb-2 text-sm">Pruebas ofrecidas ({pruebasOfrecidas.length})</div>
+          <div className="label-art text-zona-competencia mb-2 text-sm">Pruebas ofrecidas ({pruebasOfrecidas.length})</div>
           {pruebasOfrecidas.map((p) => (
             <div key={p.id} className="text-xs border-b border-ink-400 py-1 flex justify-between">
-              <span>{p.medio} — {p.oportuna ? "oportuna" : <span className="text-neon-red">extemporánea</span>}</span>
+              <span>{p.medio} — {p.oportuna ? "oportuna" : <span className="text-zona-nulidad">extemporánea</span>}</span>
               <span className="tag tag-violet">{p.articulo}</span>
             </div>
           ))}

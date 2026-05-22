@@ -12,7 +12,7 @@ export default function Epilogo() {
     <main className="min-h-screen px-6 py-16 max-w-3xl mx-auto">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2 }}>
         <div className="tag mb-4">FOLIO FINAL — CICLO PROCESAL {personaje.cicloProcesal}</div>
-        <h1 className="label-art text-4xl text-neon-blue glitch-text mb-8">{personaje.nombre || "Litigante"}</h1>
+        <h1 className="label-art text-4xl text-zona-notificaciones glitch-text mb-8">{personaje.nombre || "Litigante"}</h1>
 
         <div className="doc p-8 font-serif whitespace-pre-line text-base leading-relaxed">
           {epilogo || "No hay epílogo aún. Termina un expediente para conocer el resultado."}

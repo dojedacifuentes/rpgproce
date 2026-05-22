@@ -65,17 +65,17 @@ export default function EncuentroNpc({ npcId, onCerrar }: EncuentroNpcProps) {
           className="bg-terminal-dark border-2 border-neon-cyan/50 rounded w-full max-w-2xl shadow-2xl"
         >
           {/* Header */}
-          <div className="bg-terminal-darker border-b border-neon-cyan/30 p-4 flex justify-between items-center">
+          <div className="bg-bg-deep border-b border-neon-cyan/30 p-4 flex justify-between items-center">
             <div className="flex items-center gap-3">
               <span className="text-3xl">{npc.emoji}</span>
               <div>
-                <h2 className="font-display-grave text-xl text-neon-cyan">{npc.nombre}</h2>
-                <p className="text-xs text-parchment/60 font-mono-terminal">{npc.titulo}</p>
+                <h2 className="font-display-grave text-xl text-zona-competencia">{npc.nombre}</h2>
+                <p className="text-xs text-doc-aged/60 font-mono-terminal">{npc.titulo}</p>
               </div>
             </div>
             <button
               onClick={onCerrar}
-              className="text-neon-red text-xl font-bold hover:scale-125 transition-transform"
+              className="text-zona-nulidad text-xl font-bold hover:scale-125 transition-transform"
             >
               ✕
             </button>
@@ -83,8 +83,8 @@ export default function EncuentroNpc({ npcId, onCerrar }: EncuentroNpcProps) {
 
           {/* Descripción */}
           <div className="p-4 border-b border-neon-cyan/20">
-            <p className="text-xs text-parchment/70 font-mono-terminal leading-relaxed">{npc.descripcion}</p>
-            <p className="text-xs text-parchment/50 italic mt-2">Personalidad: {npc.personalidad}</p>
+            <p className="text-xs text-doc-aged/70 font-mono-terminal leading-relaxed">{npc.descripcion}</p>
+            <p className="text-xs text-doc-aged/50 italic mt-2">Personalidad: {npc.personalidad}</p>
           </div>
 
           {/* Diálogo */}
@@ -93,9 +93,9 @@ export default function EncuentroNpc({ npcId, onCerrar }: EncuentroNpcProps) {
               key={`dialogo-${dialogoIdx}`}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-terminal-darker border-l-4 border-neon-cyan p-4 rounded"
+              className="bg-bg-deep border-l-4 border-neon-cyan p-4 rounded"
             >
-              <p className="text-parchment/85 font-serif-juridica text-sm leading-relaxed italic">
+              <p className="text-doc-aged/85 font-serif-juridica text-sm leading-relaxed italic">
                 "{dialogo.texto}"
               </p>
             </motion.div>
@@ -105,7 +105,7 @@ export default function EncuentroNpc({ npcId, onCerrar }: EncuentroNpcProps) {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="bg-neon-cyan/10 border border-neon-cyan/50 p-3 rounded text-xs text-neon-cyan font-mono-terminal space-y-1"
+                className="bg-neon-cyan/10 border border-neon-cyan/50 p-3 rounded text-xs text-zona-competencia font-mono-terminal space-y-1"
               >
                 {dialogo.efecto.reputacion && (
                   <div>+ {dialogo.efecto.reputacion} Reputación</div>
@@ -124,7 +124,7 @@ export default function EncuentroNpc({ npcId, onCerrar }: EncuentroNpcProps) {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="bg-neon-green/10 border border-neon-green/50 p-3 rounded text-xs text-neon-green font-mono-terminal"
+                className="bg-zona-cautelares/10 border border-zona-cautelares/50 p-3 rounded text-xs text-zona-cautelares font-mono-terminal"
               >
                 ✓ Efectos aplicados
               </motion.div>
@@ -132,17 +132,17 @@ export default function EncuentroNpc({ npcId, onCerrar }: EncuentroNpcProps) {
           </div>
 
           {/* Índice de diálogos */}
-          <div className="px-6 py-2 bg-terminal-darker border-t border-neon-cyan/20 text-xs text-parchment/50 font-mono-terminal">
+          <div className="px-6 py-2 bg-bg-deep border-t border-neon-cyan/20 text-xs text-doc-aged/50 font-mono-terminal">
             Diálogo {dialogoIdx === 0 ? "inicial" : dialogoIdx} de {npc.dialogos.length + 1}
           </div>
 
           {/* Botones */}
-          <div className="p-4 bg-terminal-darker border-t border-neon-cyan/20 flex gap-2">
+          <div className="p-4 bg-bg-deep border-t border-neon-cyan/20 flex gap-2">
             {!efectosAplicados && dialogo.efecto ? (
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 onClick={aplicarEfecto}
-                className="flex-1 btn bg-neon-cyan text-terminal-darker font-bold text-sm"
+                className="flex-1 btn bg-neon-cyan text-bg-deep font-bold text-sm"
               >
                 Escuchar ({dialogo.efecto.reputacion ? '+Rep' : dialogo.efecto.trauma ? '+Trauma' : '+Econ'})
               </motion.button>
@@ -161,8 +161,8 @@ export default function EncuentroNpc({ npcId, onCerrar }: EncuentroNpcProps) {
           {npc.mision && (
             <div className="p-4 bg-neon-violet/5 border-t border-neon-violet/30">
               <div className="text-xs font-mono-terminal text-neon-violet mb-1">⚔️ MISIÓN DISPONIBLE</div>
-              <div className="text-sm font-display-grave text-parchment/90 mb-2">{npc.mision.titulo}</div>
-              <p className="text-xs text-parchment/70 leading-relaxed mb-2">{npc.mision.descripcion}</p>
+              <div className="text-sm font-display-grave text-doc-aged/90 mb-2">{npc.mision.titulo}</div>
+              <p className="text-xs text-doc-aged/70 leading-relaxed mb-2">{npc.mision.descripcion}</p>
               <div className="text-xs font-mono-terminal text-neon-violet">Recompensa: {npc.mision.recompensa}</div>
             </div>
           )}

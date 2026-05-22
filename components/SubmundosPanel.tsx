@@ -51,15 +51,15 @@ export default function SubmundosPanel() {
           </div>
 
           {/* Intro */}
-          <div className="border-l-4 border-neon-purple pl-4">
+          <div className="border-l-4 border-zona-recursos pl-4">
             <p className="font-serif-juridica text-doc-aged/80 leading-relaxed">
               {submundoActual.narrativa.intro}
             </p>
           </div>
 
           {/* Contenido principal */}
-          <div className="bg-terminal-darker/50 p-6 rounded border border-parchment/20 space-y-3 max-h-96 overflow-y-auto">
-            <div className="font-mono-terminal text-[9px] text-parchment/50 uppercase tracking-wider">
+          <div className="bg-bg-deep/50 p-6 rounded border border-doc-aged/20 space-y-3 max-h-96 overflow-y-auto">
+            <div className="font-mono-terminal text-[9px] text-doc-aged/50 uppercase tracking-wider">
               CONTENIDO
             </div>
             <p className="font-serif-juridica text-doc-aged/75 whitespace-pre-wrap text-sm leading-relaxed">
@@ -68,8 +68,8 @@ export default function SubmundosPanel() {
           </div>
 
           {/* Reflexión */}
-          <div className="p-4 bg-neon-purple/5 border border-neon-purple/30 rounded">
-            <div className="font-mono-terminal text-[9px] text-neon-purple/70 uppercase tracking-wider mb-2">
+          <div className="p-4 bg-zona-recursos/5 border border-zona-recursos/30 rounded">
+            <div className="font-mono-terminal text-[9px] text-zona-recursos/70 uppercase tracking-wider mb-2">
               Reflexión
             </div>
             <p className="font-serif-juridica italic text-doc-aged/70 text-sm">
@@ -79,8 +79,8 @@ export default function SubmundosPanel() {
 
           {/* Recompensa */}
           {submundoActual.recompensa && (
-            <div className="p-4 bg-neon-green/5 border border-neon-green/30 rounded">
-              <div className="font-mono-terminal text-[9px] text-neon-green/70 uppercase tracking-wider mb-2">
+            <div className="p-4 bg-zona-cautelares/5 border border-zona-cautelares/30 rounded">
+              <div className="font-mono-terminal text-[9px] text-zona-cautelares/70 uppercase tracking-wider mb-2">
                 Recompensas
               </div>
               <div className="space-y-1 text-sm font-mono-terminal">

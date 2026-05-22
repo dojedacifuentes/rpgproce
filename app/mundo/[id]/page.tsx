@@ -111,13 +111,13 @@ function CaracteristicasJurisdiccion() {
   ];
   return (
     <div className="space-y-3">
-      <h2 className="label-art text-neon-blue text-xl">Características de la jurisdicción</h2>
+      <h2 className="label-art text-zona-competencia text-xl">Características de la jurisdicción</h2>
       <div className="grid md:grid-cols-2 gap-3">
         {features.map((f) => (
           <div key={f.n} className="terminal p-4">
-            <div className="label-art text-neon-cyan">{f.n}</div>
+            <div className="label-art text-zona-recursos">{f.n}</div>
             <div className="tag tag-violet mt-1">{f.a}</div>
-            <p className="text-parchment/70 text-xs mt-2">{f.d}</p>
+            <p className="text-doc-aged/70 text-xs mt-2">{f.d}</p>
           </div>
         ))}
       </div>
@@ -128,11 +128,11 @@ function CaracteristicasJurisdiccion() {
 function AccionPretension() {
   return (
     <div className="terminal p-6">
-      <h2 className="label-art text-neon-blue text-xl mb-3">Acción y pretensión (doctrinario)</h2>
-      <ul className="text-sm text-parchment/80 space-y-2">
-        <li><b className="text-neon-cyan">Acción</b>: facultad de provocar la actividad jurisdiccional del Estado. Es un derecho autónomo, abstracto y subjetivo público. Couture, Goldschmidt, Carnelutti.</li>
-        <li><b className="text-neon-cyan">Pretensión</b>: declaración de voluntad por la cual se reclama del órgano jurisdiccional, frente a persona distinta, la resolución de un conflicto. Elementos: sujetos (actor, demandado), objeto (petitum) y causa (causa petendi).</li>
-        <li><b className="text-neon-cyan">Distinción</b>: la acción se dirige al tribunal; la pretensión, contra el demandado. La acción existe aun sin razón; la pretensión, sin razón, fracasa.</li>
+      <h2 className="label-art text-zona-competencia text-xl mb-3">Acción y pretensión (doctrinario)</h2>
+      <ul className="text-sm text-doc-aged/80 space-y-2">
+        <li><b className="text-zona-competencia">Acción</b>: facultad de provocar la actividad jurisdiccional del Estado. Es un derecho autónomo, abstracto y subjetivo público. Couture, Goldschmidt, Carnelutti.</li>
+        <li><b className="text-zona-competencia">Pretensión</b>: declaración de voluntad por la cual se reclama del órgano jurisdiccional, frente a persona distinta, la resolución de un conflicto. Elementos: sujetos (actor, demandado), objeto (petitum) y causa (causa petendi).</li>
+        <li><b className="text-zona-competencia">Distinción</b>: la acción se dirige al tribunal; la pretensión, contra el demandado. La acción existe aun sin razón; la pretensión, sin razón, fracasa.</li>
       </ul>
     </div>
   );
@@ -141,8 +141,8 @@ function AccionPretension() {
 function ConciliacionInfo() {
   return (
     <div className="terminal p-6">
-      <h2 className="label-art text-neon-blue text-xl mb-3">Conciliación obligatoria (arts. 262-268 CPC)</h2>
-      <p className="text-parchment/80 text-sm">
+      <h2 className="label-art text-zona-competencia text-xl mb-3">Conciliación obligatoria (arts. 262-268 CPC)</h2>
+      <p className="text-doc-aged/80 text-sm">
         Agotados los trámites de discusión, el juez llamará a las partes a conciliación, salvo en los casos del art. 313 inc. 1° y los juicios o procedimientos especiales señalados (juicio ejecutivo, hacienda, etc.). El acta de conciliación total o parcial se tiene como sentencia ejecutoriada (art. 267).
       </p>
     </div>
@@ -152,12 +152,12 @@ function ConciliacionInfo() {
 function SentenciaInfo({ onCerrar }: { onCerrar: () => void }) {
   return (
     <div className="terminal p-6">
-      <h2 className="label-art text-neon-blue text-xl mb-3">Sentencia definitiva (arts. 158, 162, 170, 432 CPC)</h2>
-      <ul className="text-sm text-parchment/80 space-y-2 mb-4">
-        <li>• <b className="text-neon-cyan">Citación a oír sentencia</b> (432): tras observaciones a la prueba.</li>
-        <li>• <b className="text-neon-cyan">Plazo para sentenciar</b>: 60 días contados desde que la causa queda en estado de fallo (162).</li>
-        <li>• <b className="text-neon-cyan">Requisitos formales</b> (170 + Auto Acordado 1920): partes, demanda y excepciones, hechos no controvertidos, hechos controvertidos, fundamentos de derecho, citas legales, resolución del asunto.</li>
-        <li>• <b className="text-neon-cyan">Casación en la forma</b>: art. 768 enumera las causales (omisión del 170, ultra petita, cosa juzgada, etc.).</li>
+      <h2 className="label-art text-zona-competencia text-xl mb-3">Sentencia definitiva (arts. 158, 162, 170, 432 CPC)</h2>
+      <ul className="text-sm text-doc-aged/80 space-y-2 mb-4">
+        <li>• <b className="text-zona-competencia">Citación a oír sentencia</b> (432): tras observaciones a la prueba.</li>
+        <li>• <b className="text-zona-competencia">Plazo para sentenciar</b>: 60 días contados desde que la causa queda en estado de fallo (162).</li>
+        <li>• <b className="text-zona-competencia">Requisitos formales</b> (170 + Auto Acordado 1920): partes, demanda y excepciones, hechos no controvertidos, hechos controvertidos, fundamentos de derecho, citas legales, resolución del asunto.</li>
+        <li>• <b className="text-zona-competencia">Casación en la forma</b>: art. 768 enumera las causales (omisión del 170, ultra petita, cosa juzgada, etc.).</li>
       </ul>
       <button className="btn" onClick={onCerrar}>▸ Revisar recursos procedentes</button>
     </div>
@@ -167,8 +167,8 @@ function SentenciaInfo({ onCerrar }: { onCerrar: () => void }) {
 function RedireccionExamen({ onGo }: { onGo: () => void }) {
   return (
     <div className="terminal p-6">
-      <h2 className="label-art text-neon-blue text-xl mb-3">Modo Examen — Cédula procesal</h2>
-      <p className="text-parchment/80 text-sm mb-4">20 preguntas tipo cédula sobre los contenidos del juego con explicación normativa de cada respuesta.</p>
+      <h2 className="label-art text-zona-competencia text-xl mb-3">Modo Examen — Cédula procesal</h2>
+      <p className="text-doc-aged/80 text-sm mb-4">20 preguntas tipo cédula sobre los contenidos del juego con explicación normativa de cada respuesta.</p>
       <button className="btn" onClick={onGo}>▸ Iniciar cédula</button>
     </div>
   );

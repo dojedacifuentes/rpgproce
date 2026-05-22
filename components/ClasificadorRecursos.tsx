@@ -56,9 +56,9 @@ export default function ClasificadorRecursos() {
     const pct = Math.round((aciertos / CASOS.length) * 100);
     return (
       <div className="terminal p-6">
-        <h2 className="label-art text-neon-blue text-xl mb-3">Clasificación de recursos completa</h2>
-        <p className="text-parchment/70 text-sm">Aciertos: <b className="text-neon-cyan">{aciertos}</b> / {CASOS.length} ({pct}%).</p>
-        {pct === 100 && <p className="text-neon-blue text-xs mt-2">Conoces el árbol del 158-545 mejor que tu profesor de procesal.</p>}
+        <h2 className="label-art text-zona-notificaciones text-xl mb-3">Clasificación de recursos completa</h2>
+        <p className="text-doc-aged/70 text-sm">Aciertos: <b className="text-zona-competencia">{aciertos}</b> / {CASOS.length} ({pct}%).</p>
+        {pct === 100 && <p className="text-zona-notificaciones text-xs mt-2">Conoces el árbol del 158-545 mejor que tu profesor de procesal.</p>}
       </div>
     );
   }
@@ -79,15 +79,15 @@ export default function ClasificadorRecursos() {
 
   return (
     <div className="space-y-4">
-      <h2 className="label-art text-neon-blue text-xl">¿Qué recurso procede? (arts. 181, 182, 187, 188, 196, 203, 319, 766, 767, 810 CPC; 545 COT)</h2>
-      <p className="text-parchment/60 text-xs">
+      <h2 className="label-art text-zona-notificaciones text-xl">¿Qué recurso procede? (arts. 181, 182, 187, 188, 196, 203, 319, 766, 767, 810 CPC; 545 COT)</h2>
+      <p className="text-doc-aged/60 text-xs">
         Primero clasifica la resolución (art. 158 CPC). Después elige el recurso. El cuadro vive en el codex.
       </p>
 
       <div className="terminal p-5">
         <div className="tag mb-2">CASO {i + 1} / {CASOS.length}</div>
-        <div className="text-parchment text-base label-art">{caso.resolucion}</div>
-        <div className="text-xs text-parchment/60 mt-1">Tipo (art. 158 CPC): <b>{caso.tipo.replace(/_/g, " ")}</b></div>
+        <div className="text-doc-aged text-base label-art">{caso.resolucion}</div>
+        <div className="text-xs text-doc-aged/60 mt-1">Tipo (art. 158 CPC): <b>{caso.tipo.replace(/_/g, " ")}</b></div>
         <div className="text-neon-violet text-xs italic mt-3">Pista: {caso.pista}</div>
       </div>
 
@@ -95,7 +95,7 @@ export default function ClasificadorRecursos() {
         {[...RECURSOS_OPCIONES].sort(() => Math.random() - 0.5).map((r) => {
           const nombre = TABLA_RECURSOS.find((x) => x.recurso === r)?.nombre || r;
           return (
-            <button key={r} disabled={!!feedback} onClick={() => elegir(r)} className="p-3 border border-neon-blue/40 text-neon-blue text-[10px] uppercase tracking-widest disabled:opacity-40 hover:bg-neon-blue/10">
+            <button key={r} disabled={!!feedback} onClick={() => elegir(r)} className="p-3 border border-neon-blue/40 text-zona-notificaciones text-[10px] uppercase tracking-widest disabled:opacity-40 hover:bg-neon-blue/10">
               {nombre}
             </button>
           );
@@ -105,8 +105,8 @@ export default function ClasificadorRecursos() {
       <AnimatePresence>
         {feedback && (
           <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`terminal p-4 ${feedback.ok ? "border-neon-blue" : "border-neon-red"}`}>
-            <div className={`label-art ${feedback.ok ? "text-neon-blue" : "text-neon-red"}`}>{feedback.ok ? "✓ Correcto" : "✗ Incorrecto"}</div>
-            <p className="text-parchment/80 text-xs mt-2">{feedback.explicacion}</p>
+            <div className={`label-art ${feedback.ok ? "text-zona-notificaciones" : "text-zona-nulidad"}`}>{feedback.ok ? "✓ Correcto" : "✗ Incorrecto"}</div>
+            <p className="text-doc-aged/80 text-xs mt-2">{feedback.explicacion}</p>
             <div className="tag tag-violet mt-2">{feedback.art}</div>
             <button className="btn mt-3" onClick={() => { setFeedback(null); setI((x) => x + 1); }}>▸ Siguiente caso</button>
           </motion.div>

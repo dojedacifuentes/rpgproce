@@ -72,7 +72,7 @@ export default function ZonaExplorador({ zona, children }: ZonaExplorador) {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-4 p-3 bg-neon-purple/10 border border-neon-purple/50 rounded text-xs text-neon-purple font-mono-terminal"
+          className="mb-4 p-3 bg-zona-recursos/10 border border-zona-recursos/50 rounded text-xs text-zona-recursos font-mono-terminal"
         >
           🔍 Exploración en progreso... NPCs: {npcsEnZona.length} | Eventos: {eventosEnZona.length}
         </motion.div>
