@@ -4,6 +4,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import type {
   Expediente, Flag, Incidente, Logro, MedidaCautelar, Mundo, Personaje, SaveState,
   Escrito, Resolucion, RecursoInterpuesto, Prueba, Tribunal, CasoResuelto, CasoEnProgreso,
+  ProgresionNpc, EstadoNpc,
 } from "@/types/game";
 
 type Store = SaveState & {
@@ -27,6 +28,11 @@ type Store = SaveState & {
   desbloquearLogro: (l: Logro) => void;
   iniciarCaso: (caso: CasoEnProgreso) => void;
   resolverCaso: (caseId: string, resuelto: CasoResuelto, efectos?: { reputacion?: number; trauma?: number; conocimiento?: number }) => void;
+  // NPC System
+  iniciarArcoNpc: (npcId: string) => void;
+  avanzoNpc: (npcId: string, accion: "completar_actividad" | "pasar_etapa" | "iniciar_desafio") => void;
+  completarDesafioNpc: (npcId: string, exitoso: boolean, efectos?: { reputacion?: number; trauma?: number; conocimiento?: number; skills?: string[] }) => void;
+  validarNpcsDesbloqueados: () => void;
   reset: () => void;
   finalizar: (texto: string) => void;
   nuevoCicloProcesal: () => void;
@@ -60,6 +66,9 @@ const INIT: SaveState = {
   log: [],
   logros: [],
   casosResueltos: [],
+  npcesEnProgreso: new Map<string, ProgresionNpc>(),
+  npcesCompletados: [],
+  npcesDesbloqueados: [],
 };
 
 export const useGame = create<Store>()(
@@ -137,6 +146,121 @@ export const useGame = create<Store>()(
             ultimoGuardado: Date.now(),
           };
           return efectosAplicados;
+        }),
+      iniciarArcoNpc: (npcId) =>
+        set((s) => {
+          const nuevaProgresion: ProgresionNpc = {
+            npcId,
+            estado: "en_progreso_etapa_1",
+            etapaActual: 1,
+            fechaInicio: Date.now(),
+            ultimoProgreso: Date.now(),
+            actividadCompletada: false,
+            intentosFinal: 0,
+          };
+          const nuevoMap = new Map(s.npcesEnProgreso);
+          nuevoMap.set(npcId, nuevaProgresion);
+          return {
+            npcesEnProgreso: nuevoMap,
+            ultimoGuardado: Date.now(),
+          };
+        }),
+      avanzoNpc: (npcId, accion) =>
+        set((s) => {
+          const actual = s.npcesEnProgreso.get(npcId);
+          if (!actual) return s;
+
+          const nuevoMap = new Map(s.npcesEnProgreso);
+
+          if (accion === "completar_actividad") {
+            nuevoMap.set(npcId, {
+              ...actual,
+              actividadCompletada: true,
+              ultimoProgreso: Date.now(),
+            });
+          } else if (accion === "pasar_etapa") {
+            const proxEtapa = actual.etapaActual + 1;
+            const nuevoEstado: EstadoNpc =
+              proxEtapa === 2 ? "en_progreso_etapa_2" :
+              proxEtapa === 3 ? "en_progreso_etapa_3" :
+              "desafio_final";
+
+            nuevoMap.set(npcId, {
+              ...actual,
+              etapaActual: proxEtapa,
+              estado: nuevoEstado,
+              actividadCompletada: false,
+              ultimoProgreso: Date.now(),
+            });
+          } else if (accion === "iniciar_desafio") {
+            nuevoMap.set(npcId, {
+              ...actual,
+              estado: "desafio_final",
+              ultimoProgreso: Date.now(),
+            });
+          }
+
+          return {
+            npcesEnProgreso: nuevoMap,
+            ultimoGuardado: Date.now(),
+          };
+        }),
+      completarDesafioNpc: (npcId, exitoso, efectos) =>
+        set((s) => {
+          const actual = s.npcesEnProgreso.get(npcId);
+          if (!actual) return s;
+
+          const nuevoMap = new Map(s.npcesEnProgreso);
+          const nuevoEstado: EstadoNpc = exitoso ? "completada" : "fallida";
+
+          nuevoMap.set(npcId, {
+            ...actual,
+            estado: nuevoEstado,
+            intentosFinal: actual.intentosFinal + 1,
+            ultimoProgreso: Date.now(),
+          });
+
+          // Aplicar efectos al personaje
+          const p = s.personaje;
+          const nuevaRep = Math.max(-100, Math.min(100, p.reputacion + (efectos?.reputacion || 0)));
+          const nuevoTrauma = Math.max(0, Math.min(100, p.trauma + (efectos?.trauma || 0)));
+          const nuevoConocimiento = Math.max(0, Math.min(10, p.atributos.conocimiento_procesal + (efectos?.conocimiento || 0)));
+
+          // Agregar skills a flags si existen
+          const nuevosFlags = [...s.flags];
+          if (efectos?.skills) {
+            for (const skill of efectos.skills) {
+              if (!nuevosFlags.includes(skill)) {
+                nuevosFlags.push(skill);
+              }
+            }
+          }
+
+          const nuevosCompletados = exitoso && !s.npcesCompletados.includes(npcId)
+            ? [...s.npcesCompletados, npcId]
+            : s.npcesCompletados;
+
+          return {
+            npcesEnProgreso: nuevoMap,
+            npcesCompletados: nuevosCompletados,
+            personaje: {
+              ...p,
+              reputacion: nuevaRep,
+              trauma: nuevoTrauma,
+              atributos: {
+                ...p.atributos,
+                conocimiento_procesal: nuevoConocimiento,
+              },
+            },
+            flags: nuevosFlags,
+            ultimoGuardado: Date.now(),
+          };
+        }),
+      validarNpcsDesbloqueados: () =>
+        set((s) => {
+          // Por ahora, todos los NPCs disponibles
+          // En futuro: validar dependencias contra npcesCompletados
+          return s; // placeholder
         }),
       finalizar: (texto) => set({ finalizado: true, epilogo: texto }),
       nuevoCicloProcesal: () =>

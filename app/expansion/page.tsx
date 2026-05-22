@@ -19,6 +19,7 @@ import DueloMediosPrueba from "@/components/DueloMediosPrueba";
 import AtaqueRepreguntas from "@/components/AtaqueRepreguntas";
 import CasoInvestigativo from "@/components/CasoInvestigativo";
 import SubmundosPanel from "@/components/SubmundosPanel";
+import NPCInteractionPanel from "@/components/NPCInteractionPanel";
 import { CASOS_INVESTIGATIVOS } from "@/data/casos-investigativos";
 
 type Modulo =
@@ -40,7 +41,8 @@ type Modulo =
   | "duelo"
   | "ataque"
   | "investigacion"
-  | "submundos";
+  | "submundos"
+  | "npcs";
 
 const MODULOS: {
   id: Modulo;
@@ -85,6 +87,15 @@ const MODULOS: {
     descripcion: "Historias de vicios procesales que nunca se escriben. El Archivo Secreto · Las Cámaras Ocultas · La Doctrina Apócrifa. Desbloquea con logros.",
     zona: "nulidad",
     numeral: "SUB.01",
+    nuevo: true,
+  },
+  {
+    id: "npcs",
+    titulo: "Mentoría Procesal",
+    subtitulo: "ARCOS NARRATIVOS · 10 MENTORES",
+    descripcion: "Aprende directamente de expertos. Dra. Noemí · Juez Silva · Receptor Castro · 7 más. Cada mentor ofrece 3 etapas de aprendizaje + desafío final. Relaciones NPC y dependencias.",
+    zona: "recursos",
+    numeral: "NPC.01",
     nuevo: true,
   },
   {
@@ -292,6 +303,7 @@ export default function ExpansionHub() {
         {m === "ataque" && <AtaqueRepreguntas />}
         {m === "arcade" && <ArcadeClasificador />}
         {m === "submundos" && <SubmundosPanel />}
+        {m === "npcs" && <NPCInteractionPanel />}
         {m === "vof" && <SpeedrunVoF />}
         {m === "sentencia" && <SalaSentencia />}
         {m === "expediente" && <ExpedienteVivo />}

@@ -267,6 +267,27 @@ export type CasoEnProgreso = {
   inicioTiempo: number;
 };
 
+// ============== SISTEMA DE NPCS - MENTORÍA ==============
+
+export type EstadoNpc =
+  | "no_iniciada"
+  | "en_progreso_etapa_1"
+  | "en_progreso_etapa_2"
+  | "en_progreso_etapa_3"
+  | "desafio_final"
+  | "completada"
+  | "fallida";
+
+export type ProgresionNpc = {
+  npcId: string;
+  estado: EstadoNpc;
+  etapaActual: number;         // 1, 2, 3, o 0 si no iniciada
+  fechaInicio: number;
+  ultimoProgreso: number;
+  actividadCompletada: boolean;
+  intentosFinal: number;        // para desafío final
+};
+
 export type SaveState = {
   version: number;
   creado: number;
@@ -282,6 +303,10 @@ export type SaveState = {
   logros: Logro[];
   casosResueltos: CasoResuelto[];
   casosEnProgreso?: CasoEnProgreso;
+  // Sistema de NPCs
+  npcesEnProgreso: Map<string, ProgresionNpc>;
+  npcesCompletados: string[];      // IDs de NPCs cuyo arco terminó (completada OR fallida)
+  npcesDesbloqueados: string[];    // IDs de NPCs disponibles (dependencias satisfechas)
   finalizado?: boolean;
   epilogo?: string;
 };
