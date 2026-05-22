@@ -326,12 +326,31 @@ export const useGame = create<Store>()(
     }),
     {
       name: "derecho-procesal-rpg-save",
-      version: 1,
+      version: 2,
       migrate: () => ({ ...INIT, creado: Date.now() }) as any,
-      storage: createJSONStorage(() =>
-        typeof window !== "undefined"
+      // Serializador custom: Map<string, ProgresionNpc> → array y viceversa
+      storage: createJSONStorage(
+        () => (typeof window !== "undefined"
           ? window.localStorage
-          : ({ getItem: () => null, setItem: () => {}, removeItem: () => {} } as any)
+          : ({ getItem: () => null, setItem: () => {}, removeItem: () => {} } as any)),
+        {
+          replacer: (_key: string, value: unknown) => {
+            if (value instanceof Map) {
+              return { __type: "Map", entries: Array.from(value.entries()) };
+            }
+            return value;
+          },
+          reviver: (_key: string, value: unknown) => {
+            if (
+              value !== null &&
+              typeof value === "object" &&
+              (value as Record<string, unknown>).__type === "Map"
+            ) {
+              return new Map((value as { entries: [string, unknown][] }).entries);
+            }
+            return value;
+          },
+        }
       ),
     }
   )

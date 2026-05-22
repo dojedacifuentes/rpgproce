@@ -304,40 +304,89 @@ function ActoCard({ acto, completadas }: { acto: { numero: number; titulo: strin
 }
 
 // ────────────────────────────────────────────
+const TIPO_ICON: Record<string, string> = {
+  investigacion: "🔍", arcade: "🎮", boss: "⚔️",
+  npc: "🧑‍⚖️", puzzle: "🧩", dialogo: "💬",
+  examen: "📋", ejecutivo: "💼",
+};
+
 function MisionesPanel({ misionesCompletadas }: { misionesCompletadas: string[] }) {
+  const router = useRouter();
+
+  const handleJugar = (href?: string, moduloId?: string, tipo?: string) => {
+    sfx.click?.();
+    if (href) { router.push(href); return; }
+    if (moduloId) { router.push(`/expansion?m=${moduloId}`); return; }
+    if (tipo === "boss") { router.push("/oral"); return; }
+    if (tipo === "examen") { router.push("/examen"); return; }
+    router.push("/expansion");
+  };
+
   return (
-    <div className="terminal p-4 space-y-4 max-h-[450px] overflow-y-auto">
-      {CAMPAÑA.map((acto) => (
-        <div key={acto.numero}>
-          <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-recursos mb-2">
-            Acto {acto.numero}: {acto.titulo}
-          </div>
-          <div className="space-y-1.5">
-            {acto.misiones.map((mision) => {
-              const completada = misionesCompletadas.includes(mision.id);
-              return (
-                <div
-                  key={mision.id}
-                  className="flex items-start gap-2 p-2 border rounded transition-colors"
-                  style={{
-                    borderColor: completada ? "rgba(88,245,176,0.3)" : "rgba(75,231,255,0.1)",
-                    background: completada ? "rgba(88,245,176,0.03)" : "transparent",
-                  }}
-                >
-                  <span className="text-sm mt-0.5">{completada ? "✅" : "⬜"}</span>
-                  <div>
-                    <div className="font-display-grave text-xs text-doc-aged">{mision.titulo}</div>
-                    <div className="font-mono-terminal text-[8px] text-doc-aged/50">{mision.descripcion}</div>
-                    <div className="font-mono-terminal text-[8px] text-zona-prueba mt-0.5">
-                      +{mision.recompensa.xp} XP · 🪙{mision.recompensa.monedas}
+    <div className="terminal p-4 space-y-5 max-h-[500px] overflow-y-auto">
+      {CAMPAÑA.map((acto) => {
+        const completadasActo = acto.misiones.filter((m) => misionesCompletadas.includes(m.id)).length;
+        const pctActo = Math.round((completadasActo / acto.misiones.length) * 100);
+        return (
+          <div key={acto.numero}>
+            {/* Cabecera del acto */}
+            <div className="flex items-center justify-between mb-2">
+              <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-recursos">
+                Acto {acto.numero}: {acto.titulo}
+              </div>
+              <span className="font-mono-terminal text-[8px] text-doc-aged/40">
+                {completadasActo}/{acto.misiones.length}
+              </span>
+            </div>
+            {/* Barra de progreso del acto */}
+            <div className="h-0.5 bg-bg-steel rounded-full overflow-hidden mb-2">
+              <div
+                className="h-full rounded-full transition-all duration-700"
+                style={{
+                  width: `${pctActo}%`,
+                  background: "linear-gradient(90deg, var(--zona-competencia), var(--zona-recursos))",
+                }}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              {acto.misiones.map((mision) => {
+                const completada = misionesCompletadas.includes(mision.id);
+                return (
+                  <div
+                    key={mision.id}
+                    className="flex items-center gap-2 p-2 border rounded"
+                    style={{
+                      borderColor: completada ? "rgba(88,245,176,0.25)" : "rgba(75,231,255,0.1)",
+                      background: completada ? "rgba(88,245,176,0.03)" : "transparent",
+                    }}
+                  >
+                    <span className="text-sm shrink-0">{TIPO_ICON[mision.tipo] ?? "📌"}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-display-grave text-xs text-doc-aged truncate">{mision.titulo}</div>
+                      <div className="font-mono-terminal text-[7px] text-doc-aged/40 truncate">{mision.descripcion}</div>
+                      <div className="font-mono-terminal text-[7px] text-zona-prueba mt-0.5">
+                        +{mision.recompensa.xp} XP · 🪙{mision.recompensa.monedas}
+                      </div>
                     </div>
+                    {completada ? (
+                      <span className="text-[10px] text-zona-cautelares shrink-0">✓</span>
+                    ) : (
+                      <button
+                        onClick={() => handleJugar(mision.href, mision.moduloId, mision.tipo)}
+                        onMouseEnter={() => sfx.hover?.()}
+                        className="shrink-0 text-[8px] font-mono-terminal px-2 py-1 border border-zona-competencia/40 text-zona-competencia hover:border-zona-competencia hover:brightness-125 transition-all"
+                      >
+                        JUGAR
+                      </button>
+                    )}
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

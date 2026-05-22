@@ -302,9 +302,8 @@ export default function ExpansionHub() {
         <CasoInvestigativo
           caso={casoActual}
           onVolver={() => setCasoSeleccionado(null)}
-          onResuelto={(result) => {
-            // Podría agregar lógica aquí después
-            console.log("Caso resuelto:", result);
+          onResuelto={() => {
+            // Recompensas ya aplicadas dentro de CasoInvestigativo.handleVerificar
           }}
         />
       </main>
