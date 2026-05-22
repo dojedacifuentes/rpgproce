@@ -5,64 +5,105 @@ import SeleccionBuild from "@/components/SeleccionBuild";
 import ExpedienteVivo from "@/components/ExpedienteVivo";
 import PreclusionTimer from "@/components/PreclusionTimer";
 import InhibitoriaDeclinatoria from "@/components/InhibitoriaDeclinatoria";
+import ArcadeClasificador from "@/components/ArcadeClasificador";
+import AbandonoProcedimiento from "@/components/AbandonoProcedimiento";
+import ComparecenciaPanel from "@/components/ComparecenciaPanel";
 
-type Modulo = "menu" | "build" | "expediente" | "preclusion" | "inhibitoria";
+type Modulo = "menu" | "build" | "expediente" | "preclusion" | "inhibitoria" | "arcade" | "abandono" | "comparecencia";
+
+const MODULOS: { id: Modulo; titulo: string; subtitulo: string; descripcion: string; zona: string; numeral: string }[] = [
+  { id: "arcade", titulo: "Arcade Clasificador", subtitulo: "MODO RAPIDO · COMBO", descripcion: "Resoluciones · recursos · excepciones · competencia · notificaciones · ejecutivo. Velocidad creciente. Combo multiplicador. Ranking S-A-B-C-D.", zona: "ejecutivo", numeral: "ARC.01" },
+  { id: "expediente", titulo: "Expediente Vivo", subtitulo: "SALUD PROCESAL", descripcion: "El expediente se degrada con cada vicio. Glitch progresivo según el daño. Si llega a 0: nulidad latente del 768 N°9.", zona: "nulidad", numeral: "INST.04" },
+  { id: "preclusion", titulo: "Preclusión Real", subtitulo: "PLAZOS FATALES", descripcion: "Timer en tiempo real. Si vencés el plazo, la preclusión es irreversible. Art. 64 CPC en su versión más cruel.", zona: "ejecutivo", numeral: "INST.06" },
+  { id: "inhibitoria", titulo: "Inhibitoria vs Declinatoria", subtitulo: "CUESTIONES DE COMPETENCIA", descripcion: "Identificá medio + tribunal correcto. Arts. 101-112 CPC. Los conflictos suspenden el principal (art. 112).", zona: "competencia", numeral: "INST.01" },
+  { id: "abandono", titulo: "Abandono del Procedimiento", subtitulo: "TIMER DE 6 MESES", descripcion: "Mantené el expediente vivo. Solo gestiones útiles interrumpen el plazo. Las administrativas no sirven. Art. 152 CPC.", zona: "incidentes", numeral: "INST.18" },
+  { id: "comparecencia", titulo: "Comparecencia", subtitulo: "PATROCINIO · LEY 18.120", descripcion: "Validá los 7 requisitos del primer escrito. La secretaria tribunalicia rechaza con humor seco. Olvidar patrocinio = humillación inmediata.", zona: "incidentes", numeral: "INST.19" },
+  { id: "build", titulo: "Especialización", subtitulo: "BUILD · 6 CLASES", descripcion: "Litigante agresivo · monstruo casacional · formalista extremo · estratega cautelar · operador práctico · doctrinario.", zona: "recursos", numeral: "RPG.01" },
+];
 
 export default function ExpansionHub() {
   const [m, setM] = useState<Modulo>("menu");
 
   if (m !== "menu") {
     return (
-      <main className="min-h-screen px-6 py-8 max-w-5xl mx-auto">
-        <div className="flex justify-between mb-4">
+      <main className="min-h-screen px-4 md:px-8 py-6 max-w-6xl mx-auto">
+        <div className="flex justify-between mb-6">
           <button className="btn" onClick={() => setM("menu")}>◂ Hub Expansión</button>
-          <Link href="/juego" className="btn">◂ Mapa principal</Link>
+          <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
         </div>
-        {m === "build" && <SeleccionBuild onElegir={() => setM("menu")} />}
+        {m === "arcade" && <ArcadeClasificador />}
         {m === "expediente" && <ExpedienteVivo />}
         {m === "preclusion" && <PreclusionTimer />}
         {m === "inhibitoria" && <InhibitoriaDeclinatoria />}
+        {m === "abandono" && <AbandonoProcedimiento />}
+        {m === "comparecencia" && <ComparecenciaPanel />}
+        {m === "build" && <SeleccionBuild onElegir={() => setM("menu")} />}
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen px-6 py-8 max-w-5xl mx-auto">
-      <header className="flex justify-between mb-6 flex-wrap gap-2">
-        <Link href="/juego" className="btn">◂ Mapa principal</Link>
-        <div className="tag tag-violet">HUB EXPANSIÓN v2.0</div>
+    <main className="min-h-screen px-4 md:px-8 py-6 max-w-6xl mx-auto">
+      <header className="flex justify-between mb-8 flex-wrap gap-2">
+        <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
+        <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-zona-recursos">
+          HUB EXPANSIÓN v3.0 · SISTEMAS AVANZADOS
+        </div>
       </header>
 
-      <h1 className="label-art text-3xl text-neon-blue mb-2">Sistemas avanzados</h1>
-      <p className="text-parchment/60 text-sm mb-6">
-        Cinco sistemas nuevos para entrenamiento de examen de grado. Integrá con el mapa principal.
-      </p>
+      <div className="mb-8">
+        <div className="font-mono-terminal text-[10px] uppercase tracking-[.4em] text-zona-recursos mb-2">SUBSISTEMAS</div>
+        <h1 className="font-display-grave text-4xl md:text-5xl text-doc-aged mb-3">Arquitectura Avanzada</h1>
+        <p className="text-doc-aged/60 text-sm font-mono-terminal max-w-2xl">
+          Siete sistemas modulares para entrenamiento de examen de grado. Cada uno simula una institución del Derecho Procesal chileno con mecánicas propias.
+        </p>
+      </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <Card t="🎭 Especialización (Build)" d="Elegí una de 6 builds: agresivo, casacional, formalista, cautelar, práctico, doctrinario. Modifica atributos y desbloquea recursos." onClick={() => setM("build")} />
-        <Card t="📁 Expediente Vivo" d="Simulación de salud procesal. Cada vicio degrada el expediente. Glitch visual al cruzar el umbral del 768." onClick={() => setM("expediente")} />
-        <Card t="⏳ Preclusión real" d="Plazos fatales en tiempo real (1s = 1 día). El art. 64 CPC se hace carne." onClick={() => setM("preclusion")} />
-        <Card t="⚖️ Inhibitoria vs Declinatoria" d="Minijuego del CPC 101-112. Identificá medio y tribunal correcto." onClick={() => setM("inhibitoria")} />
-        <CardLink t="🎤 Modo Oral (Bosses)" d="Seis arquetipos del examen de grado. Cadenas de preguntas y derivaciones. Daño bidireccional." href="/oral" />
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+        {MODULOS.map((mod) => (
+          <button
+            key={mod.id}
+            onClick={() => setM(mod.id)}
+            className="zona-card p-5 text-left"
+            style={{ "--zona-color": `var(--zona-${mod.zona})` } as React.CSSProperties}
+          >
+            <div className="flex justify-between items-start mb-3">
+              <span className="font-display-grave text-3xl opacity-40" style={{ color: `var(--zona-${mod.zona})` }}>
+                {mod.numeral.split(".")[0]}
+              </span>
+              <span className="text-[9px] uppercase tracking-widest font-mono-terminal opacity-50" style={{ color: `var(--zona-${mod.zona})` }}>
+                {mod.numeral}
+              </span>
+            </div>
+            <h3 className="font-display-grave text-lg text-doc-aged tracking-wider mb-1">{mod.titulo}</h3>
+            <div className="text-[10px] uppercase tracking-widest font-mono-terminal mb-2" style={{ color: `var(--zona-${mod.zona})` }}>
+              {mod.subtitulo}
+            </div>
+            <p className="text-doc-aged/55 text-xs leading-relaxed font-mono-terminal">{mod.descripcion}</p>
+          </button>
+        ))}
+
+        {/* CTA al Modo Oral */}
+        <Link
+          href="/oral"
+          className="zona-card p-5 text-left block"
+          style={{ "--zona-color": "var(--zona-oralidad)" } as React.CSSProperties}
+        >
+          <div className="flex justify-between items-start mb-3">
+            <span className="font-display-grave text-3xl opacity-40 text-zona-oralidad">XX</span>
+            <span className="text-[9px] uppercase tracking-widest font-mono-terminal opacity-50 text-zona-oralidad">
+              INST.20
+            </span>
+          </div>
+          <h3 className="font-display-grave text-lg text-doc-aged tracking-wider mb-1">Modo Oral</h3>
+          <div className="text-[10px] uppercase tracking-widest font-mono-terminal text-zona-oralidad mb-2">
+            BOSSES · 6 INSTANCIAS
+          </div>
+          <p className="text-doc-aged/55 text-xs leading-relaxed font-mono-terminal">
+            Anfiteatro judicial. Comisión examinadora con cadenas de derivación. Ataques: directo / puente / trampa / repregunta.
+          </p>
+        </Link>
       </div>
     </main>
-  );
-}
-
-function Card({ t, d, onClick }: { t: string; d: string; onClick: () => void }) {
-  return (
-    <button onClick={onClick} className="terminal p-5 text-left transition hover:bg-neon-blue/5">
-      <div className="label-art text-neon-cyan text-lg">{t}</div>
-      <p className="text-parchment/70 text-xs mt-2">{d}</p>
-    </button>
-  );
-}
-
-function CardLink({ t, d, href }: { t: string; d: string; href: string }) {
-  return (
-    <Link href={href} className="terminal p-5 transition hover:bg-neon-blue/5">
-      <div className="label-art text-neon-cyan text-lg">{t}</div>
-      <p className="text-parchment/70 text-xs mt-2">{d}</p>
-    </Link>
   );
 }

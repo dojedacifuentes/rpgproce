@@ -12,55 +12,152 @@ export default function Home() {
   useEffect(() => { setMounted(true); }, []);
 
   if (!mounted) {
-    return <main className="min-h-screen flex items-center justify-center text-neon-blue label-art">CARGANDO EXPEDIENTE…</main>;
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <div className="font-display-grave text-zona-competencia text-lg term-loader">INICIANDO TERMINAL JURÍDICA</div>
+      </main>
+    );
   }
 
   const hayPartida = !!personaje.nombre;
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none opacity-20 [background-image:linear-gradient(rgba(0,229,255,.18)_1px,transparent_1px),linear-gradient(90deg,rgba(0,229,255,.18)_1px,transparent_1px)] [background-size:32px_32px]" />
-      <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2 }} className="text-center max-w-4xl">
-        <div className="tag mb-6">EXPEDIENTE C-1725/2026 · TRIBUNAL DE LETRAS</div>
-        <h1 className="label-art text-5xl md:text-7xl text-neon-blue glitch-text mb-4">DERECHO PROCESAL</h1>
-        <h2 className="font-serif italic text-parchment/80 text-xl md:text-2xl mb-8">
-          Un RPG narrativo sobre jurisdicción, competencia, juicio ordinario, ejecución y recursos.
-        </h2>
-        <p className="text-parchment/60 max-w-2xl mx-auto mb-10 text-sm leading-relaxed">
-          Crea un personaje (abogado/a, juez, secretario). Determina jurisdicción y competencia. Redacta una demanda
-          que sobreviva al art. 303. Emplaza, contesta, prueba. Recurre al recurso correcto. Ejecuta. Sube de ciclo procesal.
-          <br />
-          <span className="text-neon-violet">Basado en CPR (76), COT (1, 5, 45-148, 545), CPC (38-545, 158, 170, 181-203, 254-433, 434-478, 766-810).</span>
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <Link href="/creacion" className="btn">▶ Nueva partida</Link>
-          {hayPartida && !finalizado && <Link href="/juego" className="btn">▶ Continuar expediente · ciclo {personaje.cicloProcesal}</Link>}
-          {hayPartida && finalizado && <Link href="/epilogo" className="btn">📜 Leer epílogo</Link>}
-          <Link href="/codex" className="btn">📜 Codex</Link>
-          <Link href="/examen" className="btn">📝 Modo Examen</Link>
-          <Link href="/expansion" className="btn" style={{ borderColor: "#a78bfa", color: "#a78bfa" }}>★ Expansión v2.0</Link>
-          <Link href="/oral" className="btn btn-danger">🎤 Bosses</Link>
-        </div>
-        <div className="divider my-12" />
-        <div className="grid md:grid-cols-3 gap-4 text-left text-xs text-parchment/60">
-          <Feature icon="⚖️" t="13 mundos jugables" d="Desde jurisdicción hasta ejecución. Cada módulo con escenas + minijuego pedagógico + artículos." />
-          <Feature icon="📑" t="Cuadro de recursos vivo" d="Clasifica el recurso procedente contra cada tipo de resolución (158, 181, 187, 766, 767, 810, 545 COT)." />
-          <Feature icon="🔁" t="Loop procesal" d="Termina un expediente, abre otro. Conservas atributos, logros y experiencia entre ciclos." />
-        </div>
-      </motion.div>
-      <footer className="absolute bottom-3 text-[10px] uppercase tracking-widest text-parchment/30">
-        v1.0 — build para examen de grado · arts. 76 CPR, 1-545 COT, 38-810 CPC.
-      </footer>
+    <main className="min-h-screen relative overflow-hidden">
+      {/* Capa atmosférica de profundidad */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(75,231,255,.04)_1px,transparent_1px),linear-gradient(90deg,rgba(75,231,255,.04)_1px,transparent_1px)] [background-size:48px_48px]" />
+        <div className="absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
+      </div>
+
+      <div className="relative z-10 min-h-screen flex flex-col">
+        {/* HEADER procedural */}
+        <header className="flex justify-between items-center px-6 md:px-12 py-5 border-b border-zona-competencia/10">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-zona-cautelares rounded-full animate-flicker" />
+            <span className="text-[11px] uppercase tracking-[.3em] text-doc-aged/60 font-mono-terminal">
+              TERMINAL JURÍDICA · CONEXIÓN ACTIVA · SISTEMA v3.0
+            </span>
+          </div>
+          <div className="text-[10px] uppercase tracking-widest text-doc-aged/40 font-mono-terminal">
+            {new Date().toLocaleString("es-CL", { dateStyle: "short", timeStyle: "short" })}
+          </div>
+        </header>
+
+        {/* HERO */}
+        <section className="flex-1 px-6 md:px-12 py-10 md:py-16 flex flex-col justify-center max-w-6xl mx-auto w-full">
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2 }}>
+            <div className="font-mono-terminal text-[10px] uppercase tracking-[.4em] text-zona-recursos mb-4">
+              EXPEDIENTE C-1725/2026 · LIBRO I-III · CPC + COT
+            </div>
+            <h1 className="font-display-grave text-5xl md:text-7xl lg:text-8xl text-doc-aged mb-2 leading-[1]">
+              <span className="text-zona-competencia glitch-text">FORO</span> <span className="italic font-serif-juridica text-doc-aged/90">[in]</span>VISIBLE
+            </h1>
+            <p className="font-serif-juridica italic text-zona-prueba/70 text-xl md:text-2xl mb-8">
+              Un simulador procesal chileno. Hostil. Vivo. Inevitable.
+            </p>
+
+            <div className="max-w-3xl space-y-3 mb-10">
+              <p className="text-doc-aged/70 text-sm leading-relaxed font-mono-terminal">
+                Creás un litigante. Estudiás jurisdicción y competencia. Notificás. Emplazás. Discutís. Probás.
+                Recibís sentencia. Recurrís. Ejecutás. <span className="text-zona-nulidad">O fracasás.</span>
+              </p>
+              <p className="text-doc-aged/50 text-xs leading-relaxed font-mono-terminal">
+                <span className="text-zona-recursos">Sistema:</span> CPR (76) · COT (1, 45-148, 545) · CPC (38-545, 158, 170, 254-433, 434-478, 766-810).
+                <br />
+                <span className="text-zona-cautelares">Modos:</span> arcade · detective · boss fight · oral de grado · examen.
+              </p>
+            </div>
+
+            {/* CTAs principales */}
+            <div className="flex flex-wrap gap-2 md:gap-3">
+              <Link href="/creacion" className="group relative">
+                <div className="zona-card p-4 px-6" style={{ "--zona-color": "var(--zona-competencia)" } as React.CSSProperties}>
+                  <div className="text-[10px] uppercase tracking-widest text-zona-competencia/60 font-mono-terminal">NUEVA</div>
+                  <div className="font-display-grave text-lg text-doc-aged group-hover:text-zona-competencia transition-colors">CAMPAÑA</div>
+                </div>
+              </Link>
+
+              {hayPartida && !finalizado && (
+                <Link href="/juego" className="group">
+                  <div className="zona-card p-4 px-6" style={{ "--zona-color": "var(--zona-prueba)" } as React.CSSProperties}>
+                    <div className="text-[10px] uppercase tracking-widest text-zona-prueba/60 font-mono-terminal">CICLO {personaje.cicloProcesal}</div>
+                    <div className="font-display-grave text-lg text-doc-aged group-hover:text-zona-prueba transition-colors">CONTINUAR</div>
+                  </div>
+                </Link>
+              )}
+              {hayPartida && finalizado && (
+                <Link href="/epilogo" className="group">
+                  <div className="zona-card p-4 px-6" style={{ "--zona-color": "var(--zona-cosajuzgada)" } as React.CSSProperties}>
+                    <div className="text-[10px] uppercase tracking-widest text-zona-cosajuzgada/60 font-mono-terminal">FOLIO FINAL</div>
+                    <div className="font-display-grave text-lg text-doc-aged">EPÍLOGO</div>
+                  </div>
+                </Link>
+              )}
+
+              <Link href="/expansion" className="group">
+                <div className="zona-card p-4 px-6" style={{ "--zona-color": "var(--zona-recursos)" } as React.CSSProperties}>
+                  <div className="text-[10px] uppercase tracking-widest text-zona-recursos/60 font-mono-terminal">EXPANSIÓN</div>
+                  <div className="font-display-grave text-lg text-doc-aged group-hover:text-zona-recursos transition-colors">SISTEMAS v2.0</div>
+                </div>
+              </Link>
+
+              <Link href="/oral" className="group">
+                <div className="zona-card p-4 px-6" style={{ "--zona-color": "var(--zona-oralidad)" } as React.CSSProperties}>
+                  <div className="text-[10px] uppercase tracking-widest text-zona-oralidad/60 font-mono-terminal">COMISIÓN</div>
+                  <div className="font-display-grave text-lg text-doc-aged group-hover:text-zona-oralidad transition-colors">BOSSES ORALES</div>
+                </div>
+              </Link>
+
+              <Link href="/codex" className="group">
+                <div className="zona-card p-4 px-6" style={{ "--zona-color": "var(--zona-cosajuzgada)" } as React.CSSProperties}>
+                  <div className="text-[10px] uppercase tracking-widest text-doc-aged/40 font-mono-terminal">CONSULTA</div>
+                  <div className="font-display-grave text-lg text-doc-aged group-hover:text-zona-cosajuzgada transition-colors">CODEX</div>
+                </div>
+              </Link>
+
+              <Link href="/examen" className="group">
+                <div className="zona-card p-4 px-6" style={{ "--zona-color": "var(--zona-ejecutivo)" } as React.CSSProperties}>
+                  <div className="text-[10px] uppercase tracking-widest text-zona-ejecutivo/60 font-mono-terminal">CÉDULA</div>
+                  <div className="font-display-grave text-lg text-doc-aged group-hover:text-zona-ejecutivo transition-colors">EXAMEN</div>
+                </div>
+              </Link>
+            </div>
+          </motion.div>
+
+          {/* identidad cromática por institución */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .8, duration: 1.5 }} className="mt-16">
+            <div className="divider mb-8" />
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 text-[10px] font-mono-terminal uppercase tracking-widest">
+              <ZonaSwatch color="var(--zona-competencia)" label="Competencia" art="45-148 COT" />
+              <ZonaSwatch color="var(--zona-recursos)" label="Recursos" art="766-810" />
+              <ZonaSwatch color="var(--zona-nulidad)" label="Nulidad" art="768 / 795" />
+              <ZonaSwatch color="var(--zona-ejecutivo)" label="Ejecutivo" art="434-478" />
+              <ZonaSwatch color="var(--zona-prueba)" label="Prueba" art="318-427" />
+              <ZonaSwatch color="var(--zona-oralidad)" label="Oralidad" art="Comisión" />
+              <ZonaSwatch color="var(--zona-cautelares)" label="Cautelares" art="273-302" />
+              <ZonaSwatch color="var(--zona-cosajuzgada)" label="Cosa Juzgada" art="175-177" />
+            </div>
+          </motion.div>
+        </section>
+
+        {/* footer técnico */}
+        <footer className="px-6 md:px-12 py-4 border-t border-zona-competencia/10 flex justify-between items-center text-[10px] uppercase tracking-widest text-doc-aged/30 font-mono-terminal">
+          <span>RPG PROCE · build pedagógico examen de grado · v3.0</span>
+          <span>· art. 76 CPR · art. 1 COT · art. 158 CPC ·</span>
+        </footer>
+      </div>
     </main>
   );
 }
 
-function Feature({ icon, t, d }: { icon: string; t: string; d: string }) {
+function ZonaSwatch({ color, label, art }: { color: string; label: string; art: string }) {
   return (
-    <div className="terminal p-4">
-      <div className="text-2xl mb-2">{icon}</div>
-      <div className="label-art text-neon-blue text-sm mb-1">{t}</div>
-      <div className="text-parchment/60">{d}</div>
+    <div className="flex items-center gap-2 py-1">
+      <span className="w-2 h-6" style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}` }} />
+      <div>
+        <div style={{ color }}>{label}</div>
+        <div className="text-doc-aged/30">{art}</div>
+      </div>
     </div>
   );
 }

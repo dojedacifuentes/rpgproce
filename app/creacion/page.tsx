@@ -67,8 +67,9 @@ export default function Creacion() {
 
   return (
     <main className="min-h-screen px-6 py-10 max-w-5xl mx-auto">
-      <div className="tag mb-4">FOLIO 01 — IDENTIFICACIÓN DEL ABOGADO</div>
-      <h1 className="label-art text-3xl text-neon-blue mb-6">Constituye tu personaje procesal</h1>
+      <div className="font-mono-terminal text-[10px] uppercase tracking-[.4em] text-zona-recursos mb-3">FOLIO 01 · INSCRIPCIÓN EN EL REGISTRO DE LITIGANTES</div>
+      <h1 className="font-display-grave text-4xl text-doc-aged mb-2">Constituye tu personaje procesal</h1>
+      <p className="text-doc-aged/50 text-xs font-serif-juridica italic mb-6">«Toda comparecencia exige patrocinio, poder y voluntad de sufrir.»</p>
 
       <section className="terminal p-6 mb-6">
         <label className="text-xs uppercase tracking-widest text-neon-cyan">Nombre del comparecente</label>

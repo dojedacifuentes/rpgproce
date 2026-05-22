@@ -6,20 +6,22 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { Mundo } from "@/types/game";
 
-const MAPA: { id: Mundo; titulo: string; subt: string }[] = [
-  { id: "jurisdiccion", titulo: "I · Jurisdicción", subt: "Art. 76 CPR / 1 COT. Características esenciales." },
-  { id: "competencia", titulo: "II · Competencia", subt: "Absoluta y relativa. Factores. Arts. 45-148 COT." },
-  { id: "accion_pretension", titulo: "III · Acción y pretensión", subt: "Elementos. Clasificación. Doctrina." },
-  { id: "demanda", titulo: "IV · La demanda", subt: "Art. 254 CPC. Requisitos formales." },
-  { id: "emplazamiento", titulo: "V · Emplazamiento", subt: "Notificaciones (40-54) y plazos (258-259)." },
-  { id: "discusion", titulo: "VI · Discusión", subt: "Demanda → contestación → réplica → dúplica. Reconvención." },
-  { id: "conciliacion", titulo: "VII · Conciliación", subt: "Llamado obligatorio (art. 262 CPC)." },
-  { id: "prueba", titulo: "VIII · Prueba", subt: "Auto de prueba (318), medios (341-427), término (328-339)." },
-  { id: "sentencia", titulo: "IX · Sentencia", subt: "Art. 158 CPC. Citación a oír sentencia (432). Requisitos del 170." },
-  { id: "recursos", titulo: "X · Recursos", subt: "Cuadro completo: 181, 182, 187, 188, 196, 203, 766, 767, 810, 545 COT." },
-  { id: "juicio_ejecutivo", titulo: "XI · Juicio ejecutivo", subt: "Arts. 434-478 CPC. Cuadernos y excepciones del 464." },
-  { id: "cautelares", titulo: "XII · Cautelares", subt: "Prejudiciales y precautorias (arts. 273-302)." },
-  { id: "examen", titulo: "XIII · Modo Examen", subt: "Cédula tipo grado con explicación normativa." },
+type ZonaColor = "competencia" | "recursos" | "nulidad" | "ejecutivo" | "prueba" | "oralidad" | "cautelares" | "cosajuzgada" | "notificaciones" | "incidentes";
+
+const MAPA: { id: Mundo; titulo: string; subt: string; zona: ZonaColor; numeral: string; etimo: string }[] = [
+  { id: "jurisdiccion", titulo: "JURISDICCIÓN", subt: "El Estado se concentra en un tribunal. Características esenciales.", zona: "cosajuzgada", numeral: "I", etimo: "Art. 76 CPR · 1 COT" },
+  { id: "competencia", titulo: "COMPETENCIA", subt: "Absoluta y relativa. Materia, fuero, cuantía, territorio. Inhibitoria vs declinatoria.", zona: "competencia", numeral: "II", etimo: "Arts. 45-148, 101-112 COT/CPC" },
+  { id: "accion_pretension", titulo: "ACCIÓN & PRETENSIÓN", subt: "Couture vs Carnelutti. Doctrina pura.", zona: "cosajuzgada", numeral: "III", etimo: "Doctrinario" },
+  { id: "demanda", titulo: "DEMANDA", subt: "Requisitos del art. 254. Ineptitud del libelo 303 N°4.", zona: "competencia", numeral: "IV", etimo: "Art. 254 CPC" },
+  { id: "emplazamiento", titulo: "EMPLAZAMIENTO", subt: "Notificación + plazo. Trámite esencial 795 N°1.", zona: "notificaciones", numeral: "V", etimo: "Arts. 40-54, 258-259" },
+  { id: "discusion", titulo: "DISCUSIÓN", subt: "Demanda → dilatorias → réplica → dúplica → reconvención.", zona: "incidentes", numeral: "VI", etimo: "Arts. 254-318 CPC" },
+  { id: "conciliacion", titulo: "CONCILIACIÓN", subt: "Llamado obligatorio del 262. Acta vale sentencia ejecutoriada.", zona: "prueba", numeral: "VII", etimo: "Arts. 262-268 CPC" },
+  { id: "prueba", titulo: "PRUEBA", subt: "Auto 318, medios 341-427, observaciones 430.", zona: "prueba", numeral: "VIII", etimo: "Arts. 318-433 CPC" },
+  { id: "sentencia", titulo: "SENTENCIA", subt: "158, 162, 170. Citación 432. Plazo 60 días.", zona: "cosajuzgada", numeral: "IX", etimo: "Arts. 158, 162, 170, 432" },
+  { id: "recursos", titulo: "RECURSOS", subt: "181, 182, 187, 188, 196, 203, 766, 767, 810 + 545 COT.", zona: "recursos", numeral: "X", etimo: "Libro III CPC + 545 COT" },
+  { id: "juicio_ejecutivo", titulo: "JUICIO EJECUTIVO", subt: "Coerción. Cuadernos. Excepciones tasadas del 464.", zona: "ejecutivo", numeral: "XI", etimo: "Arts. 434-478 CPC" },
+  { id: "cautelares", titulo: "CAUTELARES", subt: "Prejudiciales + precautorias. Innominadas 298 inc. 2°.", zona: "cautelares", numeral: "XII", etimo: "Arts. 273-302 CPC" },
+  { id: "examen", titulo: "CÉDULA FINAL", subt: "Examen oral simulado. Comisión examinadora.", zona: "oralidad", numeral: "XIII", etimo: "Modo Examen" },
 ];
 
 export default function Juego() {
@@ -33,74 +35,147 @@ export default function Juego() {
   if (!personaje.nombre) return null;
 
   return (
-    <main className="min-h-screen px-6 py-8 max-w-6xl mx-auto">
-      <header className="flex justify-between items-start mb-6 flex-wrap gap-3">
-        <div>
-          <div className="tag mb-2">EXPEDIENTE ABIERTO · CICLO {personaje.cicloProcesal}</div>
-          <h1 className="label-art text-2xl text-neon-blue">{personaje.nombre}</h1>
-          <p className="text-parchment/60 text-xs uppercase tracking-widest">
-            {personaje.rol.replace(/_/g, " ")} · {personaje.origen.replace(/_/g, " ")} · ganados {personaje.expedientesGanados} · perdidos {personaje.expedientesPerdidos}
-          </p>
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          <Link href="/expansion" className="btn" style={{ borderColor: "#a78bfa", color: "#a78bfa" }}>★ Expansión v2.0</Link>
-          <Link href="/oral" className="btn btn-danger">🎤 Modo Oral</Link>
-          <Link href="/codex" className="btn">📜 Codex</Link>
-          <Link href="/inventario" className="btn">📦 Expediente</Link>
-          {finalizado && <Link href="/epilogo" className="btn">📜 Epílogo</Link>}
-          <Link href="/" className="btn btn-danger">⏻ Salir</Link>
+    <main className="min-h-screen px-4 md:px-8 py-6 max-w-7xl mx-auto">
+      {/* HEADER con identidad de litigante */}
+      <header className="mb-8">
+        <div className="flex justify-between items-start flex-wrap gap-4 pb-5 border-b border-zona-competencia/15">
+          <div className="flex items-start gap-4">
+            <Avatar nombre={personaje.nombre} ciclo={personaje.cicloProcesal} />
+            <div>
+              <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-zona-recursos">
+                FOLIO ACTIVO · CICLO PROCESAL {personaje.cicloProcesal}
+              </div>
+              <h1 className="font-display-grave text-2xl md:text-3xl text-doc-aged mt-1">{personaje.nombre}</h1>
+              <p className="text-doc-aged/50 text-[11px] font-mono-terminal mt-1 uppercase tracking-widest">
+                {personaje.rol.replace(/_/g, " ")} · {personaje.origen.replace(/_/g, " ")}
+                <span className="mx-2 text-zona-cautelares">●</span>
+                <span className="text-zona-cautelares">{personaje.expedientesGanados} ganados</span>
+                <span className="mx-2 text-zona-nulidad">●</span>
+                <span className="text-zona-nulidad">{personaje.expedientesPerdidos} perdidos</span>
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2 text-[11px]">
+            <Link href="/expansion" className="btn btn-recurso">★ Expansión</Link>
+            <Link href="/oral" className="btn btn-oral">⚖ Bosses</Link>
+            <Link href="/codex" className="btn">📜 Codex</Link>
+            <Link href="/inventario" className="btn">📦 Expediente</Link>
+            {finalizado && <Link href="/epilogo" className="btn">Epílogo</Link>}
+            <Link href="/" className="btn btn-danger">⏻ Salir</Link>
+          </div>
         </div>
       </header>
 
-      <section className="grid lg:grid-cols-3 gap-4 mb-6">
-        <Stat label="Reputación forense" value={personaje.reputacion} min={-100} max={100} color="violet" />
-        <Stat label="Trauma procesal" value={personaje.trauma} min={0} max={100} color="red" />
-        <Stat label="Nivel económico" value={personaje.nivelEconomico} min={0} max={100} color="blue" />
+      {/* STATS — diseño telemetría */}
+      <section className="grid md:grid-cols-4 gap-3 mb-10">
+        <Telemetria label="Reputación forense" value={personaje.reputacion} min={-100} max={100} zona="recursos" />
+        <Telemetria label="Trauma procesal" value={personaje.trauma} min={0} max={100} zona="nulidad" />
+        <Telemetria label="Nivel económico" value={personaje.nivelEconomico} min={0} max={100} zona="prueba" />
+        <Telemetria label="Logros" value={logros.length} min={0} max={20} zona="cautelares" raw />
       </section>
 
-      <section className="grid md:grid-cols-2 gap-4 mb-8">
-        {MAPA.map((m) => (
-          <motion.div key={m.id} whileHover={{ y: -2 }}>
-            <Link href={`/mundo/${m.id}`} className="block terminal p-5">
-              <div className="label-art text-neon-cyan text-lg">{m.titulo}</div>
-              <div className="text-parchment/60 text-xs mt-1">{m.subt}</div>
-            </Link>
-          </motion.div>
-        ))}
+      {/* MAPA — las instituciones como zonas */}
+      <section className="mb-10">
+        <div className="flex justify-between items-end mb-4">
+          <h2 className="font-display-grave text-xl text-doc-aged tracking-wider">CIUDAD JUDICIAL · 13 ZONAS</h2>
+          <span className="text-[10px] uppercase tracking-widest text-doc-aged/40 font-mono-terminal">
+            haz click para entrar
+          </span>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          {MAPA.map((m, i) => (
+            <motion.div
+              key={m.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04, duration: 0.4 }}
+            >
+              <Link href={`/mundo/${m.id}`} className="block zona-card p-5" style={{ "--zona-color": `var(--zona-${m.zona})` } as React.CSSProperties}>
+                <div className="flex justify-between items-start mb-3">
+                  <span className="font-display-grave text-3xl opacity-50" style={{ color: `var(--zona-${m.zona})` }}>{m.numeral}</span>
+                  <span className="text-[9px] uppercase tracking-widest font-mono-terminal opacity-50" style={{ color: `var(--zona-${m.zona})` }}>
+                    {m.etimo}
+                  </span>
+                </div>
+                <h3 className="font-display-grave text-base text-doc-aged tracking-wider mb-1">{m.titulo}</h3>
+                <p className="text-doc-aged/55 text-xs leading-relaxed font-mono-terminal">{m.subt}</p>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
       </section>
 
+      {/* LOG */}
       <section className="terminal p-4 mb-8">
-        <div className="label-art text-neon-violet text-sm mb-2">Registro del expediente</div>
-        <div className="max-h-40 overflow-y-auto text-xs text-parchment/70 space-y-1">
-          {log.length === 0 && <div className="italic text-parchment/40">Sin actuaciones. La lluvia jurídica espera.</div>}
+        <div className="flex justify-between items-center mb-3">
+          <div className="font-display-grave text-sm text-zona-recursos tracking-widest">REGISTRO DEL EXPEDIENTE</div>
+          <div className="text-[10px] font-mono-terminal text-doc-aged/40 uppercase">{log.length} actuaciones</div>
+        </div>
+        <div className="max-h-44 overflow-y-auto text-xs text-doc-aged/70 space-y-1 font-mono-terminal">
+          {log.length === 0 && <div className="italic text-doc-aged/30">Sin actuaciones. La lluvia jurídica espera.</div>}
           {log.map((l, i) => (
-            <div key={i}>
-              <span className="text-neon-blue">›</span> {l.texto}
-              {l.tag && <span className="ml-2 tag">{l.tag}</span>}
+            <div key={i} className="flex gap-2">
+              <span className="text-zona-competencia">›</span>
+              <span className="flex-1">{l.texto}</span>
+              {l.tag && <span className="tag tag-recursos text-[9px]">{l.tag}</span>}
             </div>
           ))}
         </div>
       </section>
 
+      {/* contadores */}
       <section className="grid md:grid-cols-3 gap-3 text-xs">
-        <div className="terminal p-3"><b className="text-neon-cyan">{expedientesArchivados.length}</b> expedientes archivados</div>
-        <div className="terminal p-3"><b className="text-neon-cyan">{cautelares.length}</b> cautelares decretadas</div>
-        <div className="terminal p-3"><b className="text-neon-cyan">{logros.length}</b> logros</div>
+        <Contador icon="📁" label="Expedientes archivados" value={expedientesArchivados.length} zona="cosajuzgada" />
+        <Contador icon="⚖" label="Cautelares decretadas" value={cautelares.length} zona="cautelares" />
+        <Contador icon="★" label="Logros desbloqueados" value={logros.length} zona="recursos" />
       </section>
     </main>
   );
 }
 
-function Stat({ label, value, min, max, color }: { label: string; value: number; min: number; max: number; color: "violet" | "red" | "blue" }) {
-  const pct = ((value - min) / (max - min)) * 100;
-  const c = color === "violet" ? "bg-neon-violet" : color === "red" ? "bg-neon-red" : "bg-neon-blue";
+function Avatar({ nombre, ciclo }: { nombre: string; ciclo: number }) {
+  const inicial = (nombre || "?").charAt(0).toUpperCase();
   return (
-    <div className="terminal p-4">
-      <div className="flex justify-between text-xs uppercase tracking-widest mb-2">
-        <span>{label}</span><span className="text-parchment/70">{value}</span>
+    <div className="relative w-14 h-14 shrink-0">
+      <div className="absolute inset-0 border border-zona-competencia/40 rotate-45 bg-bg-file/60" />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="font-display-grave text-2xl text-zona-competencia">{inicial}</span>
       </div>
-      <div className="h-2 bg-ink-700">
-        <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} className={`h-full ${c}`} />
+      <div className="absolute -bottom-1 -right-1 bg-bg-deep border border-zona-recursos/50 text-zona-recursos text-[9px] px-1 font-mono-terminal">
+        C{ciclo}
+      </div>
+    </div>
+  );
+}
+
+function Telemetria({ label, value, min, max, zona, raw }: { label: string; value: number; min: number; max: number; zona: ZonaColor; raw?: boolean }) {
+  const pct = ((value - min) / (max - min)) * 100;
+  return (
+    <div className="zona-card p-3" style={{ "--zona-color": `var(--zona-${zona})` } as React.CSSProperties}>
+      <div className="flex justify-between text-[10px] uppercase tracking-widest font-mono-terminal mb-2">
+        <span className="text-doc-aged/60">{label}</span>
+        <span style={{ color: `var(--zona-${zona})` }}>{raw ? value : value}</span>
+      </div>
+      <div className="h-1.5 bg-bg-deep border border-bg-steel/40">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${Math.max(0, Math.min(100, pct))}%` }}
+          transition={{ duration: 0.8 }}
+          className="h-full"
+          style={{ background: `linear-gradient(90deg, var(--zona-${zona}), color-mix(in srgb, var(--zona-${zona}) 50%, white))` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function Contador({ icon, label, value, zona }: { icon: string; label: string; value: number; zona: ZonaColor }) {
+  return (
+    <div className="zona-card p-4 flex items-center gap-3" style={{ "--zona-color": `var(--zona-${zona})` } as React.CSSProperties}>
+      <span className="text-2xl">{icon}</span>
+      <div>
+        <div className="font-display-grave text-2xl" style={{ color: `var(--zona-${zona})` }}>{value}</div>
+        <div className="text-[10px] uppercase tracking-widest text-doc-aged/50 font-mono-terminal">{label}</div>
       </div>
     </div>
   );

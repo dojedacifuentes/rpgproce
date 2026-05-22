@@ -4,7 +4,9 @@ import { useState } from "react";
 import { BOSSES } from "@/data/bosses";
 import type { BossId } from "@/types/expansion";
 import InterrogacionOral from "@/components/InterrogacionOral";
+import { AvatarBoss } from "@/components/AvataresJuridicos";
 import { useGame } from "@/store/useGame";
+import { motion } from "framer-motion";
 
 export default function OralPage() {
   const game = useGame();
@@ -13,10 +15,12 @@ export default function OralPage() {
 
   if (bossActivo) {
     return (
-      <main className="min-h-screen px-6 py-8 max-w-4xl mx-auto">
+      <main className="min-h-screen px-4 md:px-8 py-6 max-w-5xl mx-auto">
         <div className="flex justify-between mb-4">
-          <button className="btn" onClick={() => setBossActivo(null)}>◂ Retirarse</button>
-          <div className="tag tag-red">MODO INTERROGACIÓN ORAL</div>
+          <button className="btn btn-danger" onClick={() => setBossActivo(null)}>◂ Retirarse</button>
+          <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-zona-oralidad animate-flicker">
+            ANFITEATRO TRIBUNALICIO · TRANSMISIÓN ACTIVA
+          </div>
         </div>
         <InterrogacionOral bossId={bossActivo} onFin={() => setBossActivo(null)} />
       </main>
@@ -24,51 +28,84 @@ export default function OralPage() {
   }
 
   return (
-    <main className="min-h-screen px-6 py-8 max-w-5xl mx-auto">
-      <header className="flex justify-between items-center mb-6">
-        <Link href="/juego" className="btn">◂ Mapa</Link>
-        <div className="tag tag-red">MODO INTERROGACIÓN ORAL · BOSSES</div>
+    <main className="min-h-screen px-4 md:px-8 py-6 max-w-7xl mx-auto">
+      <header className="flex justify-between items-center mb-8">
+        <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
+        <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-zona-oralidad">
+          COMISIÓN EXAMINADORA · 6 INSTANCIAS
+        </div>
       </header>
 
-      <h1 className="label-art text-3xl text-neon-blue mb-2">Comisión examinadora</h1>
-      <p className="text-parchment/60 text-sm mb-6">
-        Seis arquetipos del examen de grado chileno. Cada uno ataca con cadenas: pregunta directa → repregunta → trampa → derivación.
-        Acertar daña al boss; fallar consume tu salud mental. Derrotar a los seis desbloquea el Modo Pesadilla.
-      </p>
+      <div className="mb-10">
+        <div className="font-mono-terminal text-[10px] uppercase tracking-[.4em] text-zona-recursos mb-3">
+          ANFITEATRO JUDICIAL CYBERPUNK
+        </div>
+        <h1 className="font-display-grave text-4xl md:text-5xl text-doc-aged mb-3 glitch-text-oral">
+          La Comisión te espera
+        </h1>
+        <p className="text-doc-aged/60 text-sm font-mono-terminal max-w-2xl">
+          Seis arquetipos del examen de grado chileno. Cada uno ataca con cadenas:
+          <span className="text-zona-recursos"> pregunta directa</span> →
+          <span className="text-zona-prueba"> repregunta</span> →
+          <span className="text-zona-nulidad"> trampa</span> →
+          <span className="text-zona-cautelares"> derivación</span>.
+          <br />Aciertos dañan al boss. Fallos consumen tu salud mental.
+        </p>
+      </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        {BOSSES.map((b) => {
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        {BOSSES.map((b, i) => {
           const vencido = derrotados.includes(b.id);
           return (
-            <button
+            <motion.button
               key={b.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08 }}
               onClick={() => setBossActivo(b.id)}
-              className={`terminal p-5 text-left transition hover:bg-neon-blue/5 ${vencido ? "border-neon-blue" : ""}`}
+              className={`zona-card p-4 text-left transition-all overflow-hidden ${vencido ? "" : ""}`}
+              style={{ "--zona-color": "var(--zona-oralidad)" } as React.CSSProperties}
             >
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="tag tag-violet">{b.rama.toUpperCase()}</div>
-                  <h2 className="label-art text-neon-cyan text-lg mt-1">{b.nombre}</h2>
+              <div className="flex gap-4 items-start">
+                <div className="shrink-0">
+                  <AvatarBoss bossId={b.id} size={90} />
                 </div>
-                {vencido && <div className="tag tag-amber">★ VENCIDO</div>}
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-start gap-2 mb-2">
+                    <span className="tag tag-oralidad text-[9px]">{b.rama}</span>
+                    {vencido && <span className="tag tag-cautelar text-[9px]">★ VENCIDO</span>}
+                  </div>
+                  <h3 className="font-display-grave text-lg text-doc-aged tracking-wider leading-tight mb-2">{b.nombre}</h3>
+                  <p className="text-doc-aged/60 text-[11px] font-serif-juridica italic line-clamp-3">{b.arquetipo}</p>
+                  <div className="flex gap-2 mt-3 text-[9px] font-mono-terminal">
+                    <span className="text-zona-nulidad">♥ {b.saludInicial}</span>
+                    <span className="text-zona-competencia">◇ {b.saludJugador}</span>
+                    <span className="text-zona-recursos">{b.ataques.length} ataques</span>
+                  </div>
+                </div>
               </div>
-              <p className="text-parchment/70 text-xs italic mt-2">{b.arquetipo}</p>
-              <p className="text-parchment/60 text-sm mt-2">{b.descripcion}</p>
-              <div className="mt-3 text-[10px] grid grid-cols-2 gap-2">
-                <div>Salud boss: <b className="text-neon-red">{b.saludInicial}</b></div>
-                <div>Salud jugador: <b className="text-neon-blue">{b.saludJugador}</b></div>
-              </div>
-            </button>
+            </motion.button>
           );
         })}
       </div>
 
-      <div className="mt-8 terminal p-4">
-        <div className="label-art text-neon-violet text-sm mb-2">Progreso comisión</div>
-        <div className="text-xs text-parchment/70">Bosses derrotados: <b className="text-neon-cyan">{derrotados.length}</b> / {BOSSES.length}</div>
-        {derrotados.length === BOSSES.length && (
-          <p className="text-neon-amber text-xs mt-2 glitch-text">★ COMISIÓN VENCIDA. Modo Pesadilla desbloqueado.</p>
-        )}
+      <div className="terminal p-5">
+        <div className="flex justify-between items-center">
+          <div>
+            <div className="font-mono-terminal text-[10px] uppercase tracking-widest text-zona-recursos">Progreso comisión</div>
+            <div className="font-display-grave text-2xl text-doc-aged">
+              {derrotados.length} <span className="text-doc-aged/40">/ {BOSSES.length}</span>
+            </div>
+          </div>
+          {derrotados.length === BOSSES.length && (
+            <div className="text-zona-oralidad text-sm font-display-grave glitch-text-oral animate-flicker">
+              ★ COMISIÓN VENCIDA · MODO PESADILLA DESBLOQUEADO
+            </div>
+          )}
+        </div>
+        <div className="h-1 bg-bg-deep border border-bg-steel mt-2">
+          <div className="h-full" style={{ width: `${(derrotados.length / BOSSES.length) * 100}%`, background: "var(--zona-oralidad)" }} />
+        </div>
       </div>
     </main>
   );

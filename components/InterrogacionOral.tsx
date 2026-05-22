@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useGame } from "@/store/useGame";
 import { BOSSES } from "@/data/bosses";
 import type { Boss, BossId } from "@/types/expansion";
+import { AvatarBoss } from "@/components/AvataresJuridicos";
 
 export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; onFin?: () => void }) {
   const game = useGame();
@@ -82,31 +83,34 @@ export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; o
 
   return (
     <div className="space-y-4">
-      <div className="terminal p-5">
-        <div className="flex justify-between items-start flex-wrap gap-2">
-          <div>
-            <div className="tag tag-violet mb-2">BOSS · {boss.rama.toUpperCase()}</div>
-            <h2 className="label-art text-2xl text-neon-red">{boss.nombre}</h2>
-            <p className="text-parchment/60 text-xs mt-1 italic">{boss.arquetipo}</p>
+      <div className="zona-card p-5" style={{ "--zona-color": "var(--zona-oralidad)" } as React.CSSProperties}>
+        <div className="flex gap-5 flex-wrap items-start">
+          <div className="shrink-0">
+            <AvatarBoss bossId={boss.id} size={140} />
           </div>
-          <div className="grid grid-cols-2 gap-3 text-xs min-w-[280px]">
+          <div className="flex-1 min-w-[200px]">
+            <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-zona-oralidad mb-2">BOSS · {boss.rama.toUpperCase()}</div>
+            <h2 className="font-display-grave text-3xl text-doc-aged">{boss.nombre}</h2>
+            <p className="text-doc-aged/60 text-xs mt-2 italic font-serif-juridica">{boss.arquetipo}</p>
+            <p className="text-doc-aged/50 text-xs mt-2 font-mono-terminal">{boss.ambientacion}</p>
+          </div>
+          <div className="grid gap-3 text-xs min-w-[260px]">
             <div>
-              <div className="text-neon-red mb-1">Salud {boss.nombre.split(" ")[0]}</div>
-              <div className="h-2 bg-ink-700 w-full">
-                <motion.div animate={{ width: `${(saludBoss / boss.saludInicial) * 100}%` }} className="h-full bg-neon-red" />
+              <div className="text-zona-nulidad mb-1 font-mono-terminal text-[10px] uppercase tracking-widest">Salud del boss</div>
+              <div className="h-2 bg-bg-deep border border-bg-steel">
+                <motion.div animate={{ width: `${(saludBoss / boss.saludInicial) * 100}%` }} className="h-full" style={{ background: "var(--zona-nulidad)" }} />
               </div>
-              <div className="text-right">{saludBoss}/{boss.saludInicial}</div>
+              <div className="text-right text-doc-aged/60 font-mono-terminal text-[10px]">{saludBoss}/{boss.saludInicial}</div>
             </div>
             <div>
-              <div className="text-neon-blue mb-1">Salud mental</div>
-              <div className="h-2 bg-ink-700 w-full">
-                <motion.div animate={{ width: `${(saludJugador / boss.saludJugador) * 100}%` }} className="h-full bg-neon-blue" />
+              <div className="text-zona-competencia mb-1 font-mono-terminal text-[10px] uppercase tracking-widest">Salud mental</div>
+              <div className="h-2 bg-bg-deep border border-bg-steel">
+                <motion.div animate={{ width: `${(saludJugador / boss.saludJugador) * 100}%` }} className="h-full" style={{ background: "var(--zona-competencia)" }} />
               </div>
-              <div className="text-right">{saludJugador}/{boss.saludJugador}</div>
+              <div className="text-right text-doc-aged/60 font-mono-terminal text-[10px]">{saludJugador}/{boss.saludJugador}</div>
             </div>
           </div>
         </div>
-        <p className="text-parchment/70 text-sm mt-3 italic">{boss.ambientacion}</p>
       </div>
 
       <AnimatePresence mode="wait">
