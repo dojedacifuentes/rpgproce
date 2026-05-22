@@ -13,6 +13,7 @@ import SalaSentencia from "@/components/SalaSentencia";
 import JuicioEjecutivoCompleto from "@/components/JuicioEjecutivoCompleto";
 import GrimorioSkills from "@/components/GrimorioSkills";
 import ExamenGrado from "@/components/ExamenGrado";
+import SistemaCartas from "@/components/SistemaCartas";
 
 type Modulo =
   | "menu"
@@ -27,7 +28,8 @@ type Modulo =
   | "sentencia"
   | "ejecutivo_full"
   | "grimorio"
-  | "examen";
+  | "examen"
+  | "cartas";
 
 const MODULOS: {
   id: Modulo;
@@ -63,6 +65,15 @@ const MODULOS: {
     descripcion: "11 habilidades procesales que se desbloquean al cumplir logros. Escudo del 768, Preclusión Inversa, Blindaje del 44, Casación de Oficio Simulada, Embargo Express, Cosa Juzgada Aparente y más.",
     zona: "recursos",
     numeral: "GRI.01",
+    nuevo: true,
+  },
+  {
+    id: "cartas",
+    titulo: "Sistema de Cartas",
+    subtitulo: "EXCEPCIONES · RECURSOS · PRUEBAS",
+    descripcion: "20 tarjetas jurídicas representando excepciones ejecutivas, recursos, medios de prueba, incidentes y estrategias. Cada carta tiene efecto, riesgo y humor negro normativo. Agregalas a tu mano y juégalas tácticamente.",
+    zona: "nulidad",
+    numeral: "CAR.01",
     nuevo: true,
   },
   {
@@ -152,6 +163,7 @@ export default function ExpansionHub() {
         {m === "ejecutivo_full" && <JuicioEjecutivoCompleto />}
         {m === "examen" && <ExamenGrado />}
         {m === "grimorio" && <GrimorioSkills />}
+        {m === "cartas" && <SistemaCartas />}
         {m === "arcade" && <ArcadeClasificador />}
         {m === "vof" && <SpeedrunVoF />}
         {m === "sentencia" && <SalaSentencia />}
@@ -170,7 +182,7 @@ export default function ExpansionHub() {
       <header className="flex justify-between mb-8 flex-wrap gap-2">
         <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
         <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-zona-recursos">
-          HUB EXPANSIÓN v3.3 · {MODULOS.length} SISTEMAS
+          HUB EXPANSIÓN v4.0 · {MODULOS.length + 1} SISTEMAS (incl. MODO ORAL)
         </div>
       </header>
 
