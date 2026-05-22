@@ -8,6 +8,7 @@ const TODOS = [...BOSSES, ...BOSSES_EXTRA];
 import type { Boss, BossId } from "@/types/expansion";
 import { AvatarBoss } from "@/components/AvataresJuridicos";
 import { sfx } from "@/lib/audio";
+import { fx } from "@/lib/fx";
 import { shuffleOptions } from "@/lib/shuffleOptions";
 
 // ============================================================================
@@ -107,6 +108,7 @@ export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; o
 
     if (originalOp.correcta) {
       sfx.oralCorrecta();
+      fx.reward();
       const nuevoSaludBoss = Math.max(0, saludBoss - dmg);
       setSaludBoss(nuevoSaludBoss);
       game.pushLog(`✓ "${boss!.nombre}": ${originalOp.art}`, "ORAL");
@@ -116,6 +118,9 @@ export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; o
         const monedas = 40 + (phase - 1) * 10;
         setXpGanado(xp);
         setMonedasGanadas(monedas);
+        fx.success();
+        fx.xpGain(xp);
+        fx.coinGain(monedas);
         setTerminado("victoria");
         game.gainXp(xp);
         game.gainMonedas(monedas);
@@ -132,11 +137,13 @@ export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; o
       }
     } else {
       sfx.warning();
+      fx.shake();
       const nuevoSaludJugador = Math.max(0, saludJugador - dmg);
       setSaludJugador(nuevoSaludJugador);
       game.ajustarTrauma(3);
       game.pushLog(`✗ "${boss!.nombre}" — ${originalOp.explicacion}`, "ORAL");
       if (nuevoSaludJugador <= 0) {
+        fx.danger();
         game.ajustarTrauma(10);
         setTerminado("derrota");
       }

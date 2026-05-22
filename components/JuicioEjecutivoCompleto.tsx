@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGame } from "@/store/useGame";
 import { sfx } from "@/lib/audio";
+import { fx } from "@/lib/fx";
 import { EJECUTIVO_VARIANTES, type EjecutivoVariante } from "@/data/ejecutivo-variantes";
 
 // ============================================================================
@@ -156,12 +157,16 @@ export default function JuicioEjecutivoCompleto() {
     if (estado.fallo === "favorable") {
       const xp = 80 + dif * 5;
       const monedas = 30 + dif * 3;
+      fx.success();
+      fx.xpGain(xp);
+      fx.coinGain(monedas);
       game.gainXp(xp);
       game.gainMonedas(monedas);
       game.ajustarReputacion(15);
       game.pushLog(`Ejecutivo "${variante?.titulo ?? "caso"}" — ACOGIDO (+${xp} XP, +${monedas}🪙)`, "ejecutivo");
       setRewardDisplay({ xp, monedas, rep: 15 });
     } else if (estado.fallo === "rechazada") {
+      fx.danger();
       game.ajustarTrauma(8);
       game.ajustarReputacion(-5);
       game.pushLog(`Ejecutivo "${variante?.titulo ?? "caso"}" — RECHAZADO`, "fracaso");
@@ -371,6 +376,7 @@ export default function JuicioEjecutivoCompleto() {
                     setFeedback("El título no es ejecutivo. Tu demanda será rechazada in limine. -10 reputación.");
                     setEstado((s) => ({ ...s, reputacion: s.reputacion - 10, vida: s.vida - 20 }));
                     sfx.inadmisible();
+                    fx.glitch();
                     return;
                   }
                   // Check prescripcion trap
@@ -378,6 +384,7 @@ export default function JuicioEjecutivoCompleto() {
                     setFeedback("⚠ Trampa: pagaré/instrumento con más de 3 años. Tribunal puede declarar prescripción de oficio. -15 vida.");
                     setEstado((s) => ({ ...s, vida: s.vida - 15, reputacion: s.reputacion - 5 }));
                     sfx.glitch();
+                    fx.warning();
                   }
                   setEstado((s) => ({ ...s, tituloValido: true }));
                   if (t.requierePrep) avanzar("preparatoria");
@@ -433,6 +440,7 @@ export default function JuicioEjecutivoCompleto() {
               art="Trampa"
               onClick={() => {
                 sfx.inadmisible();
+                fx.glitch();
                 setEstado((s) => ({ ...s, vida: s.vida - 25, reputacion: s.reputacion - 5 }));
                 setFeedback("El mandamiento será rechazado por falta de título preparado. -25 vida. -5 reputación.");
               }}
@@ -517,6 +525,7 @@ export default function JuicioEjecutivoCompleto() {
                   art="Art. 44 CPC (trampa)"
                   onClick={() => {
                     sfx.inadmisible();
+                    fx.shake();
                     setEstado((s) => ({ ...s, vida: s.vida - 30, reputacion: s.reputacion - 10 }));
                     setFeedback("Nulidad de notificación. Se requieren DOS intentos fallidos antes de publicación. -30 vida.");
                   }}
@@ -557,6 +566,7 @@ export default function JuicioEjecutivoCompleto() {
                   onClick={() => {
                     if (b.inembargable) {
                       sfx.glitch();
+                      fx.shake();
                       setFeedback(
                         `Bien INEMBARGABLE (${(b as { art?: string }).art ?? "art. 445"}). Tu embargo será nulo respecto de este bien. La contraparte ya está redactando incidente.`
                       );

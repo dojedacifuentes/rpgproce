@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/audio";
+import { fx } from "@/lib/fx";
 import { useGame } from "@/store/useGame";
 
 // Fisher-Yates shuffle
@@ -222,9 +223,11 @@ export default function AtaqueRepreguntas() {
 
     if (es_correcta) {
       sfx.oralCorrecta();
+      fx.reward();
       setRespuestasCorrectas((r) => r + 1);
     } else {
       sfx.warning();
+      fx.shake();
     }
 
     setRespuestasTotales((r) => r + 1);

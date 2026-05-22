@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGame } from "@/store/useGame";
 import { sfx } from "@/lib/audio";
+import { fx } from "@/lib/fx";
 import { casosAleatoriosVoF, type PreguntaVoF } from "@/data/preguntas-vof";
 
 // ============================================================================
@@ -64,10 +65,12 @@ export default function SpeedrunVoF() {
     const ok = r === actual.respuesta;
     if (ok) {
       sfx.combo(combo);
+      fx.reward();
       setAciertos((a) => a + 1);
       setCombo((c) => { const n = c + 1; setMaxCombo((m) => Math.max(m, n)); return n; });
     } else {
       sfx.glitch();
+      fx.shake();
       setFallos((f) => f + 1);
       setCombo(0);
       setGlitchPantalla(true);

@@ -3,6 +3,7 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGame } from "@/store/useGame";
 import { shuffleOptions } from "@/lib/shuffleOptions";
+import { fx } from "@/lib/fx";
 
 // ============================================================================
 // CLASIFICADOR ARCADE — minijuego rápido con combo/multiplicador/streak
@@ -302,6 +303,7 @@ export default function ArcadeClasificador() {
     const op = cuestionActual.opciones[idx];
     setRespuestaIdx(idx);
     if (op.correcta) {
+      fx.reward();
       const multiplicador = 1 + Math.floor(combo / 3); // x1, x2 a las 3, x3 a las 6, ...
       const bonusTiempo = Math.round(tiempo * 10); // bonus por velocidad
       const puntos = 100 * multiplicador + bonusTiempo;
@@ -314,6 +316,7 @@ export default function ArcadeClasificador() {
       setStreak((s) => s + 1);
       game.ajustarAtributo("conocimiento_procesal", 0);
     } else {
+      fx.shake();
       setCombo(0);
       setStreak(0);
     }
@@ -339,8 +342,11 @@ export default function ArcadeClasificador() {
     const rank = puntaje >= 4000 ? "S" : puntaje >= 2500 ? "A" : puntaje >= 1500 ? "B" : puntaje >= 800 ? "C" : "D";
     game.pushLog(`Arcade completado: ${puntaje} pts · combo x${maxCombo} · rank ${rank}`, "ARCADE");
     if (rank === "S" || rank === "A") {
+      fx.success();
       game.desbloquearLogro({ id: `arcade_${rank.toLowerCase()}`, titulo: `Arcade Rank ${rank}`, descripcion: `${puntaje} pts en clasificador arcade`, articulo: "—", desbloqueado: true });
       game.ajustarReputacion(rank === "S" ? 10 : 5);
+    } else if (rank === "D") {
+      fx.danger();
     }
   }
 
