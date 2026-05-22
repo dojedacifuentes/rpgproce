@@ -1,0 +1,438 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   DESIGN TOKENS — RPG PROCE v3.0
+   "Una simulación distópica del Derecho Procesal chileno"
+   ============================================================================ */
+:root {
+  color-scheme: dark;
+  /* identidad cromática */
+  --zona-competencia: #4BE7FF;
+  --zona-recursos: #8A5CFF;
+  --zona-nulidad: #D94A4A;
+  --zona-ejecutivo: #FF8A3D;
+  --zona-prueba: #D7B46A;
+  --zona-oralidad: #FF4FCF;
+  --zona-cautelares: #58F5B0;
+  --zona-cosajuzgada: #F2F2F0;
+  --zona-notificaciones: #7AD4E6;
+  --zona-incidentes: #E68A4B;
+  /* fondos */
+  --bg-deep: #06070B;
+  --bg-oil: #0A1220;
+  --bg-file: #131720;
+  /* tipografía */
+  --font-serif: "Cormorant Garamond", "IM Fell English", Georgia, serif;
+  --font-display: "Cinzel", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+html, body { background: var(--bg-deep); color: #E8DFC5; }
+
+body {
+  font-family: var(--font-mono);
+  background-image:
+    /* iluminación ambiental decadente */
+    radial-gradient(1400px 700px at 15% -10%, rgba(75,231,255,.04), transparent 60%),
+    radial-gradient(900px 600px at 90% 110%, rgba(138,92,255,.04), transparent 60%),
+    radial-gradient(600px 400px at 50% 50%, rgba(215,180,106,.015), transparent 70%),
+    /* base degradada */
+    linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-oil) 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ============================================================================
+   ATMÓSFERA — scanlines, ruido, viñeta
+   ============================================================================ */
+.crt::before {
+  content: "";
+  position: fixed; inset: 0; pointer-events: none; z-index: 50;
+  background: repeating-linear-gradient(180deg, rgba(255,255,255,.015) 0 1px, transparent 1px 3px);
+  mix-blend-mode: overlay;
+}
+.crt::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 51;
+  background:
+    radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.6) 100%),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" /><feColorMatrix values="0 0 0 0 0.85 0 0 0 0 0.83 0 0 0 0 0.77 0 0 0 0.03 0"/></filter><rect width="200" height="200" filter="url(%23n)"/></svg>');
+  background-blend-mode: multiply;
+}
+
+/* ============================================================================
+   TIPOGRAFÍA
+   ============================================================================ */
+.font-serif-juridica { font-family: var(--font-serif); font-style: italic; letter-spacing: .01em; }
+.font-display-grave { font-family: var(--font-display); letter-spacing: .14em; }
+.font-mono-terminal { font-family: var(--font-mono); letter-spacing: .02em; }
+
+.label-art { font-family: var(--font-display); letter-spacing: .18em; }
+
+/* ============================================================================
+   COMPONENTES BASE — terminales, paneles, documentos
+   ============================================================================ */
+.terminal {
+  border: 1px solid rgba(75,231,255,.18);
+  background:
+    linear-gradient(180deg, rgba(19,23,32,.85), rgba(10,18,32,.92)),
+    radial-gradient(800px 200px at 50% 0%, rgba(75,231,255,.04), transparent 60%);
+  box-shadow:
+    0 0 24px rgba(75,231,255,.07),
+    inset 0 1px 0 rgba(255,255,255,.04),
+    inset 0 -1px 0 rgba(0,0,0,.4);
+  position: relative;
+}
+.terminal::before {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(180deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px);
+  mix-blend-mode: overlay;
+  z-index: 1;
+}
+.terminal > * { position: relative; z-index: 2; }
+
+/* Panel holográfico — para info crítica */
+.holo {
+  border: 1px solid rgba(138,92,255,.25);
+  background:
+    linear-gradient(180deg, rgba(24,30,52,.65), rgba(13,16,28,.9));
+  box-shadow:
+    0 0 40px rgba(138,92,255,.1),
+    inset 0 1px 0 rgba(255,255,255,.05);
+  backdrop-filter: blur(6px);
+}
+
+/* ============================================================================
+   BOTONES
+   ============================================================================ */
+.btn {
+  @apply px-4 py-2 border uppercase tracking-widest text-xs;
+  font-family: var(--font-mono);
+  border-color: rgba(75,231,255,.35);
+  color: var(--zona-competencia);
+  background: rgba(75,231,255,.03);
+  transition: all .2s ease;
+  position: relative;
+}
+.btn:hover {
+  background: rgba(75,231,255,.12);
+  box-shadow: 0 0 18px rgba(75,231,255,.3);
+  border-color: rgba(75,231,255,.6);
+}
+.btn-danger { color: var(--zona-nulidad); border-color: rgba(217,74,74,.45); background: rgba(217,74,74,.04); }
+.btn-danger:hover { background: rgba(217,74,74,.13); box-shadow: 0 0 18px rgba(217,74,74,.35); border-color: rgba(217,74,74,.7); }
+.btn-recurso { color: var(--zona-recursos); border-color: rgba(138,92,255,.45); background: rgba(138,92,255,.04); }
+.btn-recurso:hover { background: rgba(138,92,255,.13); box-shadow: 0 0 18px rgba(138,92,255,.35); border-color: rgba(138,92,255,.7); }
+.btn-oral { color: var(--zona-oralidad); border-color: rgba(255,79,207,.45); background: rgba(255,79,207,.04); }
+.btn-oral:hover { background: rgba(255,79,207,.15); box-shadow: 0 0 18px rgba(255,79,207,.4); }
+.btn-cautelar { color: var(--zona-cautelares); border-color: rgba(88,245,176,.4); background: rgba(88,245,176,.04); }
+.btn-cautelar:hover { background: rgba(88,245,176,.13); box-shadow: 0 0 18px rgba(88,245,176,.35); }
+
+/* ============================================================================
+   ETIQUETAS POR ZONA
+   ============================================================================ */
+.tag {
+  @apply inline-block text-[10px] px-2 py-0.5 uppercase tracking-widest border;
+  font-family: var(--font-mono);
+  border-color: rgba(75,231,255,.4);
+  color: var(--zona-competencia);
+  background: rgba(75,231,255,.03);
+}
+.tag-competencia { border-color: rgba(75,231,255,.5); color: var(--zona-competencia); background: rgba(75,231,255,.04); }
+.tag-recursos { border-color: rgba(138,92,255,.5); color: var(--zona-recursos); background: rgba(138,92,255,.04); }
+.tag-nulidad { border-color: rgba(217,74,74,.55); color: var(--zona-nulidad); background: rgba(217,74,74,.05); }
+.tag-ejecutivo { border-color: rgba(255,138,61,.55); color: var(--zona-ejecutivo); background: rgba(255,138,61,.05); }
+.tag-prueba { border-color: rgba(215,180,106,.55); color: var(--zona-prueba); background: rgba(215,180,106,.05); }
+.tag-oralidad { border-color: rgba(255,79,207,.55); color: var(--zona-oralidad); background: rgba(255,79,207,.05); }
+.tag-cautelar { border-color: rgba(88,245,176,.55); color: var(--zona-cautelares); background: rgba(88,245,176,.05); }
+.tag-cosajuzgada { border-color: rgba(242,242,240,.45); color: var(--zona-cosajuzgada); background: rgba(242,242,240,.04); }
+.tag-incidente { border-color: rgba(230,138,75,.55); color: var(--zona-incidentes); background: rgba(230,138,75,.05); }
+/* compat con v1/v2 */
+.tag-red { @apply tag-nulidad; }
+.tag-amber { @apply tag-prueba; }
+.tag-violet { @apply tag-recursos; }
+
+/* ============================================================================
+   DIVISORES Y EFECTOS
+   ============================================================================ */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(75,231,255,.4), rgba(138,92,255,.4), transparent);
+}
+
+.glitch-text {
+  position: relative;
+  text-shadow: 0 0 6px rgba(75,231,255,.7), 0 0 18px rgba(75,231,255,.2);
+}
+.glitch-text-nulidad { text-shadow: 0 0 6px rgba(217,74,74,.7), 0 0 18px rgba(217,74,74,.25); }
+.glitch-text-oral { text-shadow: 0 0 6px rgba(255,79,207,.7), 0 0 18px rgba(255,79,207,.25); }
+.glitch-text-casacion { text-shadow: 0 0 6px rgba(138,92,255,.8), 0 0 22px rgba(138,92,255,.3); }
+
+/* ============================================================================
+   DOCUMENTO ENVEJECIDO — para epílogo, sentencias
+   ============================================================================ */
+.doc {
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.02) 0 24px, transparent 24px 25px),
+    radial-gradient(120% 90% at 50% 0%, #F2EAD0 0%, #E8DFC5 60%, #D6CAA2 100%);
+  color: #1a1614;
+  border: 1px solid #B5A678;
+  box-shadow:
+    0 30px 60px -20px rgba(0,0,0,.7),
+    0 8px 24px -8px rgba(0,0,0,.5),
+    inset 0 0 80px rgba(120,90,40,.08);
+  font-family: var(--font-serif);
+  position: relative;
+}
+.doc::after {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="2"/><feColorMatrix values="0 0 0 0 0.15 0 0 0 0 0.12 0 0 0 0 0.08 0 0 0 0.08 0"/></filter><rect width="200" height="200" filter="url(%23n)"/></svg>');
+  mix-blend-mode: multiply;
+  opacity: .5;
+}
+
+/* ============================================================================
+   ZONAS — visual identity por institución
+   ============================================================================ */
+.zona-card {
+  position: relative;
+  border: 1px solid var(--zona-color, rgba(75,231,255,.25));
+  background:
+    linear-gradient(180deg, rgba(19,23,32,.7), rgba(10,18,32,.85)),
+    radial-gradient(80% 100% at 0% 0%, color-mix(in srgb, var(--zona-color, #4BE7FF) 8%, transparent), transparent 60%);
+  box-shadow:
+    0 0 24px color-mix(in srgb, var(--zona-color, #4BE7FF) 8%, transparent),
+    inset 0 1px 0 rgba(255,255,255,.04);
+  transition: all .3s ease;
+  overflow: hidden;
+}
+.zona-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 40px color-mix(in srgb, var(--zona-color, #4BE7FF) 15%, transparent),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  border-color: var(--zona-color, #4BE7FF);
+}
+.zona-card::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--zona-color, #4BE7FF), transparent);
+  opacity: .6;
+}
+
+/* ============================================================================
+   BARRAS Y MEDIDORES
+   ============================================================================ */
+.barfill { background: linear-gradient(90deg, var(--zona-competencia), var(--zona-recursos)); }
+.barfill-zona { background: linear-gradient(90deg, var(--zona-color, var(--zona-competencia)), color-mix(in srgb, var(--zona-color, #4BE7FF) 60%, white)); }
+
+/* ============================================================================
+   EXPEDIENTE VIVO — glitch progresivo según salud
+   ============================================================================ */
+.expediente-sano { filter: none; }
+.expediente-degradado { filter: hue-rotate(-5deg) contrast(1.05); animation: flicker 4s infinite; }
+.expediente-corrupto {
+  filter: hue-rotate(-15deg) contrast(1.15) saturate(0.85);
+  animation: glitch .6s steps(3) infinite, flicker 3s infinite;
+}
+.expediente-letal {
+  filter: hue-rotate(-25deg) contrast(1.3) saturate(0.7);
+  animation: glitch .35s steps(2) infinite;
+}
+
+/* ============================================================================
+   ARTÍCULO ORBITAL — para citas que flotan alrededor de bosses
+   ============================================================================ */
+.articulo-orbit {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--zona-recursos);
+  opacity: .65;
+  animation: orbit 14s linear infinite;
+}
+
+/* ============================================================================
+   TRANSICIONES SUAVES POR DEFECTO
+   ============================================================================ */
+a, button, .zona-card {
+  transition: all .2s ease-out;
+}
+
+/* Loader: terminal cargando */
+.term-loader::after {
+  content: "▮";
+  margin-left: 2px;
+  animation: flicker 1s steps(2) infinite;
+}
+
+/* Inputs de terminal */
+input, select, textarea {
+  font-family: var(--font-mono);
+}
+input:focus, select:focus, textarea:focus {
+  outline: 1px solid var(--zona-competencia);
+  outline-offset: 1px;
+}
+
+/* Scrollbar discreto */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: rgba(75,231,255,.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(75,231,255,.4); }
+
+/* ============================================================================
+   v3.1 — INTENSIFICACIÓN ATMOSFÉRICA
+   ============================================================================ */
+
+/* Selection — texto seleccionado en cyan eléctrico */
+::selection { background: rgba(75,231,255,.35); color: #FFFFFF; }
+
+/* Caret style — cursor parpadeante en inputs */
+@keyframes caretBlink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+input, textarea { caret-color: var(--zona-competencia); }
+
+/* Animación: zoom holográfico (entrada) */
+@keyframes holoEnter {
+  0% { opacity: 0; transform: scale(0.96); filter: blur(4px); }
+  100% { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+.holo-enter { animation: holoEnter .5s ease-out forwards; }
+
+/* Animación: glitch frame (1 frame de error visual) */
+@keyframes glitchFrame {
+  0%, 100% { transform: translate(0); filter: none; }
+  20% { transform: translate(-2px, 1px); filter: hue-rotate(-15deg); }
+  40% { transform: translate(2px, -1px); filter: hue-rotate(15deg); }
+  60% { transform: translate(-1px, -2px); filter: contrast(1.4); }
+  80% { transform: translate(1px, 2px); filter: saturate(2); }
+}
+.glitch-frame { animation: glitchFrame .4s steps(4) 1; }
+
+/* Animación: oscilación tipo holograma */
+@keyframes holoFlicker {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  50% { opacity: 0.92; filter: brightness(1.1); }
+  52% { opacity: 0.75; }
+  54% { opacity: 1; }
+}
+.holo-flicker { animation: holoFlicker 3s infinite; }
+
+/* Texto rotativo tipo terminal — apariencia de typewriter */
+@keyframes typewriter {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+.typewriter { display: inline-block; animation: typewriter 1.2s steps(40) forwards; }
+
+/* Borde holográfico animado para elementos destacados */
+@keyframes borderScan {
+  0% { background-position: 0% 0; }
+  100% { background-position: 200% 0; }
+}
+.border-holo {
+  position: relative;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--bg-deep), var(--bg-deep)) padding-box,
+    linear-gradient(90deg, var(--zona-competencia), var(--zona-recursos), var(--zona-competencia)) border-box;
+  background-size: 100% 100%, 200% 100%;
+  animation: borderScan 6s linear infinite;
+}
+
+/* Texto "scan" — barrido sobre texto */
+.text-scan {
+  background: linear-gradient(90deg, var(--zona-competencia) 0%, white 50%, var(--zona-competencia) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: borderScan 4s linear infinite;
+}
+
+/* Headlines: efecto chromatic aberration */
+.chroma {
+  position: relative;
+}
+.chroma::before, .chroma::after {
+  content: attr(data-text);
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+.chroma::before { color: var(--zona-nulidad); transform: translate(-1.5px, 0); mix-blend-mode: screen; opacity: 0.6; }
+.chroma::after { color: var(--zona-competencia); transform: translate(1.5px, 0); mix-blend-mode: screen; opacity: 0.6; }
+
+/* Marquee técnico — útil para feeds */
+@keyframes marquee {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
+}
+.marquee-text { animation: marquee 30s linear infinite; }
+
+/* Botones con halo pulsante */
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  border: 1px solid currentColor;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.btn:hover::after { opacity: 0.5; box-shadow: 0 0 16px currentColor; }
+
+/* Cards al hover: doble borde */
+.zona-card { position: relative; cursor: pointer; }
+.zona-card::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  pointer-events: none;
+  border: 1px solid var(--zona-color, var(--zona-competencia));
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.zona-card:hover::after { opacity: 0.3; }
+
+/* Anchor cards: contenido siempre encima del overlay */
+.zona-card > * { position: relative; z-index: 2; }
+
+/* Reactividad emocional global — la página cambia su pulso de fondo */
+@keyframes uiBreathe {
+  0%, 100% { filter: brightness(1) saturate(1); }
+  50% { filter: brightness(1.04) saturate(1.05); }
+}
+body { animation: uiBreathe 12s ease-in-out infinite; }
+
+/* Estado "presión" — cuando hay timer crítico */
+.presion-alta {
+  animation: presionPulse 0.8s ease-in-out infinite;
+}
+@keyframes presionPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217,74,74,0); }
+  50% { box-shadow: 0 0 30px 4px rgba(217,74,74,.3); }
+}
+
+/* Líneas procesales ASCII art para divisores */
+.divider-ornamental {
+  text-align: center;
+  color: rgba(75,231,255,.3);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .5em;
+  margin: 2rem 0;
+}
+.divider-ornamental::before { content: "═══ ◆ ═══ ◆ ═══"; }
+
+/* Reducción de motion para usuarios sensibles */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
