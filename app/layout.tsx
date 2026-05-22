@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import GlobalCanvas from "@/components/GlobalCanvas";
 
 export const metadata: Metadata = {
-  title: "EXPEDIENTE: Derecho Procesal Civil — RPG",
-  description: "Disco Elysium + CPC chileno. Un RPG narrativo procesal para examen de grado.",
+  title: "FORO [in]VISIBLE — Simulador Procesal Chileno",
+  description: "Cyberpunk jurídico chileno. CPC + COT + CPR. Examen de grado.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -17,7 +18,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className="crt">{children}</body>
+      <body className="crt">
+        <GlobalCanvas />
+        <div className="relative z-10">
+          {children}
+        </div>
+      </body>
     </html>
   );
 }

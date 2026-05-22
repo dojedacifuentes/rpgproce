@@ -283,3 +283,156 @@ input:focus, select:focus, textarea:focus {
 ::-webkit-scrollbar-track { background: var(--bg-deep); }
 ::-webkit-scrollbar-thumb { background: rgba(75,231,255,.2); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(75,231,255,.4); }
+
+/* ============================================================================
+   v3.1 — INTENSIFICACIÓN ATMOSFÉRICA
+   ============================================================================ */
+
+/* Selection — texto seleccionado en cyan eléctrico */
+::selection { background: rgba(75,231,255,.35); color: #FFFFFF; }
+
+/* Caret style — cursor parpadeante en inputs */
+@keyframes caretBlink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+input, textarea { caret-color: var(--zona-competencia); }
+
+/* Animación: zoom holográfico (entrada) */
+@keyframes holoEnter {
+  0% { opacity: 0; transform: scale(0.96); filter: blur(4px); }
+  100% { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+.holo-enter { animation: holoEnter .5s ease-out forwards; }
+
+/* Animación: glitch frame (1 frame de error visual) */
+@keyframes glitchFrame {
+  0%, 100% { transform: translate(0); filter: none; }
+  20% { transform: translate(-2px, 1px); filter: hue-rotate(-15deg); }
+  40% { transform: translate(2px, -1px); filter: hue-rotate(15deg); }
+  60% { transform: translate(-1px, -2px); filter: contrast(1.4); }
+  80% { transform: translate(1px, 2px); filter: saturate(2); }
+}
+.glitch-frame { animation: glitchFrame .4s steps(4) 1; }
+
+/* Animación: oscilación tipo holograma */
+@keyframes holoFlicker {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  50% { opacity: 0.92; filter: brightness(1.1); }
+  52% { opacity: 0.75; }
+  54% { opacity: 1; }
+}
+.holo-flicker { animation: holoFlicker 3s infinite; }
+
+/* Texto rotativo tipo terminal — apariencia de typewriter */
+@keyframes typewriter {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+.typewriter { display: inline-block; animation: typewriter 1.2s steps(40) forwards; }
+
+/* Borde holográfico animado para elementos destacados */
+@keyframes borderScan {
+  0% { background-position: 0% 0; }
+  100% { background-position: 200% 0; }
+}
+.border-holo {
+  position: relative;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--bg-deep), var(--bg-deep)) padding-box,
+    linear-gradient(90deg, var(--zona-competencia), var(--zona-recursos), var(--zona-competencia)) border-box;
+  background-size: 100% 100%, 200% 100%;
+  animation: borderScan 6s linear infinite;
+}
+
+/* Texto "scan" — barrido sobre texto */
+.text-scan {
+  background: linear-gradient(90deg, var(--zona-competencia) 0%, white 50%, var(--zona-competencia) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: borderScan 4s linear infinite;
+}
+
+/* Headlines: efecto chromatic aberration */
+.chroma {
+  position: relative;
+}
+.chroma::before, .chroma::after {
+  content: attr(data-text);
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+.chroma::before { color: var(--zona-nulidad); transform: translate(-1.5px, 0); mix-blend-mode: screen; opacity: 0.6; }
+.chroma::after { color: var(--zona-competencia); transform: translate(1.5px, 0); mix-blend-mode: screen; opacity: 0.6; }
+
+/* Marquee técnico — útil para feeds */
+@keyframes marquee {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
+}
+.marquee-text { animation: marquee 30s linear infinite; }
+
+/* Botones con halo pulsante */
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  border: 1px solid currentColor;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.btn:hover::after { opacity: 0.5; box-shadow: 0 0 16px currentColor; }
+
+/* Cards al hover: doble borde */
+.zona-card { position: relative; cursor: pointer; }
+.zona-card::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  pointer-events: none;
+  border: 1px solid var(--zona-color, var(--zona-competencia));
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.zona-card:hover::after { opacity: 0.3; }
+
+/* Anchor cards: contenido siempre encima del overlay */
+.zona-card > * { position: relative; z-index: 2; }
+
+/* Reactividad emocional global — la página cambia su pulso de fondo */
+@keyframes uiBreathe {
+  0%, 100% { filter: brightness(1) saturate(1); }
+  50% { filter: brightness(1.04) saturate(1.05); }
+}
+body { animation: uiBreathe 12s ease-in-out infinite; }
+
+/* Estado "presión" — cuando hay timer crítico */
+.presion-alta {
+  animation: presionPulse 0.8s ease-in-out infinite;
+}
+@keyframes presionPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217,74,74,0); }
+  50% { box-shadow: 0 0 30px 4px rgba(217,74,74,.3); }
+}
+
+/* Líneas procesales ASCII art para divisores */
+.divider-ornamental {
+  text-align: center;
+  color: rgba(75,231,255,.3);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .5em;
+  margin: 2rem 0;
+}
+.divider-ornamental::before { content: "═══ ◆ ═══ ◆ ═══"; }
+
+/* Reducción de motion para usuarios sensibles */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
