@@ -138,6 +138,98 @@ const BANCO: Cuestion[] = [
     { texto: "Genéricas como en el ordinario", correcta: false },
     { texto: "Solo de fondo", correcta: false },
   ]},
+
+  // ─── PREGUNTAS DIFÍCILES — distractores plausibles ───────────────────────
+
+  // RESOLUCIONES — distinciones finas
+  { rama: "resoluciones", art: "Art. 158 inc. 2° CPC", enunciado: "'Traslado al demandado para que conteste en 15 días' — tipo de resolución", opciones: [
+    { texto: "Decreto (impulso procesal sin contenido decisorio)", correcta: true },
+    { texto: "Interlocutoria de 1° grado (inicia fase)", correcta: false },
+    { texto: "Auto (falla incidente)", correcta: false },
+  ]},
+  { rama: "resoluciones", art: "Art. 158 inc. 2° CPC", enunciado: "Resolución que ESTABLECE DERECHOS PERMANENTES para las partes (interlocutoria)", opciones: [
+    { texto: "Interlocutoria de 1° grado", correcta: true },
+    { texto: "Interlocutoria de 2° grado", correcta: false },
+    { texto: "Auto", correcta: false },
+  ]},
+  { rama: "resoluciones", art: "Art. 158 CPC", enunciado: "Resolución 'Pone término al juicio o hace imposible su continuación'", opciones: [
+    { texto: "Interlocutoria de 2° grado", correcta: true },
+    { texto: "Sentencia definitiva", correcta: false },
+    { texto: "Interlocutoria de 1° grado", correcta: false },
+  ]},
+  { rama: "resoluciones", art: "Art. 158 inc. final CPC", enunciado: "'Agréguese a los autos' — tipo de resolución", opciones: [
+    { texto: "Decreto / providencia / proveído", correcta: true },
+    { texto: "Auto", correcta: false },
+    { texto: "Interlocutoria de 1° grado", correcta: false },
+  ]},
+
+  // RECURSOS — casos específicos y plazos trampa
+  { rama: "recursos", art: "Art. 319 CPC", enunciado: "Plazo para pedir reposición contra el auto de prueba", opciones: [
+    { texto: "3 días con apelación subsidiaria", correcta: true },
+    { texto: "5 días (reposición ordinaria)", correcta: false },
+    { texto: "10 días como el art. 178", correcta: false },
+  ]},
+  { rama: "recursos", art: "Arts. 766-769 CPC", enunciado: "Para interponer casación en la forma, el recurso debe haber sido...", opciones: [
+    { texto: "Preparado (reclamado el vicio en la instancia)", correcta: true },
+    { texto: "Anunciado al momento del fallo", correcta: false },
+    { texto: "Firmado por el cliente", correcta: false },
+  ]},
+  { rama: "recursos", art: "Art. 189 CPC", enunciado: "Apelación en contra de sentencias definitivas: plazo para interponerla", opciones: [
+    { texto: "15 días hábiles", correcta: true },
+    { texto: "10 días", correcta: false },
+    { texto: "5 días", correcta: false },
+  ]},
+  { rama: "recursos", art: "Art. 189 inc. 1° CPC", enunciado: "Plazo para apelar contra sentencias interlocutorias, autos y decretos", opciones: [
+    { texto: "5 días hábiles", correcta: true },
+    { texto: "15 días", correcta: false },
+    { texto: "3 días", correcta: false },
+  ]},
+  { rama: "recursos", art: "Art. 766 CPC", enunciado: "La casación en la forma procede contra sentencias...", opciones: [
+    { texto: "Definitivas e interlocutorias de 2° grado", correcta: true },
+    { texto: "Todo tipo de resoluciones", correcta: false },
+    { texto: "Solo definitivas", correcta: false },
+  ]},
+
+  // EXCEPCIONES — confusiones clásicas
+  { rama: "excepciones", art: "Art. 303 N°3 CPC", enunciado: "Litispendencia — clasificación", opciones: [
+    { texto: "Dilatoria (demanda idéntica en otro tribunal)", correcta: true },
+    { texto: "Perentoria anómala", correcta: false },
+    { texto: "Perentoria ordinaria", correcta: false },
+  ]},
+  { rama: "excepciones", art: "Art. 303 N°5 CPC", enunciado: "Beneficio de excusión — clasificación", opciones: [
+    { texto: "Dilatoria N°5", correcta: true },
+    { texto: "Perentoria ordinaria", correcta: false },
+    { texto: "Mixta", correcta: false },
+  ]},
+  { rama: "excepciones", art: "Art. 305 CPC", enunciado: "Las excepciones dilatorias deben oponerse...", opciones: [
+    { texto: "Todas juntas en un mismo escrito dentro del plazo para contestar", correcta: true },
+    { texto: "Antes del auto de prueba", correcta: false },
+    { texto: "En cualquier estado hasta la vista", correcta: false },
+  ]},
+
+  // NOTIFICACIONES — plazos y requisitos precisos
+  { rama: "notificaciones", art: "Art. 46 CPC", enunciado: "Tras notificación personal subsidiaria, carta certificada dentro de...", opciones: [
+    { texto: "2 días hábiles", correcta: true },
+    { texto: "5 días", correcta: false },
+    { texto: "3 días", correcta: false },
+  ]},
+  { rama: "notificaciones", art: "Art. 48 CPC", enunciado: "Las sentencias definitivas se notifican por...", opciones: [
+    { texto: "Cédula", correcta: true },
+    { texto: "Estado diario", correcta: false },
+    { texto: "Personal siempre", correcta: false },
+  ]},
+
+  // EJECUTIVO — distinciones finas del cuaderno
+  { rama: "ejecutivo", art: "Art. 458 CPC", enunciado: "Plazo para oponer excepciones en juicio ejecutivo (mismo lugar que tribunal)", opciones: [
+    { texto: "4 días hábiles", correcta: true },
+    { texto: "10 días", correcta: false },
+    { texto: "15 días", correcta: false },
+  ]},
+  { rama: "ejecutivo", art: "Art. 434 N°7 CPC", enunciado: "Acto de comercio ante dos testigos con firma del deudor — ¿es título ejecutivo?", opciones: [
+    { texto: "Sí, cheque protestado por falta de fondos", correcta: false },
+    { texto: "Sí, si el deudor no lo tacha de falso en la diligencia", correcta: true },
+    { texto: "No, requiere escritura pública", correcta: false },
+  ]},
 ];
 
 const COLOR_RAMA: Record<Cuestion["rama"], string> = {

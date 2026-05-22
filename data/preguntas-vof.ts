@@ -269,6 +269,56 @@ export const BANCO_VOF: PreguntaVoF[] = [
   { enunciado: "El testigo inhábil del 358 nunca puede declarar válidamente.",
     respuesta: false, explicacion: "FALSO. El testigo puede declarar, pero su testimonio tiene menor valor o es desestimado. La tacha se interpone antes de la declaración y se resuelve en la sentencia.",
     art: "Arts. 357-358 CPC", zona: "prueba", dificultad: 2 },
+
+  // ─────────────── PREGUNTAS DE DIFICULTAD MÁXIMA — dificultad: 3 ───────────────
+
+  { enunciado: "La sentencia interlocutoria que recibe la causa a prueba es apelable directamente.",
+    respuesta: false, explicacion: "FALSO. La interlocutoria de 1° grado (auto de prueba) se impugna POR REPOSICIÓN (art. 319) con apelación EN SUBSIDIO. No procede apelación directa. Error clásico de examen.",
+    art: "Art. 319 CPC", zona: "recursos", dificultad: 3 },
+
+  { enunciado: "La conciliación obligatoria del art. 262 procede en TODOS los juicios civiles sin excepción.",
+    respuesta: false, explicacion: "FALSO. El art. 262 inc. 2° excluye: juicios ejecutivos, de hacienda, de desahucio o terminación del arrendamiento, entre otros casos donde no existe controversia de hecho o la ley excluye expresamente.",
+    art: "Art. 262 inc. 2° CPC", zona: "prueba", dificultad: 3 },
+
+  { enunciado: "El plazo para interponer casación en la forma contra sentencia definitiva es de 15 días.",
+    respuesta: true, explicacion: "VERDADERO. Art. 770 inc. 1°: 15 días desde notificación de la resolución. El plazo de 10 días es para la casación en el fondo cuando el recurso de apelación fue rechazado en forma simultánea.",
+    art: "Art. 770 CPC", zona: "recursos", dificultad: 3 },
+
+  { enunciado: "En el juicio ejecutivo, si el ejecutado no opone excepciones en plazo, el tribunal DEBE dictar sentencia de remate inmediatamente.",
+    respuesta: false, explicacion: "FALSO. Si no opone excepciones, el mandamiento de ejecución hace de sentencia definitiva (art. 472 CPC). El tribunal OMITE la sentencia — no dicta nueva resolución, el mandamiento ya es suficiente.",
+    art: "Art. 472 CPC", zona: "ejecutivo", dificultad: 3 },
+
+  { enunciado: "El abandono del procedimiento extingue las acciones del demandante si transcurren 6 meses.",
+    respuesta: false, explicacion: "FALSO. El abandono NO extingue las acciones, solo las gestiones realizadas en el proceso (art. 156 CPC). El demandante puede demandar de nuevo. La confusión se debe a que SE EXTINGUE la pretensión procesal, no el derecho sustantivo.",
+    art: "Arts. 152-157 CPC", zona: "incidentes", dificultad: 3 },
+
+  { enunciado: "La interlocutoria de 2° grado que pone término al juicio es apelable aunque no sea sentencia definitiva.",
+    respuesta: true, explicacion: "VERDADERO. Art. 187 CPC permite apelar de interlocutorias de cualquier grado cuando ponen término al juicio o hacen imposible su continuación. No importa que no sea definitiva — el efecto práctico es idéntico.",
+    art: "Art. 187 CPC", zona: "recursos", dificultad: 3 },
+
+  { enunciado: "La cosa juzgada formal impide toda discusión posterior entre las mismas partes.",
+    respuesta: false, explicacion: "FALSO. La cosa juzgada FORMAL solo impide atacar la resolución DENTRO DEL MISMO PROCESO. La material es la que impide un nuevo juicio entre las mismas partes con las mismas identidades (triple identidad del 177 CPC). Son conceptos distintos.",
+    art: "Art. 177 CPC", zona: "cosajuzgada", dificultad: 3 },
+
+  { enunciado: "El desasimiento del tribunal opera desde que se NOTIFICA la sentencia definitiva.",
+    respuesta: false, explicacion: "FALSO. El desasimiento opera desde que se DICTA la sentencia (art. 182 CPC), no desde su notificación. El tribunal queda 'desasido' del conocimiento en el momento mismo de la dictación. La notificación es para las partes, no para el desasimiento.",
+    art: "Art. 182 CPC", zona: "cosajuzgada", dificultad: 3 },
+
+  { enunciado: "En el juicio sumario la sustitución al ordinario solo puede pedirla el demandado.",
+    respuesta: false, explicacion: "FALSO. El art. 681 permite a CUALQUIERA DE LAS PARTES pedir la sustitución de procedimiento cuando aparezca que la acción es de lato conocimiento. El tribunal puede acceder si hay mérito para ello.",
+    art: "Art. 681 CPC", zona: "incidentes", dificultad: 3 },
+
+  { enunciado: "Las excepciones perentorias anómalas del art. 310 pueden oponerse en 2ª instancia hasta antes de la vista.",
+    respuesta: true, explicacion: "VERDADERO pero trampa: art. 310 inc. 2° las admite en 2ª instancia HASTA ANTES DE LA VISTA DE LA CAUSA, no hasta antes de la citación a oír sentencia que es el límite en 1ª. Son plazos distintos en cada instancia.",
+    art: "Art. 310 inc. 2° CPC", zona: "recursos", dificultad: 3 },
+
+  { enunciado: "En el juicio ejecutivo, las excepciones del art. 464 pueden ser tanto dilatorias como perentorias.",
+    respuesta: true, explicacion: "VERDADERO. Las 17 causales del 464 mezclan: incompetencia (dilatoria), falta de personería (dilatoria), prescripción (perentoria), pago (perentoria), etc. El sistema es taxativo pero no uniforme en naturaleza.",
+    art: "Art. 464 CPC", zona: "ejecutivo", dificultad: 3 },
+
+  { enunciado: "La queja procede también cuando existe recurso de casación disponible pero no se interpuso a tiempo.",
+    respuesta: false, explicacion: "FALSO. La queja es SUBSIDIARIA — solo procede si no hay otro recurso ordinario o extraordinario disponible (art. 545 COT). Si prescribió el plazo por incuria del abogado, eso no rehabilita la queja.",
+    art: "Art. 545 COT", zona: "recursos", dificultad: 3 },
 ];
 
 export function casosAleatoriosVoF(n: number, dificultad?: 1 | 2 | 3): PreguntaVoF[] {
