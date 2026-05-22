@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import GlobalCanvas from "@/components/GlobalCanvas";
+import WorldThemeProvider from "@/components/WorldThemeProvider";
 
 export const metadata: Metadata = {
   title: "FORO [in]VISIBLE — Simulador Procesal Chileno",
@@ -19,6 +20,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="crt">
+        {/* Aplica data-world al body para activar los 5 temas visuales */}
+        <WorldThemeProvider />
+        {/* GlobalCanvas incluye HUDPersistente internamente */}
         <GlobalCanvas />
         <div className="relative z-10">
           {children}

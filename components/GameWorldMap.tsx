@@ -2,8 +2,7 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGame } from "@/store/useGame";
-// Campaign data available for future integration
-// import { CAMPAÑA, BOSSES } from "@/data/campaign";
+import { CAMPAÑA } from "@/data/campaign";
 import { useRouter } from "next/navigation";
 import { sfx } from "@/lib/audio";
 
@@ -195,13 +194,25 @@ function MapNode({
 export default function GameWorldMap() {
   const [selectedNode, setSelectedNode] = useState<ZoneNode | null>(null);
   const misionesCompletadas = useGame((s) => s.misionesCompletadas);
-  const actoActual = 1; // TODO: calcular desde game state
   const router = useRouter();
 
+  // Calcula el acto actual como el primer acto que aún tiene misiones sin completar
+  const actoActual = (() => {
+    for (const acto of CAMPAÑA) {
+      const completadas = acto.misiones.filter((m) => misionesCompletadas.includes(m.id)).length;
+      if (completadas < acto.misiones.length) return acto.numero;
+    }
+    return CAMPAÑA.length; // todos completados
+  })();
+
+  // Un nodo está completado si todas las misiones del acto correspondiente están completadas
   const isCompletado = useCallback((nodeId: string) => {
-    // Simplificado: si el acto está "completado"
-    return false;
-  }, []);
+    const node = MAP_NODES.find((n) => n.id === nodeId);
+    if (!node || node.acto === 0) return false;
+    const acto = CAMPAÑA.find((a) => a.numero === node.acto);
+    if (!acto) return false;
+    return acto.misiones.every((m) => misionesCompletadas.includes(m.id));
+  }, [misionesCompletadas]);
 
   const isLocked = useCallback((node: ZoneNode) => {
     // Actos futuros están bloqueados

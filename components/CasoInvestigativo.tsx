@@ -13,8 +13,10 @@ import {
 } from "@/lib/investigacion";
 import TableroDeduccion from "./TableroDeduccion";
 import HipotesisSelector from "./HipotesisSelector";
+import { TimelineCaso } from "./TimelineProcesal";
 
 type EstadoCaso = "intro" | "explorando" | "deduccion" | "verificacion" | "resultado";
+type VistaExploracion = "tablero" | "timeline";
 
 interface CasoInvestigativoProps {
   caso: CasoType;
@@ -29,6 +31,7 @@ export default function CasoInvestigativo({
 }: CasoInvestigativoProps) {
   // Estado principal
   const [estado, setEstado] = useState<EstadoCaso>("intro");
+  const [vistaExploracion, setVistaExploracion] = useState<VistaExploracion>("tablero");
   const [inicioTiempo] = useState(Date.now());
   const [pistasDescubiertas, setPistasDescubiertas] = useState<Set<string>>(
     new Set(getPistasIniciales(caso).map((p) => p.id))
@@ -41,6 +44,10 @@ export default function CasoInvestigativo({
   // Game state
   const pushLog = useGame((s) => s.pushLog);
   const desbloquearLogro = useGame((s) => s.desbloquearLogro);
+  const gainXp = useGame((s) => s.gainXp);
+  const gainMonedas = useGame((s) => s.gainMonedas);
+  const ajustarReputacion = useGame((s) => s.ajustarReputacion);
+  const ajustarTrauma = useGame((s) => s.ajustarTrauma);
 
   // Handlers
   const handleDescubrirPista = (newPista: any) => {
@@ -56,6 +63,7 @@ export default function CasoInvestigativo({
 
   const handleVerificar = () => {
     const validacion = validarRespuesta(hipótesisSeleccionada!, caso);
+    const consecuencias = determinarConsecuencias(validacion.esCorrecta, caso);
 
     if (validacion.esCorrecta) {
       sfx.oralCorrecta?.();
@@ -66,9 +74,17 @@ export default function CasoInvestigativo({
         descripcion: `Resolviste el caso investigativo: ${caso.titulo}`,
         icono: "🔍",
       });
+      // Recompensas: XP + monedas según dificultad
+      gainXp(caso.dificultad * 20);
+      gainMonedas(caso.dificultad * 10);
+      ajustarReputacion(consecuencias.reputacion);
     } else {
       sfx.warning?.();
       pushLog(`Hipótesis incorrecta seleccionada en: ${caso.titulo}`, "WARN");
+      ajustarTrauma(consecuencias.trauma);
+      ajustarReputacion(consecuencias.reputacion);
+      // Aun aprende algo
+      gainXp(5);
     }
 
     setEstado("resultado");
@@ -168,7 +184,7 @@ export default function CasoInvestigativo({
           </motion.div>
         )}
 
-        {/* EXPLORANDO / TABLERO */}
+        {/* EXPLORANDO / TABLERO + TIMELINE */}
         {estado === "explorando" && (
           <motion.div
             key="explorando"
@@ -176,15 +192,51 @@ export default function CasoInvestigativo({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <TableroDeduccion
-              caso={caso}
-              pistasDescubiertas={pistasDescubiertas}
-              hipótesisActual={undefined}
-              onExpandirPista={setExpandedPista}
-              onDescubrirPista={handleDescubrirPista}
-              expandedPista={expandedPista}
-              onCloseExpanded={() => setExpandedPista(null)}
-            />
+            {/* Toggle vista */}
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={() => setVistaExploracion("tablero")}
+                onMouseEnter={() => sfx.hover?.()}
+                className={`flex-1 py-2 text-[10px] font-mono-terminal uppercase tracking-wider border transition-all ${
+                  vistaExploracion === "tablero"
+                    ? "border-zona-competencia text-zona-competencia bg-zona-competencia/10"
+                    : "border-doc-aged/20 text-doc-aged/40 hover:border-doc-aged/40"
+                }`}
+              >
+                🗂 Tablero de Evidencia
+              </button>
+              <button
+                onClick={() => setVistaExploracion("timeline")}
+                onMouseEnter={() => sfx.hover?.()}
+                className={`flex-1 py-2 text-[10px] font-mono-terminal uppercase tracking-wider border transition-all ${
+                  vistaExploracion === "timeline"
+                    ? "border-zona-prueba text-zona-prueba bg-zona-prueba/10"
+                    : "border-doc-aged/20 text-doc-aged/40 hover:border-doc-aged/40"
+                }`}
+              >
+                📅 Timeline Procesal
+              </button>
+            </div>
+
+            {vistaExploracion === "tablero" ? (
+              <TableroDeduccion
+                caso={caso}
+                pistasDescubiertas={pistasDescubiertas}
+                hipótesisActual={undefined}
+                onExpandirPista={setExpandedPista}
+                onDescubrirPista={handleDescubrirPista}
+                expandedPista={expandedPista}
+                onCloseExpanded={() => setExpandedPista(null)}
+              />
+            ) : (
+              <div className="terminal p-4">
+                <TimelineCaso
+                  caso={caso}
+                  pistasDescubiertas={pistasDescubiertas}
+                  onDescubrirPista={handleDescubrirPista}
+                />
+              </div>
+            )}
 
             {/* Botón siguiente fase */}
             <motion.button
@@ -298,28 +350,36 @@ export default function CasoInvestigativo({
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-4 gap-3">
               <div className="terminal p-3 text-center">
-                <div className="text-xl font-display-grave text-neon-cyan">
+                <div className="text-xl font-display-grave text-zona-competencia">
                   {score}
                 </div>
-                <div className="text-[9px] text-parchment/50 font-mono-terminal">
+                <div className="text-[9px] text-doc-aged/50 font-mono-terminal">
                   Score
                 </div>
               </div>
               <div className="terminal p-3 text-center">
-                <div className="text-xl font-display-grave text-neon-yellow">
+                <div className="text-xl font-display-grave text-zona-cautelares">
+                  +{esCorrecta ? caso.dificultad * 20 : 5}
+                </div>
+                <div className="text-[9px] text-doc-aged/50 font-mono-terminal">
+                  XP
+                </div>
+              </div>
+              <div className="terminal p-3 text-center">
+                <div className="text-xl font-display-grave text-zona-prueba">
                   {tiempoMinutos}m
                 </div>
-                <div className="text-[9px] text-parchment/50 font-mono-terminal">
+                <div className="text-[9px] text-doc-aged/50 font-mono-terminal">
                   Tiempo
                 </div>
               </div>
               <div className="terminal p-3 text-center">
-                <div className="text-xl font-display-grave text-neon-purple">
+                <div className="text-xl font-display-grave text-zona-recursos">
                   {pistasDescubiertas.size}/{caso.pistas.length}
                 </div>
-                <div className="text-[9px] text-parchment/50 font-mono-terminal">
+                <div className="text-[9px] text-doc-aged/50 font-mono-terminal">
                   Pistas
                 </div>
               </div>

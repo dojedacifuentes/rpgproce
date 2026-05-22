@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/audio";
 import { useGame } from "@/store/useGame";
+import type { CasoInvestigativo, Pista } from "@/data/casos-investigativos";
 
 interface ActoProcesal {
   id: string;
@@ -264,7 +265,7 @@ export default function TimelineProcesal() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-component="timeline-procesal">
       <div className="flex justify-between items-center flex-wrap gap-2">
         <div className="font-mono-terminal text-[10px] uppercase text-doc-aged/40">
           ESCENARIO {escenario_idx + 1} / {ESCENARIOS.length}
@@ -399,6 +400,238 @@ export default function TimelineProcesal() {
           )}
         </AnimatePresence>
       </motion.div>
+    </div>
+  );
+}
+
+// ============================================================================
+// TIMELINE CASO — Modo investigativo cronológico
+// Muestra las pistas de un caso investigativo en forma de timeline vertical
+// Marca el vicio procesal y señala plazos vencidos
+// ============================================================================
+
+const TIPO_ICONS: Record<string, string> = {
+  documento: "📄",
+  testimonio: "💬",
+  articulo: "📜",
+  fechas: "📅",
+  dialogo: "🗣️",
+};
+
+const TIPO_COLOR: Record<string, string> = {
+  documento: "var(--zona-competencia)",
+  testimonio: "var(--zona-cautelares)",
+  articulo: "var(--zona-recursos)",
+  fechas: "var(--zona-prueba)",
+  dialogo: "var(--zona-notificaciones, #A3C8E8)",
+};
+
+interface TimelineCasoProps {
+  caso: CasoInvestigativo;
+  pistasDescubiertas: Set<string>;
+  onDescubrirPista?: (pista: Pista) => void;
+}
+
+export function TimelineCaso({
+  caso,
+  pistasDescubiertas,
+  onDescubrirPista,
+}: TimelineCasoProps) {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // Separar pistas: descubiertas primero, luego ocultas
+  const descubiertas = caso.pistas.filter((p) => pistasDescubiertas.has(p.id));
+  const ocultas = caso.pistas.filter((p) => !pistasDescubiertas.has(p.id));
+
+  const handleExpandir = (pistaId: string) => {
+    sfx.click?.();
+    setExpandedId((prev) => (prev === pistaId ? null : pistaId));
+  };
+
+  const handleDescubrir = (pista: Pista) => {
+    sfx.confirm?.();
+    onDescubrirPista?.(pista);
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Cabecera */}
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-competencia mb-1">
+            TIMELINE CRONOLÓGICO
+          </div>
+          <h3 className="font-display-grave text-lg text-doc-aged">{caso.titulo}</h3>
+        </div>
+        <div className="text-[9px] font-mono-terminal text-doc-aged/40">
+          {descubiertas.length}/{caso.pistas.length} pistas
+        </div>
+      </div>
+
+      {/* Línea de tiempo vertical */}
+      <div className="relative pl-6">
+        {/* Eje vertical */}
+        <div
+          className="absolute left-2 top-0 bottom-0 w-0.5"
+          style={{ background: "linear-gradient(180deg, var(--zona-competencia)40, transparent)" }}
+        />
+
+        {/* Pistas descubiertas */}
+        <div className="space-y-3">
+          {descubiertas.map((pista, i) => {
+            const color = TIPO_COLOR[pista.tipo] || "var(--zona-competencia)";
+            const isExpanded = expandedId === pista.id;
+
+            return (
+              <motion.div
+                key={pista.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className="relative"
+              >
+                {/* Nodo en eje */}
+                <div
+                  className="absolute -left-4 top-3 w-3 h-3 rounded-full border-2"
+                  style={{ borderColor: color, background: `${color}30` }}
+                />
+
+                {/* Tarjeta de pista */}
+                <button
+                  onClick={() => handleExpandir(pista.id)}
+                  className="w-full text-left p-3 border rounded transition-all hover:brightness-125"
+                  style={{
+                    borderColor: `${color}40`,
+                    background: `${color}06`,
+                  }}
+                >
+                  <div className="flex items-start gap-2">
+                    <span className="text-base shrink-0">{TIPO_ICONS[pista.tipo] || "📌"}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span
+                          className="font-mono-terminal text-[8px] uppercase tracking-wider"
+                          style={{ color }}
+                        >
+                          {pista.tipo}
+                        </span>
+                        {pista.esRoja && (
+                          <span className="font-mono-terminal text-[7px] text-zona-nulidad border border-zona-nulidad/40 px-1">
+                            SEÑUELO
+                          </span>
+                        )}
+                      </div>
+                      <p className="font-display-grave text-sm text-doc-aged">{pista.titulo}</p>
+
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <p className="font-serif-juridica text-doc-aged/75 text-xs mt-2 leading-relaxed">
+                              {pista.contenido}
+                            </p>
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {pista.articulos.map((art) => (
+                                <span
+                                  key={art}
+                                  className="font-mono-terminal text-[8px] px-1.5 py-0.5 border"
+                                  style={{ borderColor: `${color}50`, color }}
+                                >
+                                  {art}
+                                </span>
+                              ))}
+                            </div>
+                            {pista.conectadoA && pista.conectadoA.length > 0 && (
+                              <p className="font-mono-terminal text-[8px] text-doc-aged/40 mt-1">
+                                Conectada con: {pista.conectadoA.join(", ")}
+                              </p>
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                    <span className="text-doc-aged/30 text-[10px] shrink-0">{isExpanded ? "▲" : "▼"}</span>
+                  </div>
+                </button>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Separador: zona del vicio */}
+        {ocultas.length > 0 && (
+          <div className="relative my-4 pl-0">
+            <div
+              className="text-[8px] font-mono-terminal uppercase tracking-widest px-2 py-1 border border-zona-nulidad/40 text-zona-nulidad inline-flex items-center gap-1"
+              style={{ background: "rgba(var(--zona-nulidad-rgb, 255,70,70),0.05)" }}
+            >
+              ⚠ ZONA DE VICIO — {ocultas.length} pista{ocultas.length > 1 ? "s" : ""} oculta{ocultas.length > 1 ? "s" : ""}
+            </div>
+          </div>
+        )}
+
+        {/* Pistas ocultas (botones de explorar) */}
+        <div className="space-y-2">
+          {ocultas.map((pista) => (
+            <motion.div
+              key={pista.id}
+              className="relative"
+            >
+              {/* Nodo oculto en eje */}
+              <div
+                className="absolute -left-4 top-3 w-3 h-3 rounded-full border-2 border-dashed"
+                style={{ borderColor: "rgba(255,255,255,0.15)", background: "rgba(20,25,40,0.8)" }}
+              />
+
+              <button
+                onClick={() => handleDescubrir(pista)}
+                className="w-full text-left p-3 border border-dashed border-doc-aged/15 rounded transition-all hover:border-doc-aged/30 group"
+                style={{ background: "rgba(255,255,255,0.02)" }}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-base opacity-30">🔍</span>
+                  <div>
+                    <div className="font-mono-terminal text-[8px] text-doc-aged/30 uppercase tracking-wider">
+                      {pista.tipo} · oculto
+                    </div>
+                    <p className="font-mono-terminal text-[10px] text-doc-aged/25 group-hover:text-doc-aged/50 transition-colors">
+                      Investigar: {pista.revelaSobre}
+                    </p>
+                  </div>
+                  <span className="ml-auto text-[8px] font-mono-terminal text-zona-prueba opacity-0 group-hover:opacity-100 transition-opacity">
+                    EXPLORAR →
+                  </span>
+                </div>
+              </button>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Nodo final: el problema */}
+        <div className="relative mt-4">
+          <div
+            className="absolute -left-4 top-3 w-3 h-3 rounded-full"
+            style={{ background: "var(--zona-nulidad)", boxShadow: "0 0 8px var(--zona-nulidad)" }}
+          />
+          <div
+            className="p-3 border-l-4 rounded"
+            style={{
+              borderColor: "var(--zona-nulidad)",
+              background: "rgba(255,70,70,0.05)",
+            }}
+          >
+            <div className="font-mono-terminal text-[8px] uppercase tracking-widest text-zona-nulidad mb-1">
+              ⚠ VICIO PROCESAL
+            </div>
+            <p className="font-display-grave text-sm text-zona-nulidad">{caso.problema.titulo}</p>
+            <p className="font-serif-juridica text-xs text-doc-aged/60 mt-1">{caso.problema.descripcion}</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
