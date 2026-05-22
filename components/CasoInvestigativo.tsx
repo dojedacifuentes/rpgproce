@@ -1,8 +1,9 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CasoInvestigativo as CasoType } from "@/data/casos-investigativos";
 import { sfx } from "@/lib/audio";
+import { fx } from "@/lib/fx";
 import { useGame } from "@/store/useGame";
 import {
   getPistasIniciales,
@@ -15,6 +16,11 @@ import TableroDeduccion from "./TableroDeduccion";
 import HipotesisSelector from "./HipotesisSelector";
 import { TimelineCaso } from "./TimelineProcesal";
 
+// ============================================================================
+// CASO INVESTIGATIVO — v3 visual system
+// Container principal para el flujo investigativo de 5 fases.
+// ============================================================================
+
 type EstadoCaso = "intro" | "explorando" | "deduccion" | "verificacion" | "resultado";
 type VistaExploracion = "tablero" | "timeline";
 
@@ -24,41 +30,49 @@ interface CasoInvestigativoProps {
   onResuelto?: (resultado: boolean) => void;
 }
 
+// Zona mapping per case zone
+const ZONA_COLOR: Record<string, string> = {
+  notificaciones: "var(--zona-notificaciones, #7AD4E6)",
+  recursos:       "var(--zona-recursos)",
+  cautelares:     "var(--zona-cautelares)",
+  prueba:         "var(--zona-prueba)",
+  ejecutivo:      "var(--zona-ejecutivo)",
+  competencia:    "var(--zona-competencia)",
+  nulidad:        "var(--zona-nulidad)",
+};
+
+const DIFICULTAD_LABEL: Record<number, string> = {
+  1: "INICIADO",
+  2: "AVANZADO",
+  3: "EXPERTO",
+};
+
 export default function CasoInvestigativo({
   caso,
   onVolver,
   onResuelto,
 }: CasoInvestigativoProps) {
-  // Estado principal
   const [estado, setEstado] = useState<EstadoCaso>("intro");
   const [vistaExploracion, setVistaExploracion] = useState<VistaExploracion>("tablero");
   const [inicioTiempo] = useState(Date.now());
   const [pistasDescubiertas, setPistasDescubiertas] = useState<Set<string>>(
     new Set(getPistasIniciales(caso).map((p) => p.id))
   );
-  const [hipótesisSeleccionada, setHipótesisSeleccionada] = useState<
-    number | null
-  >(null);
+  const [hipótesisSeleccionada, setHipótesisSeleccionada] = useState<number | null>(null);
   const [expandedPista, setExpandedPista] = useState<string | null>(null);
 
-  // Game state
-  const pushLog = useGame((s) => s.pushLog);
-  const desbloquearLogro = useGame((s) => s.desbloquearLogro);
-  const gainXp = useGame((s) => s.gainXp);
-  const gainMonedas = useGame((s) => s.gainMonedas);
-  const ajustarReputacion = useGame((s) => s.ajustarReputacion);
-  const ajustarTrauma = useGame((s) => s.ajustarTrauma);
+  const game = useGame();
+  const zonaColor = ZONA_COLOR[caso.zona] ?? "var(--zona-recursos)";
 
-  // Handlers
-  const handleDescubrirPista = (newPista: any) => {
+  const handleDescubrirPista = (newPista: { id: string; titulo: string }) => {
     setPistasDescubiertas((prev) => new Set([...prev, newPista.id]));
-    pushLog(`Pista descubierta: ${newPista.titulo}`, "INFO");
+    game.pushLog(`Pista descubierta: ${newPista.titulo}`, "INFO");
   };
 
   const handleSeleccionarHipótesis = (hipId: number) => {
     setHipótesisSeleccionada(hipId);
     setEstado("verificacion");
-    sfx.confirm?.();
+    sfx.click();
   };
 
   const handleVerificar = () => {
@@ -66,27 +80,29 @@ export default function CasoInvestigativo({
     const consecuencias = determinarConsecuencias(validacion.esCorrecta, caso);
 
     if (validacion.esCorrecta) {
-      sfx.oralCorrecta?.();
-      pushLog(`Caso resuelto correctamente: ${caso.titulo}`, "SKILL");
-      desbloquearLogro({
+      const xp = caso.dificultad * 20;
+      const monedas = caso.dificultad * 10;
+      fx.success();
+      fx.xpGain(xp);
+      fx.coinGain(monedas);
+      game.gainXp(xp);
+      game.gainMonedas(monedas);
+      game.ajustarReputacion(consecuencias.reputacion);
+      game.pushLog(`Caso resuelto: "${caso.titulo}" (+${xp} XP, +${monedas}🪙)`, "SKILL");
+      game.desbloquearLogro({
         id: `caso_${caso.id}`,
         titulo: caso.titulo,
-        descripcion: `Resolviste el caso investigativo: ${caso.titulo}`,
+        descripcion: `Investigación resuelta: ${caso.titulo}`,
         articulo: caso.solucion.articuloClave,
         desbloqueado: true,
         fecha: Date.now(),
       });
-      // Recompensas: XP + monedas según dificultad
-      gainXp(caso.dificultad * 20);
-      gainMonedas(caso.dificultad * 10);
-      ajustarReputacion(consecuencias.reputacion);
     } else {
-      sfx.warning?.();
-      pushLog(`Hipótesis incorrecta seleccionada en: ${caso.titulo}`, "WARN");
-      ajustarTrauma(consecuencias.trauma);
-      ajustarReputacion(consecuencias.reputacion);
-      // Aun aprende algo
-      gainXp(5);
+      fx.danger();
+      game.pushLog(`Hipótesis incorrecta: "${caso.titulo}"`, "WARN");
+      game.ajustarTrauma(consecuencias.trauma);
+      game.ajustarReputacion(consecuencias.reputacion);
+      game.gainXp(5); // aprende algo igual
     }
 
     setEstado("resultado");
@@ -97,127 +113,120 @@ export default function CasoInvestigativo({
   const esCorrecta =
     hipótesisSeleccionada !== null &&
     caso.hipótesis[hipótesisSeleccionada].es_correcta;
+  const score = calcularScore(esCorrecta, pistasDescubiertas, caso, tiempoSegundos);
 
-  const score = calcularScore(
-    esCorrecta,
-    pistasDescubiertas,
-    caso,
-    tiempoSegundos
-  );
-
-  // Render por estado
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <AnimatePresence mode="wait">
-        {/* INTRO */}
+
+        {/* ── INTRO ─────────────────────────────────────────────────────── */}
         {estado === "intro" && (
           <motion.div
             key="intro"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="space-y-6"
+            exit={{ opacity: 0, y: -16 }}
+            className="space-y-5"
           >
-            {/* Header del caso */}
-            <div className="terminal p-6 space-y-3">
+            {/* Case header */}
+            <div
+              className="terminal p-6 space-y-3"
+              style={{ borderColor: `${zonaColor}50` }}
+            >
               <div>
-                <div className="text-[9px] font-mono-terminal text-doc-aged/40 uppercase tracking-widest mb-1">
-                  CASO INVESTIGATIVO
+                <div
+                  className="font-mono-terminal text-[9px] uppercase tracking-[.35em] mb-1"
+                  style={{ color: zonaColor }}
+                >
+                  CASO INVESTIGATIVO · {caso.zona.toUpperCase()}
                 </div>
                 <h2 className="font-display-grave text-3xl text-doc-aged mb-2">
                   {caso.titulo}
                 </h2>
               </div>
-
               <p className="font-serif-juridica text-doc-aged/80 text-base leading-relaxed">
                 {caso.descripcion}
               </p>
 
-              {/* Stats caso */}
+              {/* Stats grid */}
               <div className="grid grid-cols-3 gap-3 mt-4 text-[9px] font-mono-terminal">
-                <div className="terminal p-2 text-center">
-                  <div className="text-neon-cyan">{caso.dificultad}/3</div>
-                  <div className="text-parchment/50">Dificultad</div>
+                <div className="terminal p-2 text-center" style={{ borderColor: `${zonaColor}25` }}>
+                  <div style={{ color: zonaColor }}>{DIFICULTAD_LABEL[caso.dificultad]}</div>
+                  <div className="text-doc-aged/40">Dificultad</div>
                 </div>
-                <div className="terminal p-2 text-center">
-                  <div className="text-neon-yellow">{caso.pistas.length}</div>
-                  <div className="text-parchment/50">Pistas</div>
+                <div className="terminal p-2 text-center" style={{ borderColor: `${zonaColor}25` }}>
+                  <div className="text-zona-prueba">{caso.pistas.length}</div>
+                  <div className="text-doc-aged/40">Pistas</div>
                 </div>
-                <div className="terminal p-2 text-center">
-                  <div className="text-neon-purple">
-                    {caso.hipótesis.length}
-                  </div>
-                  <div className="text-parchment/50">Hipótesis</div>
+                <div className="terminal p-2 text-center" style={{ borderColor: `${zonaColor}25` }}>
+                  <div className="text-zona-recursos">{caso.hipótesis.length}</div>
+                  <div className="text-doc-aged/40">Hipótesis</div>
                 </div>
               </div>
             </div>
 
-            {/* Problema central */}
-            <div className="terminal p-6 space-y-3 border-l-4 border-neon-red">
-              <div className="text-xs font-mono-terminal text-neon-red uppercase tracking-widest">
+            {/* Central problem */}
+            <div
+              className="terminal p-5 space-y-3 border-l-4"
+              style={{ borderLeftColor: "var(--zona-nulidad)" }}
+            >
+              <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-nulidad">
                 ⚠ PROBLEMA CENTRAL
               </div>
-              <div>
-                <p className="font-display-grave text-lg text-neon-red mb-2">
-                  {caso.problema.titulo}
-                </p>
-                <p className="font-serif-juridica text-doc-aged/80 text-sm leading-relaxed">
-                  {caso.problema.descripcion}
-                </p>
-              </div>
-              <div className="text-[9px] font-mono-terminal text-parchment/50">
-                Artículos involucrados: {caso.problema.articulosInvolucrados.join(" • ")}
+              <p className="font-display-grave text-xl text-zona-nulidad">{caso.problema.titulo}</p>
+              <p className="font-serif-juridica text-doc-aged/80 text-sm leading-relaxed">
+                {caso.problema.descripcion}
+              </p>
+              <div className="text-[9px] font-mono-terminal text-doc-aged/40">
+                Arts: {caso.problema.articulosInvolucrados.join(" · ")}
               </div>
             </div>
 
-            {/* Botón continuar */}
             <motion.button
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.01 }}
               onClick={() => {
-                sfx.confirm?.();
+                sfx.click();
                 setEstado("explorando");
-                pushLog(`Iniciaste investigación: ${caso.titulo}`, "INFO");
+                game.pushLog(`Investigación iniciada: ${caso.titulo}`, "INFO");
               }}
-              onMouseEnter={() => sfx.hover?.()}
-              className="btn btn-cyan w-full py-3 font-bold text-base"
+              onMouseEnter={() => sfx.hover()}
+              className="btn btn-cyan w-full py-3 font-mono-terminal text-sm"
             >
               ▶ INICIAR INVESTIGACIÓN
             </motion.button>
           </motion.div>
         )}
 
-        {/* EXPLORANDO / TABLERO + TIMELINE */}
+        {/* ── EXPLORANDO ────────────────────────────────────────────────── */}
         {estado === "explorando" && (
           <motion.div
             key="explorando"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0, y: -16 }}
           >
             {/* Toggle vista */}
             <div className="flex gap-2 mb-4">
-              <button
-                onClick={() => setVistaExploracion("tablero")}
-                onMouseEnter={() => sfx.hover?.()}
-                className={`flex-1 py-2 text-[10px] font-mono-terminal uppercase tracking-wider border transition-all ${
-                  vistaExploracion === "tablero"
-                    ? "border-zona-competencia text-zona-competencia bg-zona-competencia/10"
-                    : "border-doc-aged/20 text-doc-aged/40 hover:border-doc-aged/40"
-                }`}
-              >
-                🗂 Tablero de Evidencia
-              </button>
-              <button
-                onClick={() => setVistaExploracion("timeline")}
-                onMouseEnter={() => sfx.hover?.()}
-                className={`flex-1 py-2 text-[10px] font-mono-terminal uppercase tracking-wider border transition-all ${
-                  vistaExploracion === "timeline"
-                    ? "border-zona-prueba text-zona-prueba bg-zona-prueba/10"
-                    : "border-doc-aged/20 text-doc-aged/40 hover:border-doc-aged/40"
-                }`}
-              >
-                📅 Timeline Procesal
-              </button>
+              {(["tablero", "timeline"] as VistaExploracion[]).map((v) => {
+                const isActive = vistaExploracion === v;
+                const color = v === "tablero" ? "var(--zona-competencia)" : "var(--zona-prueba)";
+                const label = v === "tablero" ? "🗂 Tablero de evidencia" : "📅 Timeline procesal";
+                return (
+                  <button
+                    key={v}
+                    onClick={() => setVistaExploracion(v)}
+                    onMouseEnter={() => sfx.hover()}
+                    className="flex-1 py-2 text-[10px] font-mono-terminal uppercase tracking-wider border transition-all"
+                    style={{
+                      borderColor: isActive ? color : "rgba(255,255,255,.1)",
+                      color: isActive ? color : "rgba(255,255,255,.3)",
+                      background: isActive ? `${color}0d` : "transparent",
+                    }}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </div>
 
             {vistaExploracion === "tablero" ? (
@@ -240,28 +249,24 @@ export default function CasoInvestigativo({
               </div>
             )}
 
-            {/* Botón siguiente fase */}
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              onClick={() => {
-                sfx.confirm?.();
-                setEstado("deduccion");
-              }}
-              onMouseEnter={() => sfx.hover?.()}
-              className="btn btn-purple w-full py-3 mt-4"
+              whileHover={{ scale: 1.01 }}
+              onClick={() => { sfx.click(); setEstado("deduccion"); }}
+              onMouseEnter={() => sfx.hover()}
+              className="btn btn-recurso w-full py-3 mt-4 font-mono-terminal text-sm"
             >
               → FORMULAR HIPÓTESIS
             </motion.button>
           </motion.div>
         )}
 
-        {/* DEDUCCIÓN / HIPÓTESIS */}
+        {/* ── DEDUCCIÓN ─────────────────────────────────────────────────── */}
         {estado === "deduccion" && (
           <motion.div
             key="deduccion"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0, y: -16 }}
           >
             <HipotesisSelector
               caso={caso}
@@ -272,79 +277,79 @@ export default function CasoInvestigativo({
           </motion.div>
         )}
 
-        {/* VERIFICACIÓN */}
+        {/* ── VERIFICACIÓN ──────────────────────────────────────────────── */}
         {estado === "verificacion" && hipótesisSeleccionada !== null && (
           <motion.div
             key="verificacion"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="space-y-6"
+            exit={{ opacity: 0, y: -16 }}
+            className="space-y-5"
           >
             <div className="terminal p-6 space-y-4">
-              <div>
-                <div className="text-[9px] font-mono-terminal text-doc-aged/40 uppercase tracking-widest mb-1">
-                  HIPÓTESIS SELECCIONADA
-                </div>
-                <p className="font-display-grave text-2xl text-parchment/90 mb-3">
-                  {caso.hipótesis[hipótesisSeleccionada].titulo}
-                </p>
+              <div className="font-mono-terminal text-[9px] uppercase tracking-[.35em] text-zona-recursos mb-1">
+                HIPÓTESIS SELECCIONADA
               </div>
+              <p className="font-display-grave text-2xl text-doc-aged">
+                {caso.hipótesis[hipótesisSeleccionada].titulo}
+              </p>
 
-              <div className="border-l-2 border-neon-cyan/50 pl-4 space-y-2">
+              <div className="border-l-2 pl-4" style={{ borderColor: "rgba(75,231,255,.4)" }}>
                 <p className="font-serif-juridica text-doc-aged/80 text-base leading-relaxed">
                   {caso.hipótesis[hipótesisSeleccionada].explicacion}
                 </p>
               </div>
 
-              {/* Solución oficial */}
-              <div className="p-4 bg-neon-cyan/5 border border-neon-cyan/30 rounded space-y-2">
-                <div className="text-xs font-mono-terminal text-neon-cyan uppercase tracking-widest">
-                  🎯 Solución Oficial
+              {/* Solución */}
+              <div
+                className="p-4 space-y-2"
+                style={{
+                  background: "rgba(75,231,255,.04)",
+                  border: "1px solid rgba(75,231,255,.2)",
+                }}
+              >
+                <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-competencia">
+                  🎯 Solución oficial
                 </div>
                 <p className="font-serif-juridica text-doc-aged/80 text-sm">
                   {caso.solucion.explicacion}
                 </p>
-                <div className="text-[9px] text-parchment/60 mt-2">
-                  <span className="text-neon-purple font-mono-terminal">
-                    {caso.solucion.articuloClave}
-                  </span>
+                <div className="font-mono-terminal text-[9px] text-zona-recursos">
+                  {caso.solucion.articuloClave}
                 </div>
               </div>
             </div>
 
             <motion.button
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.01 }}
               onClick={handleVerificar}
-              onMouseEnter={() => sfx.hover?.()}
-              className="btn btn-cautelares w-full py-3 font-bold text-base"
+              onMouseEnter={() => sfx.hover()}
+              className="btn btn-cautelar w-full py-3 font-mono-terminal text-sm"
             >
               ✓ VERIFICAR HIPÓTESIS
             </motion.button>
           </motion.div>
         )}
 
-        {/* RESULTADO */}
+        {/* ── RESULTADO ─────────────────────────────────────────────────── */}
         {estado === "resultado" && hipótesisSeleccionada !== null && (
           <motion.div
             key="resultado"
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="space-y-6"
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="space-y-5"
           >
-            {/* Narrativa */}
+            {/* Narrative */}
             <div
-              className={`terminal p-6 border-l-4 space-y-3 ${
-                esCorrecta
-                  ? "border-neon-green"
-                  : "border-neon-red"
-              }`}
+              className="terminal p-6 border-l-4 space-y-3"
+              style={{ borderLeftColor: esCorrecta ? "var(--zona-cautelares)" : "var(--zona-nulidad)" }}
             >
-              <div className="text-[9px] font-mono-terminal uppercase tracking-widest" style={{
-                color: esCorrecta ? "var(--neon-green)" : "var(--neon-red)",
-              }}>
-                {esCorrecta ? "✓ CORRECTO" : "✗ INCORRECTO"}
+              <div
+                className="font-mono-terminal text-[9px] uppercase tracking-widest"
+                style={{ color: esCorrecta ? "var(--zona-cautelares)" : "var(--zona-nulidad)" }}
+              >
+                {esCorrecta ? "✓ HIPÓTESIS CORRECTA" : "✗ HIPÓTESIS INCORRECTA"}
               </div>
               <p className="font-serif-juridica text-doc-aged/80 text-base leading-relaxed italic">
                 {generarNarrativaResultado(esCorrecta, caso)}
@@ -353,66 +358,39 @@ export default function CasoInvestigativo({
 
             {/* Stats */}
             <div className="grid grid-cols-4 gap-3">
-              <div className="terminal p-3 text-center">
-                <div className="text-xl font-display-grave text-zona-competencia">
-                  {score}
+              {[
+                { label: "Score", val: score, color: "var(--zona-competencia)" },
+                { label: "XP", val: `+${esCorrecta ? caso.dificultad * 20 : 5}`, color: "var(--zona-cautelares)" },
+                { label: "Tiempo", val: `${tiempoMinutos}m`, color: "var(--zona-prueba)" },
+                { label: "Pistas", val: `${pistasDescubiertas.size}/${caso.pistas.length}`, color: "var(--zona-recursos)" },
+              ].map((s) => (
+                <div key={s.label} className="terminal p-3 text-center">
+                  <div className="font-display-grave text-xl" style={{ color: s.color }}>{s.val}</div>
+                  <div className="text-[9px] text-doc-aged/40 font-mono-terminal">{s.label}</div>
                 </div>
-                <div className="text-[9px] text-doc-aged/50 font-mono-terminal">
-                  Score
-                </div>
-              </div>
-              <div className="terminal p-3 text-center">
-                <div className="text-xl font-display-grave text-zona-cautelares">
-                  +{esCorrecta ? caso.dificultad * 20 : 5}
-                </div>
-                <div className="text-[9px] text-doc-aged/50 font-mono-terminal">
-                  XP
-                </div>
-              </div>
-              <div className="terminal p-3 text-center">
-                <div className="text-xl font-display-grave text-zona-prueba">
-                  {tiempoMinutos}m
-                </div>
-                <div className="text-[9px] text-doc-aged/50 font-mono-terminal">
-                  Tiempo
-                </div>
-              </div>
-              <div className="terminal p-3 text-center">
-                <div className="text-xl font-display-grave text-zona-recursos">
-                  {pistasDescubiertas.size}/{caso.pistas.length}
-                </div>
-                <div className="text-[9px] text-doc-aged/50 font-mono-terminal">
-                  Pistas
-                </div>
-              </div>
+              ))}
             </div>
 
-            {/* Botones */}
+            {/* Actions */}
             <div className="flex gap-3">
               {onVolver && (
                 <button
-                  onClick={() => {
-                    onVolver();
-                    onResuelto?.(esCorrecta);
-                  }}
-                  onMouseEnter={() => sfx.hover?.()}
-                  className="flex-1 btn btn-purple"
+                  onClick={() => { onVolver(); onResuelto?.(esCorrecta); }}
+                  onMouseEnter={() => sfx.hover()}
+                  className="flex-1 btn btn-recurso"
                 >
                   ← Volver
                 </button>
               )}
               <button
                 onClick={() => {
-                  // Reiniciar caso
                   setEstado("intro");
-                  setPistasDescubiertas(
-                    new Set(getPistasIniciales(caso).map((p) => p.id))
-                  );
+                  setPistasDescubiertas(new Set(getPistasIniciales(caso).map((p) => p.id)));
                   setHipótesisSeleccionada(null);
                   setExpandedPista(null);
-                  sfx.confirm?.();
+                  sfx.click();
                 }}
-                onMouseEnter={() => sfx.hover?.()}
+                onMouseEnter={() => sfx.hover()}
                 className="flex-1 btn btn-cyan"
               >
                 ↻ Reintentar

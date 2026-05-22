@@ -4,6 +4,11 @@ import { CasoInvestigativo } from "@/data/casos-investigativos";
 import { verificarHipótesis } from "@/lib/investigacion";
 import { sfx } from "@/lib/audio";
 
+// ============================================================================
+// HIPÓTESIS SELECTOR — v3 visual system
+// Selección de hipótesis con validación de pistas requeridas.
+// ============================================================================
+
 interface HipotesisSelectorProps {
   caso: CasoInvestigativo;
   pistasDescubiertas: Set<string>;
@@ -20,12 +25,12 @@ export default function HipotesisSelector({
   return (
     <div className="space-y-4">
       <div className="terminal p-4">
-        <div className="text-[9px] font-mono-terminal text-doc-aged/40 uppercase tracking-widest mb-1">
+        <div className="font-mono-terminal text-[9px] uppercase tracking-[.35em] text-zona-recursos mb-1">
           FORMULACIÓN DE HIPÓTESIS
         </div>
         <p className="font-serif-juridica text-sm text-doc-aged/70 italic">
-          Basándote en las pistas que has descubierto, ¿cuál es tu deducción sobre
-          el error procesal?
+          Basándote en las pistas descubiertas, ¿cuál es tu deducción sobre el
+          error procesal?
         </p>
       </div>
 
@@ -37,81 +42,91 @@ export default function HipotesisSelector({
           return (
             <motion.button
               key={idx}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
+              transition={{ delay: idx * 0.08 }}
               onClick={() => {
                 if (puedeSeleccionar) {
-                  sfx.confirm?.();
+                  sfx.click();
                   onSeleccionar(idx);
                 } else {
-                  sfx.warning?.();
+                  sfx.glitch?.();
                 }
               }}
-              onMouseEnter={() => {
-                if (puedeSeleccionar) sfx.hover?.();
-              }}
-              whileHover={puedeSeleccionar ? { scale: 1.02, x: 4 } : undefined}
-              whileTap={puedeSeleccionar ? { scale: 0.98 } : undefined}
+              onMouseEnter={() => { if (puedeSeleccionar) sfx.hover(); }}
+              whileHover={puedeSeleccionar ? { scale: 1.01, x: 3 } : undefined}
+              whileTap={puedeSeleccionar ? { scale: 0.99 } : undefined}
               disabled={!puedeSeleccionar}
-              className={`
-                w-full text-left p-5 rounded border-2 transition-all
-                min-h-24 flex flex-col justify-between
-                font-serif-juridica text-base leading-relaxed
-                ${
-                  puedeSeleccionar
-                    ? "border-neon-purple/50 bg-terminal-darker/80 text-parchment/90 cursor-pointer hover:border-neon-purple hover:bg-terminal-darker"
-                    : "border-parchment/20 bg-terminal-darker/40 text-parchment/50 cursor-not-allowed opacity-60"
-                }
-              `}
+              className="w-full text-left p-5 border transition-all min-h-24 flex flex-col justify-between"
+              style={
+                puedeSeleccionar
+                  ? {
+                      borderColor: "rgba(138,92,255,.45)",
+                      background: "rgba(138,92,255,.04)",
+                      cursor: "pointer",
+                    }
+                  : {
+                      borderColor: "rgba(255,255,255,.08)",
+                      background: "rgba(0,0,0,.2)",
+                      cursor: "not-allowed",
+                      opacity: 0.55,
+                    }
+              }
             >
-              {/* Título de hipótesis */}
+              {/* Title */}
               <div className="flex items-start gap-3">
-                <span className="text-2xl flex-shrink-0 mt-1">
-                  {hip.es_correcta ? "✓" : "?"}
+                <span className="text-xl flex-shrink-0 mt-0.5 text-doc-aged/50">
+                  {String(idx + 1).padStart(2, "0")}
                 </span>
                 <div className="flex-grow">
-                  <p className="font-display-grave text-base mb-1">
+                  <p className="font-display-grave text-base text-doc-aged mb-2">
                     {hip.titulo}
                   </p>
 
-                  {/* Pistas requeridas */}
-                  <div className="text-xs text-parchment/60 space-y-1">
-                    <div className="font-mono-terminal uppercase tracking-wider text-neon-cyan/70 mb-1">
-                      Requiere:
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {hip.pistas_requieren.map((pistaId) => {
-                        const pista = caso.pistas.find((p) => p.id === pistaId);
-                        const descubierta = pistasDescubiertas.has(pistaId);
-
-                        return (
-                          <span
-                            key={pistaId}
-                            className={`px-2 py-0.5 rounded text-[9px] font-mono-terminal ${
-                              descubierta
-                                ? "border border-neon-green/50 text-neon-green/80 bg-neon-green/5"
-                                : "border border-neon-red/50 text-neon-red/80 bg-neon-red/5"
-                            }`}
-                            title={pista?.titulo || pistaId}
-                          >
-                            {descubierta ? "✓" : "✗"} {pista?.titulo || "?"}
-                          </span>
-                        );
-                      })}
-                    </div>
+                  {/* Required clues */}
+                  <div className="text-[8px] font-mono-terminal uppercase tracking-widest text-zona-recursos mb-1">
+                    Requiere:
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {hip.pistas_requieren.map((pistaId) => {
+                      const pista = caso.pistas.find((p) => p.id === pistaId);
+                      const descubierta = pistasDescubiertas.has(pistaId);
+                      return (
+                        <span
+                          key={pistaId}
+                          className="px-2 py-0.5 text-[8px] font-mono-terminal border"
+                          style={{
+                            borderColor: descubierta
+                              ? "rgba(88,245,176,.4)"
+                              : "rgba(217,74,74,.35)",
+                            color: descubierta
+                              ? "var(--zona-cautelares)"
+                              : "var(--zona-nulidad)",
+                            background: descubierta
+                              ? "rgba(88,245,176,.05)"
+                              : "rgba(217,74,74,.05)",
+                          }}
+                          title={pista?.titulo ?? pistaId}
+                        >
+                          {descubierta ? "✓" : "✗"}{" "}
+                          {pista?.titulo ?? "???"}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
 
-              {/* Validación o estado */}
-              <div className="mt-2 text-[9px]">
+              {/* Status line */}
+              <div className="mt-3 text-[9px] font-mono-terminal">
                 {puedeSeleccionar ? (
-                  <div className="text-neon-green flex items-center gap-1">
-                    <span>✓</span> Puedes seleccionar esta hipótesis
-                  </div>
+                  <span className="text-zona-cautelares">
+                    ✓ Tienes suficiente información
+                  </span>
                 ) : (
-                  <div className="text-neon-red italic">{validacion.razon}</div>
+                  <span className="text-zona-nulidad italic">
+                    {validacion.razon}
+                  </span>
                 )}
               </div>
             </motion.button>
@@ -119,16 +134,9 @@ export default function HipotesisSelector({
         })}
       </div>
 
-      {/* Info: Qué necesitas */}
-      <div className="terminal p-4 text-[9px] font-mono-terminal text-doc-aged/50 space-y-2">
-        <div>
-          💡 <span className="text-parchment/70">Tip:</span> Selecciona una
-          hipótesis solo cuando hayas descubierto todas sus pistas requeridas.
-        </div>
-        <div>
-          🔍 <span className="text-parchment/70">Explora más</span> si no tienes
-          suficiente información.
-        </div>
+      <div className="terminal p-3 text-[9px] font-mono-terminal text-doc-aged/40 space-y-1">
+        <div>💡 Selecciona una hipótesis solo cuando tengas todas sus pistas requeridas.</div>
+        <div>🔍 Vuelve al tablero a explorar si te falta información.</div>
       </div>
     </div>
   );
