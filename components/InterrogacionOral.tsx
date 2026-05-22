@@ -3,12 +3,14 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGame } from "@/store/useGame";
 import { BOSSES } from "@/data/bosses";
+import { BOSSES_EXTRA } from "@/data/bosses-extra";
+const TODOS = [...BOSSES, ...BOSSES_EXTRA];
 import type { Boss, BossId } from "@/types/expansion";
 import { AvatarBoss } from "@/components/AvataresJuridicos";
 
 export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; onFin?: () => void }) {
   const game = useGame();
-  const boss = BOSSES.find((b) => b.id === bossId);
+  const boss = TODOS.find((b) => b.id === bossId);
   const [saludBoss, setSaludBoss] = useState(boss?.saludInicial || 100);
   const [saludJugador, setSaludJugador] = useState(boss?.saludJugador || 70);
   const [ataqueIdx, setAtaqueIdx] = useState(0);

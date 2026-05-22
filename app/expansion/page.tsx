@@ -8,11 +8,15 @@ import InhibitoriaDeclinatoria from "@/components/InhibitoriaDeclinatoria";
 import ArcadeClasificador from "@/components/ArcadeClasificador";
 import AbandonoProcedimiento from "@/components/AbandonoProcedimiento";
 import ComparecenciaPanel from "@/components/ComparecenciaPanel";
+import SpeedrunVoF from "@/components/SpeedrunVoF";
+import SalaSentencia from "@/components/SalaSentencia";
 
-type Modulo = "menu" | "build" | "expediente" | "preclusion" | "inhibitoria" | "arcade" | "abandono" | "comparecencia";
+type Modulo = "menu" | "build" | "expediente" | "preclusion" | "inhibitoria" | "arcade" | "abandono" | "comparecencia" | "vof" | "sentencia";
 
 const MODULOS: { id: Modulo; titulo: string; subtitulo: string; descripcion: string; zona: string; numeral: string }[] = [
   { id: "arcade", titulo: "Arcade Clasificador", subtitulo: "MODO RAPIDO · COMBO", descripcion: "Resoluciones · recursos · excepciones · competencia · notificaciones · ejecutivo. Velocidad creciente. Combo multiplicador. Ranking S-A-B-C-D.", zona: "ejecutivo", numeral: "ARC.01" },
+  { id: "vof", titulo: "Verdadero o Falso", subtitulo: "PRESIÓN TEMPORAL · TRAMPAS", descripcion: "40 enunciados tramposos en 3 niveles de dificultad. La respuesta intuitiva suele ser la incorrecta. Glitch visual al fallar.", zona: "oralidad", numeral: "ARC.02" },
+  { id: "sentencia", titulo: "Sala de Sentencia", subtitulo: "HORROR JUDICIAL", descripcion: "Esperá el dictamen. El estrado holográfico observa. Las frases del tribunal pulsan en el tiempo. Veredicto aleatorio con efectos.", zona: "cosajuzgada", numeral: "INST.16" },
   { id: "expediente", titulo: "Expediente Vivo", subtitulo: "SALUD PROCESAL", descripcion: "El expediente se degrada con cada vicio. Glitch progresivo según el daño. Si llega a 0: nulidad latente del 768 N°9.", zona: "nulidad", numeral: "INST.04" },
   { id: "preclusion", titulo: "Preclusión Real", subtitulo: "PLAZOS FATALES", descripcion: "Timer en tiempo real. Si vencés el plazo, la preclusión es irreversible. Art. 64 CPC en su versión más cruel.", zona: "ejecutivo", numeral: "INST.06" },
   { id: "inhibitoria", titulo: "Inhibitoria vs Declinatoria", subtitulo: "CUESTIONES DE COMPETENCIA", descripcion: "Identificá medio + tribunal correcto. Arts. 101-112 CPC. Los conflictos suspenden el principal (art. 112).", zona: "competencia", numeral: "INST.01" },
@@ -32,6 +36,8 @@ export default function ExpansionHub() {
           <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
         </div>
         {m === "arcade" && <ArcadeClasificador />}
+        {m === "vof" && <SpeedrunVoF />}
+        {m === "sentencia" && <SalaSentencia />}
         {m === "expediente" && <ExpedienteVivo />}
         {m === "preclusion" && <PreclusionTimer />}
         {m === "inhibitoria" && <InhibitoriaDeclinatoria />}

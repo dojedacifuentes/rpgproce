@@ -92,7 +92,7 @@ export default function ClasificadorRecursos() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-        {RECURSOS_OPCIONES.map((r) => {
+        {[...RECURSOS_OPCIONES].sort(() => Math.random() - 0.5).map((r) => {
           const nombre = TABLA_RECURSOS.find((x) => x.recurso === r)?.nombre || r;
           return (
             <button key={r} disabled={!!feedback} onClick={() => elegir(r)} className="p-3 border border-neon-blue/40 text-neon-blue text-[10px] uppercase tracking-widest disabled:opacity-40 hover:bg-neon-blue/10">

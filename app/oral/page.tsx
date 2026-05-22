@@ -2,6 +2,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { BOSSES } from "@/data/bosses";
+import { BOSSES_EXTRA } from "@/data/bosses-extra";
+const TODOS_BOSSES = [...BOSSES, ...BOSSES_EXTRA];
 import type { BossId } from "@/types/expansion";
 import InterrogacionOral from "@/components/InterrogacionOral";
 import { AvatarBoss } from "@/components/AvataresJuridicos";
@@ -54,7 +56,7 @@ export default function OralPage() {
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        {BOSSES.map((b, i) => {
+        {TODOS_BOSSES.map((b, i) => {
           const vencido = derrotados.includes(b.id);
           return (
             <motion.button
@@ -94,7 +96,7 @@ export default function OralPage() {
           <div>
             <div className="font-mono-terminal text-[10px] uppercase tracking-widest text-zona-recursos">Progreso comisión</div>
             <div className="font-display-grave text-2xl text-doc-aged">
-              {derrotados.length} <span className="text-doc-aged/40">/ {BOSSES.length}</span>
+              {derrotados.length} <span className="text-doc-aged/40">/ {TODOS_BOSSES.length}</span>
             </div>
           </div>
           {derrotados.length === BOSSES.length && (
@@ -104,7 +106,7 @@ export default function OralPage() {
           )}
         </div>
         <div className="h-1 bg-bg-deep border border-bg-steel mt-2">
-          <div className="h-full" style={{ width: `${(derrotados.length / BOSSES.length) * 100}%`, background: "var(--zona-oralidad)" }} />
+          <div className="h-full" style={{ width: `${(derrotados.length / TODOS_BOSSES.length) * 100}%`, background: "var(--zona-oralidad)" }} />
         </div>
       </div>
     </main>
