@@ -1,220 +1,349 @@
 "use client";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useGame } from "@/store/useGame";
 import { sfx } from "@/lib/audio";
 
-const FRASES_ROTATIVAS = [
-  "art. 76 CPR — Jurisdicción es la facultad de conocer, juzgar y hacer ejecutar lo juzgado.",
-  "art. 64 CPC — Los plazos que señala este Código son fatales.",
-  "art. 158 CPC — Las resoluciones se clasifican en sentencias, autos y decretos.",
-  "art. 254 CPC — Toda demanda debe contener cinco menciones.",
-  "art. 303 CPC — Solo son admisibles como excepciones dilatorias las seis enumeradas.",
-  "art. 768 CPC — Las causales de casación en la forma son taxativas.",
-  "art. 152 CPC — El procedimiento se entiende abandonado después de seis meses sin gestión útil.",
-  "art. 545 COT — La queja procede contra faltas o abusos graves.",
+// ============================================================================
+// TÍTULO DEL JUEGO — Pantalla de inicio épica
+// Inspiración: Hades, Hollow Knight, Disco Elysium
+// ============================================================================
+
+const FRASES = [
+  { art: "art. 768 CPC", texto: "La forma es sustancia." },
+  { art: "art. 64 CPC", texto: "Los plazos son fatales. No hay clemencia." },
+  { art: "art. 44 CPC", texto: "Dos intentos. Luego el Diario Oficial." },
+  { art: "art. 152 CPC", texto: "Seis meses sin gestión útil. Abandono consumado." },
+  { art: "art. 545 COT", texto: "La queja es para faltas graves. ¿Lo es?" },
+  { art: "art. 254 CPC", texto: "Cinco menciones. Sin excepciones." },
+  { art: "art. 76 CPR", texto: "Solo el Estado tiene jurisdicción." },
+];
+
+function FloatingArticle({ texto, x, y, delay }: { texto: string; x: number; y: number; delay: number }) {
+  return (
+    <motion.div
+      className="absolute font-mono-terminal text-[9px] text-zona-competencia/20 pointer-events-none select-none"
+      style={{ left: `${x}%`, top: `${y}%` }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: [0, 0.4, 0.2, 0.4], y: [20, 0, -10, 0] }}
+      transition={{ duration: 6, delay, repeat: Infinity, ease: "easeInOut" }}
+    >
+      {texto}
+    </motion.div>
+  );
+}
+
+const FLOATING_ARTICLES = [
+  { texto: "art. 158 CPC", x: 5, y: 15 },
+  { texto: "art. 254 CPC", x: 90, y: 25 },
+  { texto: "art. 768 CPC", x: 8, y: 70 },
+  { texto: "art. 44 CPC", x: 85, y: 65 },
+  { texto: "art. 187 CPC", x: 15, y: 45 },
+  { texto: "art. 434 CPC", x: 78, y: 45 },
+  { texto: "art. 64 CPC", x: 50, y: 10 },
+  { texto: "art. 290 CPC", x: 50, y: 85 },
+  { texto: "art. 545 COT", x: 25, y: 85 },
+  { texto: "art. 76 CPR", x: 70, y: 80 },
 ];
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [fraseIdx, setFraseIdx] = useState(0);
+  const [pressToContinue, setPressToContinue] = useState(false);
   const personaje = useGame((s) => s.personaje);
   const finalizado = useGame((s) => s.finalizado);
+  const nivel = useGame((s) => s.nivel);
 
   useEffect(() => {
     setMounted(true);
-    const i = setInterval(() => setFraseIdx((x) => (x + 1) % FRASES_ROTATIVAS.length), 4500);
-    return () => clearInterval(i);
+    const i = setInterval(() => setFraseIdx((x) => (x + 1) % FRASES.length), 4000);
+    // Press to continue blink
+    const p = setTimeout(() => setPressToContinue(true), 1500);
+    return () => { clearInterval(i); clearTimeout(p); };
   }, []);
 
   if (!mounted) return null;
-
   const hayPartida = !!personaje.nombre;
 
   return (
-    <main className="min-h-screen relative">
-      {/* ───────────── HERO ───────────── */}
-      <section className="px-6 md:px-12 pt-16 md:pt-24 pb-12 max-w-7xl mx-auto relative">
-        {/* breadcrumb terminal */}
+    <main
+      className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden"
+      style={{
+        background: `
+          radial-gradient(ellipse 80% 60% at 50% 120%, rgba(138,92,255,.08), transparent),
+          radial-gradient(ellipse 60% 40% at 20% -20%, rgba(75,231,255,.06), transparent),
+          radial-gradient(ellipse 50% 35% at 80% 110%, rgba(217,74,74,.04), transparent),
+          #06070B
+        `,
+      }}
+    >
+      {/* ─── ARTÍCULOS FLOTANTES DE FONDO ─── */}
+      {FLOATING_ARTICLES.map((a, i) => (
+        <FloatingArticle key={i} texto={a.texto} x={a.x} y={a.y} delay={i * 0.5} />
+      ))}
+
+      {/* ─── LÍNEA DECORATIVA SUPERIOR ─── */}
+      <motion.div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{ background: "linear-gradient(90deg, transparent, var(--zona-competencia), var(--zona-recursos), transparent)" }}
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ duration: 2, ease: "easeOut" }}
+      />
+
+      {/* ─── CENTRO — TÍTULO PRINCIPAL ─── */}
+      <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl mx-auto">
+
+        {/* Kicker */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="font-mono-terminal text-[10px] uppercase tracking-[.4em] mb-6 flex items-center gap-3"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+          className="font-mono-terminal text-[10px] uppercase tracking-[0.5em] text-zona-recursos mb-6 flex items-center gap-3"
         >
           <span className="text-zona-cautelares animate-flicker">●</span>
-          <span className="text-zona-recursos">SISTEMA</span>
-          <span className="text-doc-aged/30">/</span>
-          <span className="text-zona-competencia">TERMINAL</span>
-          <span className="text-doc-aged/30">/</span>
-          <span className="text-zona-prueba">FORO</span>
+          SISTEMA PROCESAL CHILENO
+          <span className="text-zona-cautelares animate-flicker">●</span>
         </motion.div>
 
-        {/* TITULAR MASIVO */}
+        {/* TÍTULO MASIVO */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2 }}
-          className="relative"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          className="relative mb-2"
         >
-          {/* artículos en sombra detrás del título */}
-          <div className="absolute -top-6 -left-2 text-[8rem] md:text-[14rem] font-display-grave text-doc-aged/[0.025] pointer-events-none select-none leading-none">
+          {/* Shadow text */}
+          <div
+            className="absolute inset-0 font-display-grave text-[5rem] md:text-[9rem] lg:text-[12rem] leading-none text-doc-aged/[0.02] select-none pointer-events-none"
+            style={{ top: "10%", left: "5%" }}
+          >
             CPC
           </div>
 
-          <h1 className="font-display-grave text-6xl md:text-8xl lg:text-9xl leading-[0.95] text-doc-aged tracking-tight relative">
-            <span className="block">FORO</span>
-            <span className="block">
-              <span className="text-zona-competencia glitch-text">[in]</span>
-              <span className="text-doc-aged italic font-serif-juridica">visible</span>
+          <h1
+            className="font-display-grave leading-none text-doc-aged relative"
+            style={{
+              fontSize: "clamp(3.5rem, 12vw, 9rem)",
+              textShadow: "0 0 60px rgba(75,231,255,.15), 0 0 120px rgba(138,92,255,.1)",
+              letterSpacing: "0.1em",
+            }}
+          >
+            FORO
+          </h1>
+          <h1
+            className="font-display-grave leading-none relative flex items-baseline gap-2 justify-center"
+            style={{
+              fontSize: "clamp(3.5rem, 12vw, 9rem)",
+              letterSpacing: "0.1em",
+            }}
+          >
+            <span
+              style={{
+                color: "var(--zona-competencia)",
+                textShadow: "0 0 40px rgba(75,231,255,.5), 0 0 80px rgba(75,231,255,.2)",
+              }}
+            >
+              [in]
+            </span>
+            <span
+              className="font-serif-juridica text-doc-aged"
+              style={{
+                textShadow: "0 0 40px rgba(232,223,197,.1)",
+                letterSpacing: "0.05em",
+              }}
+            >
+              visible
             </span>
           </h1>
-
-          <div className="mt-6 max-w-2xl">
-            <div className="font-serif-juridica italic text-zona-prueba text-xl md:text-2xl leading-snug mb-3">
-              Simulador procesal chileno. Hostil. Vivo. Inevitable.
-            </div>
-            <p className="text-doc-aged/60 text-sm font-mono-terminal">
-              <span className="text-zona-recursos">⟨</span> CPR · COT · CPC <span className="text-zona-recursos">⟩</span>
-              {" · "}
-              <span className="text-zona-nulidad">art. 768</span>
-              {" · "}
-              <span className="text-zona-cautelares">art. 290</span>
-              {" · "}
-              <span className="text-zona-recursos">art. 767</span>
-              {" · "}
-              <span className="text-zona-ejecutivo">art. 434</span>
-            </p>
-          </div>
         </motion.div>
 
-        {/* CTA principal */}
+        {/* Subtítulo */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 0.8 }}
+          className="font-serif-juridica italic text-zona-prueba text-lg md:text-xl mb-10 max-w-xl"
+        >
+          Simulador procesal chileno. Hostil. Vivo. Inevitable.
+        </motion.p>
+
+        {/* ─── CTA BUTTONS ─── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          className="mt-10 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3"
+          transition={{ delay: 1.5, duration: 0.8 }}
+          className="flex flex-col sm:flex-row gap-3 mb-12"
         >
-          <HeroCard
-            href="/creacion"
-            zona="competencia"
-            kicker="NUEVA"
-            titulo="CAMPAÑA"
-            sub="Inscríbete en el registro"
-            sfxName="confirm"
-          />
-          {hayPartida && !finalizado && (
-            <HeroCard
-              href="/juego"
-              zona="prueba"
-              kicker={`CICLO ${personaje.cicloProcesal}`}
-              titulo="CONTINUAR"
-              sub={personaje.nombre}
-              sfxName="click"
+          {!hayPartida ? (
+            <GameButton
+              href="/creacion"
+              primary
+              label="NUEVA CAMPAÑA"
+              sub="Crear personaje"
+              sfxName="confirm"
+              glow="var(--zona-competencia)"
             />
+          ) : (
+            <>
+              <GameButton
+                href="/juego"
+                primary
+                label="CONTINUAR"
+                sub={`${personaje.nombre} · Nv.${nivel}`}
+                sfxName="click"
+                glow="var(--zona-cautelares)"
+              />
+              <GameButton
+                href="/creacion"
+                label="NUEVO JUEGO"
+                sub="Nueva partida"
+                sfxName="click"
+                glow="var(--zona-competencia)"
+              />
+            </>
           )}
-          {hayPartida && finalizado && (
-            <HeroCard href="/epilogo" zona="cosajuzgada" kicker="FOLIO FINAL" titulo="EPÍLOGO" sub="Cosa juzgada" sfxName="confirm" />
-          )}
-          <HeroCard href="/oral" zona="oralidad" kicker="COMISIÓN" titulo="BOSSES" sub="Anfiteatro hostil" sfxName="bossEntrada" />
-          <HeroCard href="/expansion" zona="recursos" kicker="EXPANSIÓN" titulo="SISTEMAS" sub="Arcade · Abandono · Comparecencia" sfxName="click" />
-          <HeroCard href="/examen" zona="ejecutivo" kicker="CÉDULA" titulo="EXAMEN" sub="20 preguntas tipo grado" sfxName="click" />
-          <HeroCard href="/codex" zona="cosajuzgada" kicker="CONSULTA" titulo="CODEX" sub="Articulado completo" sfxName="hover" />
+          <GameButton
+            href="/oral"
+            label="BOSSES"
+            sub="Modo combate"
+            sfxName="bossEntrada"
+            glow="var(--zona-oralidad)"
+          />
+          <GameButton
+            href="/expansion"
+            label="SISTEMAS"
+            sub="Arcade · Investigación"
+            sfxName="click"
+            glow="var(--zona-recursos)"
+          />
         </motion.div>
 
-        {/* frase rotativa estilo ticker */}
+        {/* ─── FRASE ROTATIVA ─── */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          className="mt-12 border-t border-zona-competencia/15 pt-6"
+          transition={{ delay: 2, duration: 0.6 }}
+          className="max-w-md"
         >
-          <div className="flex items-center gap-4">
-            <span className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-zona-recursos shrink-0">
-              FEED
-            </span>
-            <div className="flex-1 overflow-hidden">
-              <motion.div
-                key={fraseIdx}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                className="font-serif-juridica italic text-doc-aged/80 text-base"
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={fraseIdx}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.5 }}
+              className="text-center"
+            >
+              <div
+                className="font-mono-terminal text-[9px] uppercase tracking-widest mb-1"
+                style={{ color: "var(--zona-recursos)" }}
               >
-                {FRASES_ROTATIVAS[fraseIdx]}
-              </motion.div>
-            </div>
-          </div>
+                {FRASES[fraseIdx].art}
+              </div>
+              <div className="font-serif-juridica italic text-doc-aged/70 text-sm">
+                "{FRASES[fraseIdx].texto}"
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </motion.div>
-      </section>
+      </div>
 
-      {/* ───────────── IDENTIDAD CROMÁTICA ───────────── */}
-      <section className="px-6 md:px-12 py-12 max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="font-mono-terminal text-[10px] uppercase tracking-[.4em] text-zona-recursos mb-4"
-        >
-          ARQUITECTURA · 10 ZONAS CROMÁTICAS
-        </motion.div>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          <ZonaPill color="competencia" label="Competencia" art="45-148 COT" />
-          <ZonaPill color="recursos" label="Recursos" art="766-810 CPC" />
-          <ZonaPill color="nulidad" label="Nulidad" art="768 / 795 CPC" />
-          <ZonaPill color="ejecutivo" label="Ejecutivo" art="434-478 CPC" />
-          <ZonaPill color="prueba" label="Prueba" art="318-427 CPC" />
-          <ZonaPill color="oralidad" label="Oralidad" art="Comisión" />
-          <ZonaPill color="cautelares" label="Cautelares" art="273-302 CPC" />
-          <ZonaPill color="cosajuzgada" label="Cosa Juzgada" art="175-177 CPC" />
-          <ZonaPill color="notificaciones" label="Notificaciones" art="40-58 CPC" />
-          <ZonaPill color="incidentes" label="Incidentes" art="82-91 CPC" />
-        </div>
-      </section>
+      {/* ─── OPCIONES SECUNDARIAS ─── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2.5 }}
+        className="absolute bottom-6 left-0 right-0 flex justify-center gap-6"
+      >
+        {[
+          { href: "/examen", label: "EXAMEN", icon: "📋" },
+          { href: "/codex", label: "CODEX", icon: "📜" },
+          { href: "/inventario", label: "INVENTARIO", icon: "📦" },
+          { href: finalizado ? "/epilogo" : "/creacion", label: finalizado ? "EPÍLOGO" : "CREACIÓN", icon: finalizado ? "🎓" : "⚡" },
+        ].map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={() => sfx.click?.()}
+            onMouseEnter={() => sfx.hover?.()}
+            className="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition-opacity"
+          >
+            <span className="text-base">{item.icon}</span>
+            <span className="font-mono-terminal text-[8px] uppercase tracking-widest text-doc-aged/60">
+              {item.label}
+            </span>
+          </Link>
+        ))}
+      </motion.div>
 
-      <footer className="px-6 md:px-12 py-6 border-t border-zona-competencia/10 text-[10px] uppercase tracking-widest text-doc-aged/25 font-mono-terminal flex justify-between max-w-7xl mx-auto">
-        <span>FORO[in]VISIBLE · build v3.1 · examen de grado · sin backend</span>
-        <span>art. 76 CPR · art. 1 COT · art. 158 CPC</span>
-      </footer>
+      {/* ─── VERSION TAG ─── */}
+      <div className="absolute bottom-2 right-4 font-mono-terminal text-[8px] text-doc-aged/20">
+        v5.0 · CPR · COT · CPC · frontend-only
+      </div>
+
+      {/* ─── LÍNEA DECORATIVA INFERIOR ─── */}
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 h-px"
+        style={{ background: "linear-gradient(90deg, transparent, var(--zona-recursos), var(--zona-nulidad), transparent)" }}
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ duration: 2, delay: 0.5, ease: "easeOut" }}
+      />
     </main>
   );
 }
 
-function HeroCard({ href, zona, kicker, titulo, sub, sfxName }: { href: string; zona: string; kicker: string; titulo: string; sub: string; sfxName: keyof typeof sfx }) {
+// ────────────────────────────────────────────
+function GameButton({
+  href,
+  primary,
+  label,
+  sub,
+  sfxName,
+  glow,
+}: {
+  href: string;
+  primary?: boolean;
+  label: string;
+  sub: string;
+  sfxName: string;
+  glow: string;
+}) {
   return (
     <Link
       href={href}
       onClick={() => (sfx as any)[sfxName]?.()}
-      onMouseEnter={() => sfx.hover()}
-      className="zona-card p-4 block group"
-      style={{ "--zona-color": `var(--zona-${zona})` } as React.CSSProperties}
+      onMouseEnter={() => sfx.hover?.()}
+      className="group relative block px-6 py-4 border text-left min-w-[160px] transition-all duration-300"
+      style={{
+        borderColor: primary ? glow : `${glow}50`,
+        background: primary ? `${glow}12` : `${glow}05`,
+        boxShadow: primary ? `0 0 30px ${glow}30, inset 0 1px 0 ${glow}20` : "none",
+      }}
     >
-      <div className="text-[9px] font-mono-terminal uppercase tracking-widest opacity-60" style={{ color: `var(--zona-${zona})` }}>
-        {kicker}
-      </div>
-      <div className="font-display-grave text-xl md:text-2xl text-doc-aged group-hover:text-zona-competencia transition-colors mt-1 tracking-wider">
-        {titulo}
-      </div>
-      <div className="text-[10px] font-mono-terminal text-doc-aged/40 mt-1.5 truncate">{sub}</div>
-    </Link>
-  );
-}
-
-function ZonaPill({ color, label, art }: { color: string; label: string; art: string }) {
-  return (
-    <motion.div
-      whileHover={{ y: -2 }}
-      className="border border-bg-steel px-3 py-2.5 flex items-center gap-3 bg-bg-deep/40 backdrop-blur-sm"
-    >
-      <span
-        className="w-1 h-8 shrink-0"
-        style={{ backgroundColor: `var(--zona-${color})`, boxShadow: `0 0 12px var(--zona-${color})` }}
+      {/* Shine effect on hover */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{
+          background: `linear-gradient(135deg, ${glow}10, transparent, ${glow}05)`,
+        }}
       />
-      <div className="min-w-0">
-        <div className="font-display-grave text-sm tracking-wider" style={{ color: `var(--zona-${color})` }}>{label}</div>
-        <div className="text-[9px] font-mono-terminal text-doc-aged/30 truncate">{art}</div>
+
+      <div
+        className="font-display-grave tracking-widest text-sm relative"
+        style={{ color: primary ? glow : "var(--doc-aged, #E8DFC5)" }}
+      >
+        {label}
       </div>
-    </motion.div>
+      <div className="font-mono-terminal text-[9px] text-doc-aged/40 mt-0.5 relative">{sub}</div>
+
+      {/* Bottom glow line */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-px opacity-60 group-hover:opacity-100 transition-opacity"
+        style={{ background: `linear-gradient(90deg, transparent, ${glow}, transparent)` }}
+      />
+    </Link>
   );
 }

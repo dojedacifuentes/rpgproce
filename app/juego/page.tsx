@@ -2,31 +2,34 @@
 import Link from "next/link";
 import { useGame } from "@/store/useGame";
 import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Mundo } from "@/types/game";
+import { sfx } from "@/lib/audio";
+import GameWorldMap from "@/components/GameWorldMap";
+import { CAMPAÑA } from "@/data/campaign";
 
-type ZonaColor = "competencia" | "recursos" | "nulidad" | "ejecutivo" | "prueba" | "oralidad" | "cautelares" | "cosajuzgada" | "notificaciones" | "incidentes";
+// ============================================================================
+// CIUDAD JUDICIAL — World Map Hub v2
+// Mapa visual interactivo del RPG procesal
+// ============================================================================
 
-const MAPA: { id: Mundo; titulo: string; subt: string; zona: ZonaColor; numeral: string; etimo: string }[] = [
-  { id: "jurisdiccion", titulo: "JURISDICCIÓN", subt: "El Estado se concentra en un tribunal. Características esenciales.", zona: "cosajuzgada", numeral: "I", etimo: "Art. 76 CPR · 1 COT" },
-  { id: "competencia", titulo: "COMPETENCIA", subt: "Absoluta y relativa. Materia, fuero, cuantía, territorio. Inhibitoria vs declinatoria.", zona: "competencia", numeral: "II", etimo: "Arts. 45-148, 101-112 COT/CPC" },
-  { id: "accion_pretension", titulo: "ACCIÓN & PRETENSIÓN", subt: "Couture vs Carnelutti. Doctrina pura.", zona: "cosajuzgada", numeral: "III", etimo: "Doctrinario" },
-  { id: "demanda", titulo: "DEMANDA", subt: "Requisitos del art. 254. Ineptitud del libelo 303 N°4.", zona: "competencia", numeral: "IV", etimo: "Art. 254 CPC" },
-  { id: "emplazamiento", titulo: "EMPLAZAMIENTO", subt: "Notificación + plazo. Trámite esencial 795 N°1.", zona: "notificaciones", numeral: "V", etimo: "Arts. 40-54, 258-259" },
-  { id: "discusion", titulo: "DISCUSIÓN", subt: "Demanda → dilatorias → réplica → dúplica → reconvención.", zona: "incidentes", numeral: "VI", etimo: "Arts. 254-318 CPC" },
-  { id: "conciliacion", titulo: "CONCILIACIÓN", subt: "Llamado obligatorio del 262. Acta vale sentencia ejecutoriada.", zona: "prueba", numeral: "VII", etimo: "Arts. 262-268 CPC" },
-  { id: "prueba", titulo: "PRUEBA", subt: "Auto 318, medios 341-427, observaciones 430.", zona: "prueba", numeral: "VIII", etimo: "Arts. 318-433 CPC" },
-  { id: "sentencia", titulo: "SENTENCIA", subt: "158, 162, 170. Citación 432. Plazo 60 días.", zona: "cosajuzgada", numeral: "IX", etimo: "Arts. 158, 162, 170, 432" },
-  { id: "recursos", titulo: "RECURSOS", subt: "181, 182, 187, 188, 196, 203, 766, 767, 810 + 545 COT.", zona: "recursos", numeral: "X", etimo: "Libro III CPC + 545 COT" },
-  { id: "juicio_ejecutivo", titulo: "JUICIO EJECUTIVO", subt: "Coerción. Cuadernos. Excepciones tasadas del 464.", zona: "ejecutivo", numeral: "XI", etimo: "Arts. 434-478 CPC" },
-  { id: "cautelares", titulo: "CAUTELARES", subt: "Prejudiciales + precautorias. Innominadas 298 inc. 2°.", zona: "cautelares", numeral: "XII", etimo: "Arts. 273-302 CPC" },
-  { id: "examen", titulo: "CÉDULA FINAL", subt: "Examen oral simulado. Comisión examinadora.", zona: "oralidad", numeral: "XIII", etimo: "Modo Examen" },
+const RANGOS = [
+  { min: 1, max: 3, titulo: "Litigante Novato", color: "var(--zona-incidentes)" },
+  { min: 4, max: 6, titulo: "Operador Procesal", color: "var(--zona-competencia)" },
+  { min: 7, max: 9, titulo: "Abogado Tramitador", color: "var(--zona-prueba)" },
+  { min: 10, max: 13, titulo: "Fiscal de Hierro", color: "var(--zona-recursos)" },
+  { min: 14, max: 17, titulo: "Maestro del CPC", color: "var(--zona-cautelares)" },
+  { min: 18, max: 20, titulo: "Arquitecto del Grado", color: "var(--zona-oralidad)" },
 ];
+
+function getRango(nivel: number) {
+  return RANGOS.find((r) => nivel >= r.min && nivel <= r.max) || RANGOS[0];
+}
 
 export default function Juego() {
   const router = useRouter();
-  const { personaje, log, expedientesArchivados, cautelares, finalizado, logros } = useGame();
+  const { personaje, logros, finalizado, xp, nivel, monedas, misionesCompletadas } = useGame();
+  const [showMisiones, setShowMisiones] = useState(false);
 
   useEffect(() => {
     if (!personaje.nombre) router.replace("/creacion");
@@ -34,149 +37,307 @@ export default function Juego() {
 
   if (!personaje.nombre) return null;
 
+  const rango = getRango(nivel);
+  const totalMisiones = CAMPAÑA.reduce((s, a) => s + a.misiones.length, 0);
+  const misionesHechas = misionesCompletadas.length;
+  const progreso = Math.round((misionesHechas / totalMisiones) * 100);
+
   return (
-    <main className="min-h-screen px-4 md:px-8 py-6 max-w-7xl mx-auto">
-      {/* HEADER con identidad de litigante */}
-      <header className="mb-8">
-        <div className="flex justify-between items-start flex-wrap gap-4 pb-5 border-b border-zona-competencia/15">
-          <div className="flex items-start gap-4">
-            <Avatar nombre={personaje.nombre} ciclo={personaje.cicloProcesal} />
-            <div>
-              <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-zona-recursos">
-                FOLIO ACTIVO · CICLO PROCESAL {personaje.cicloProcesal}
+    <main
+      className="min-h-screen relative"
+      style={{
+        background: "radial-gradient(1200px 800px at 50% 0%, rgba(75,231,255,.03), transparent 70%), var(--bg-deep)"
+      }}
+    >
+      {/* ─── HEADER ─── */}
+      <header className="relative z-10 px-4 md:px-8 pt-4 pb-3 border-b border-zona-competencia/10">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 flex-wrap">
+          {/* Identidad del personaje */}
+          <div className="flex items-center gap-4">
+            {/* Avatar */}
+            <div className="relative">
+              <div
+                className="w-12 h-12 rounded border-2 flex items-center justify-center text-xl font-display-grave"
+                style={{
+                  borderColor: rango.color,
+                  background: `radial-gradient(circle, ${rango.color}15, transparent)`,
+                  boxShadow: `0 0 20px ${rango.color}30`,
+                  color: rango.color,
+                }}
+              >
+                {personaje.nombre[0]}
               </div>
-              <h1 className="font-display-grave text-2xl md:text-3xl text-doc-aged mt-1">{personaje.nombre}</h1>
-              <p className="text-doc-aged/50 text-[11px] font-mono-terminal mt-1 uppercase tracking-widest">
+              <div
+                className="absolute -bottom-1 -right-1 text-[8px] font-mono-terminal px-1 border"
+                style={{ borderColor: rango.color, color: rango.color, background: "var(--bg-deep)" }}
+              >
+                {nivel}
+              </div>
+            </div>
+
+            <div>
+              <div className="font-mono-terminal text-[8px] uppercase tracking-widest mb-0.5" style={{ color: rango.color }}>
+                {rango.titulo}
+              </div>
+              <h1 className="font-display-grave text-lg md:text-2xl text-doc-aged leading-tight">
+                {personaje.nombre}
+              </h1>
+              <p className="text-[9px] font-mono-terminal text-doc-aged/40 uppercase">
                 {personaje.rol.replace(/_/g, " ")} · {personaje.origen.replace(/_/g, " ")}
-                <span className="mx-2 text-zona-cautelares">●</span>
-                <span className="text-zona-cautelares">{personaje.expedientesGanados} ganados</span>
-                <span className="mx-2 text-zona-nulidad">●</span>
-                <span className="text-zona-nulidad">{personaje.expedientesPerdidos} perdidos</span>
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2 text-[11px]">
-            <Link href="/expansion" className="btn btn-recurso">★ Expansión</Link>
-            <Link href="/oral" className="btn btn-oral">⚖ Bosses</Link>
-            <Link href="/codex" className="btn">📜 Codex</Link>
-            <Link href="/inventario" className="btn">📦 Expediente</Link>
-            {finalizado && <Link href="/epilogo" className="btn">Epílogo</Link>}
-            <Link href="/" className="btn btn-danger">⏻ Salir</Link>
+
+          {/* Barra de progreso de campaña */}
+          <div className="hidden md:block flex-1 max-w-xs">
+            <div className="flex justify-between text-[9px] font-mono-terminal text-doc-aged/50 mb-1">
+              <span>PROGRESO CAMPAÑA</span>
+              <span className="text-zona-prueba">{progreso}%</span>
+            </div>
+            <div className="h-2 bg-bg-steel rounded-full overflow-hidden">
+              <motion.div
+                className="h-full rounded-full"
+                style={{ background: "linear-gradient(90deg, var(--zona-competencia), var(--zona-recursos))" }}
+                initial={{ width: 0 }}
+                animate={{ width: `${progreso}%` }}
+                transition={{ duration: 1, delay: 0.5 }}
+              />
+            </div>
+            <div className="text-[8px] font-mono-terminal text-doc-aged/30 mt-0.5">
+              {misionesHechas} / {totalMisiones} misiones
+            </div>
           </div>
+
+          {/* Navegación */}
+          <nav className="flex gap-2 flex-wrap">
+            <Link href="/expansion" className="btn btn-recurso text-[10px] px-3 py-1.5">
+              ★ Expansión
+            </Link>
+            <Link href="/oral" className="btn btn-oral text-[10px] px-3 py-1.5">
+              ⚔ Bosses
+            </Link>
+            <Link href="/examen" className="btn text-[10px] px-3 py-1.5">
+              📋 Examen
+            </Link>
+            {finalizado && (
+              <Link href="/epilogo" className="btn btn-cautelar text-[10px] px-3 py-1.5">
+                ✓ Epílogo
+              </Link>
+            )}
+            <Link href="/" className="btn btn-danger text-[10px] px-3 py-1.5">
+              ⏻
+            </Link>
+          </nav>
         </div>
       </header>
 
-      {/* STATS — diseño telemetría */}
-      <section className="grid md:grid-cols-4 gap-3 mb-10">
-        <Telemetria label="Reputación forense" value={personaje.reputacion} min={-100} max={100} zona="recursos" />
-        <Telemetria label="Trauma procesal" value={personaje.trauma} min={0} max={100} zona="nulidad" />
-        <Telemetria label="Nivel económico" value={personaje.nivelEconomico} min={0} max={100} zona="prueba" />
-        <Telemetria label="Logros" value={logros.length} min={0} max={20} zona="cautelares" raw />
-      </section>
+      {/* ─── MAIN CONTENT ─── */}
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
+        <div className="grid lg:grid-cols-[1fr_300px] gap-6">
 
-      {/* MAPA — las instituciones como zonas */}
-      <section className="mb-10">
-        <div className="flex justify-between items-end mb-4">
-          <h2 className="font-display-grave text-xl text-doc-aged tracking-wider">CIUDAD JUDICIAL · 13 ZONAS</h2>
-          <span className="text-[10px] uppercase tracking-widest text-doc-aged/40 font-mono-terminal">
-            haz click para entrar
-          </span>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-          {MAPA.map((m, i) => (
-            <motion.div
-              key={m.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04, duration: 0.4 }}
-            >
-              <Link href={`/mundo/${m.id}`} className="block zona-card p-5" style={{ "--zona-color": `var(--zona-${m.zona})` } as React.CSSProperties}>
-                <div className="flex justify-between items-start mb-3">
-                  <span className="font-display-grave text-3xl opacity-50" style={{ color: `var(--zona-${m.zona})` }}>{m.numeral}</span>
-                  <span className="text-[9px] uppercase tracking-widest font-mono-terminal opacity-50" style={{ color: `var(--zona-${m.zona})` }}>
-                    {m.etimo}
-                  </span>
+          {/* ─── MAPA VISUAL ─── */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-competencia mb-1">
+                  MAPA CIUDAD JUDICIAL · 7 ACTOS
                 </div>
-                <h3 className="font-display-grave text-base text-doc-aged tracking-wider mb-1">{m.titulo}</h3>
-                <p className="text-doc-aged/55 text-xs leading-relaxed font-mono-terminal">{m.subt}</p>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* LOG */}
-      <section className="terminal p-4 mb-8">
-        <div className="flex justify-between items-center mb-3">
-          <div className="font-display-grave text-sm text-zona-recursos tracking-widest">REGISTRO DEL EXPEDIENTE</div>
-          <div className="text-[10px] font-mono-terminal text-doc-aged/40 uppercase">{log.length} actuaciones</div>
-        </div>
-        <div className="max-h-44 overflow-y-auto text-xs text-doc-aged/70 space-y-1 font-mono-terminal">
-          {log.length === 0 && <div className="italic text-doc-aged/30">Sin actuaciones. La lluvia jurídica espera.</div>}
-          {log.map((l, i) => (
-            <div key={i} className="flex gap-2">
-              <span className="text-zona-competencia">›</span>
-              <span className="flex-1">{l.texto}</span>
-              {l.tag && <span className="tag tag-recursos text-[9px]">{l.tag}</span>}
+                <h2 className="font-display-grave text-2xl text-doc-aged">Ciudad Judicial</h2>
+              </div>
+              <button
+                onClick={() => setShowMisiones(!showMisiones)}
+                onMouseEnter={() => sfx.hover?.()}
+                className="btn text-[10px] px-3 py-1.5"
+              >
+                {showMisiones ? "🗺 Mapa" : "📋 Misiones"}
+              </button>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* contadores */}
-      <section className="grid md:grid-cols-3 gap-3 text-xs">
-        <Contador icon="📁" label="Expedientes archivados" value={expedientesArchivados.length} zona="cosajuzgada" />
-        <Contador icon="⚖" label="Cautelares decretadas" value={cautelares.length} zona="cautelares" />
-        <Contador icon="★" label="Logros desbloqueados" value={logros.length} zona="recursos" />
-      </section>
+            {!showMisiones ? (
+              <div className="terminal p-4" style={{ minHeight: 320 }}>
+                <GameWorldMap />
+              </div>
+            ) : (
+              <MisionesPanel misionesCompletadas={misionesCompletadas} />
+            )}
+          </div>
+
+          {/* ─── PANEL LATERAL ─── */}
+          <div className="space-y-4">
+
+            {/* Stats del personaje */}
+            <div className="terminal p-4 space-y-3">
+              <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-recursos mb-2">
+                TELEMETRÍA
+              </div>
+              <TelemetriaBar label="Reputación" value={personaje.reputacion} min={-100} max={100} zona="recursos" />
+              <TelemetriaBar label="Trauma" value={personaje.trauma} min={0} max={100} zona="nulidad" />
+              <TelemetriaBar label="Conocimiento" value={personaje.atributos.conocimiento_procesal} min={0} max={10} zona="prueba" />
+              <TelemetriaBar label="Estrategia" value={personaje.atributos.estrategia} min={0} max={10} zona="cautelares" />
+            </div>
+
+            {/* Actos disponibles */}
+            <div className="space-y-2">
+              <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-competencia">
+                ACTOS DISPONIBLES
+              </div>
+              {CAMPAÑA.slice(0, 4).map((acto) => (
+                <ActoCard
+                  key={acto.numero}
+                  acto={acto}
+                  completadas={misionesCompletadas.filter((id) =>
+                    acto.misiones.some((m) => m.id === id)
+                  ).length}
+                />
+              ))}
+            </div>
+
+            {/* Accesos rápidos */}
+            <div className="terminal p-3 space-y-2">
+              <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-prueba mb-2">
+                ACCESO RÁPIDO
+              </div>
+              {[
+                { href: "/expansion", label: "Sistemas Expansión", icon: "★", color: "recursos" },
+                { href: "/oral", label: "Boss Rush", icon: "⚔", color: "oralidad" },
+                { href: "/codex", label: "Codex Legal", icon: "📜", color: "cosajuzgada" },
+                { href: "/inventario", label: "Inventario", icon: "📦", color: "cautelares" },
+              ].map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => sfx.click?.()}
+                  onMouseEnter={() => sfx.hover?.()}
+                  className="flex items-center gap-3 p-2 border border-transparent hover:border-zona-competencia/20 rounded transition-all group"
+                >
+                  <span className="text-lg">{item.icon}</span>
+                  <span className="font-mono-terminal text-[10px] text-doc-aged/70 group-hover:text-doc-aged transition-colors">
+                    {item.label}
+                  </span>
+                </Link>
+              ))}
+            </div>
+
+            {/* Logros */}
+            <div className="terminal p-3">
+              <div className="font-mono-terminal text-[9px] text-zona-cautelares uppercase tracking-widest mb-2">
+                LOGROS: {logros.length}
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {logros.slice(0, 6).map((l) => (
+                  <div
+                    key={l.id}
+                    title={l.titulo}
+                    className="w-6 h-6 border border-zona-cautelares/40 flex items-center justify-center text-xs"
+                    style={{ background: "rgba(88,245,176,0.05)" }}
+                  >
+                    ✓
+                  </div>
+                ))}
+                {logros.length > 6 && (
+                  <div className="font-mono-terminal text-[8px] text-doc-aged/40 flex items-center px-1">
+                    +{logros.length - 6}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }
 
-function Avatar({ nombre, ciclo }: { nombre: string; ciclo: number }) {
-  const inicial = (nombre || "?").charAt(0).toUpperCase();
+// ────────────────────────────────────────────
+function TelemetriaBar({ label, value, min, max, zona }: { label: string; value: number; min: number; max: number; zona: string }) {
+  const pct = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
   return (
-    <div className="relative w-14 h-14 shrink-0">
-      <div className="absolute inset-0 border border-zona-competencia/40 rotate-45 bg-bg-file/60" />
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="font-display-grave text-2xl text-zona-competencia">{inicial}</span>
-      </div>
-      <div className="absolute -bottom-1 -right-1 bg-bg-deep border border-zona-recursos/50 text-zona-recursos text-[9px] px-1 font-mono-terminal">
-        C{ciclo}
-      </div>
-    </div>
-  );
-}
-
-function Telemetria({ label, value, min, max, zona, raw }: { label: string; value: number; min: number; max: number; zona: ZonaColor; raw?: boolean }) {
-  const pct = ((value - min) / (max - min)) * 100;
-  return (
-    <div className="zona-card p-3" style={{ "--zona-color": `var(--zona-${zona})` } as React.CSSProperties}>
-      <div className="flex justify-between text-[10px] uppercase tracking-widest font-mono-terminal mb-2">
+    <div>
+      <div className="flex justify-between text-[9px] font-mono-terminal mb-1">
         <span className="text-doc-aged/60">{label}</span>
-        <span style={{ color: `var(--zona-${zona})` }}>{raw ? value : value}</span>
+        <span style={{ color: `var(--zona-${zona})` }}>{value}</span>
       </div>
-      <div className="h-1.5 bg-bg-deep border border-bg-steel/40">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${Math.max(0, Math.min(100, pct))}%` }}
-          transition={{ duration: 0.8 }}
-          className="h-full"
-          style={{ background: `linear-gradient(90deg, var(--zona-${zona}), color-mix(in srgb, var(--zona-${zona}) 50%, white))` }}
+      <div className="h-1 bg-bg-steel rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-500"
+          style={{ width: `${pct}%`, backgroundColor: `var(--zona-${zona})`, boxShadow: `0 0 6px var(--zona-${zona})50` }}
         />
       </div>
     </div>
   );
 }
 
-function Contador({ icon, label, value, zona }: { icon: string; label: string; value: number; zona: ZonaColor }) {
+// ────────────────────────────────────────────
+function ActoCard({ acto, completadas }: { acto: { numero: number; titulo: string; zona: string; misiones: any[]; bossId: string }, completadas: number }) {
+  const pct = Math.round((completadas / acto.misiones.length) * 100);
+  const colorMap: Record<string, string> = {
+    jurisdiccion: "var(--zona-competencia)",
+    emplazamiento: "var(--zona-notificaciones)",
+    prueba: "var(--zona-prueba)",
+    sentencia: "var(--zona-cosajuzgada)",
+    recursos: "var(--zona-recursos)",
+    juicio_ejecutivo: "var(--zona-ejecutivo)",
+    examen: "var(--zona-oralidad)",
+  };
+  const color = colorMap[acto.zona] || "var(--zona-competencia)";
+
   return (
-    <div className="zona-card p-4 flex items-center gap-3" style={{ "--zona-color": `var(--zona-${zona})` } as React.CSSProperties}>
-      <span className="text-2xl">{icon}</span>
-      <div>
-        <div className="font-display-grave text-2xl" style={{ color: `var(--zona-${zona})` }}>{value}</div>
-        <div className="text-[10px] uppercase tracking-widest text-doc-aged/50 font-mono-terminal">{label}</div>
+    <div
+      className="p-2.5 border rounded transition-all hover:brightness-110"
+      style={{ borderColor: `${color}30`, background: `${color}05` }}
+    >
+      <div className="flex justify-between items-center mb-1">
+        <span className="font-mono-terminal text-[9px] uppercase" style={{ color }}>
+          Acto {acto.numero}
+        </span>
+        <span className="font-mono-terminal text-[8px] text-doc-aged/40">{completadas}/{acto.misiones.length}</span>
       </div>
+      <div className="font-display-grave text-xs text-doc-aged mb-1.5">{acto.titulo}</div>
+      <div className="h-1 bg-bg-steel rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-700"
+          style={{ width: `${pct}%`, backgroundColor: color }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ────────────────────────────────────────────
+function MisionesPanel({ misionesCompletadas }: { misionesCompletadas: string[] }) {
+  return (
+    <div className="terminal p-4 space-y-4 max-h-[450px] overflow-y-auto">
+      {CAMPAÑA.map((acto) => (
+        <div key={acto.numero}>
+          <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-recursos mb-2">
+            Acto {acto.numero}: {acto.titulo}
+          </div>
+          <div className="space-y-1.5">
+            {acto.misiones.map((mision) => {
+              const completada = misionesCompletadas.includes(mision.id);
+              return (
+                <div
+                  key={mision.id}
+                  className="flex items-start gap-2 p-2 border rounded transition-colors"
+                  style={{
+                    borderColor: completada ? "rgba(88,245,176,0.3)" : "rgba(75,231,255,0.1)",
+                    background: completada ? "rgba(88,245,176,0.03)" : "transparent",
+                  }}
+                >
+                  <span className="text-sm mt-0.5">{completada ? "✅" : "⬜"}</span>
+                  <div>
+                    <div className="font-display-grave text-xs text-doc-aged">{mision.titulo}</div>
+                    <div className="font-mono-terminal text-[8px] text-doc-aged/50">{mision.descripcion}</div>
+                    <div className="font-mono-terminal text-[8px] text-zona-prueba mt-0.5">
+                      +{mision.recompensa.xp} XP · 🪙{mision.recompensa.monedas}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

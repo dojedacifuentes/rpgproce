@@ -288,6 +288,15 @@ export type ProgresionNpc = {
   intentosFinal: number;        // para desafío final
 };
 
+// ============== SISTEMA RPG — XP, NIVEL, MONEDAS ==============
+
+export type MundoVisual =
+  | "cybervalpo"    // Cyberpunk Valparaíso — identidad original del proyecto
+  | "gotico"        // Gótico Judicial — vitrales, velas, tribunales medievales
+  | "plataformas"   // Mundo Plataformas — colorido, alegre, monedas
+  | "rts"           // StarCraft Legal — sci-fi, táctico, HUD complejo
+  | "medieval";     // Age of Empires Procesal — pergaminos, castillos
+
 export type SaveState = {
   version: number;
   creado: number;
@@ -305,8 +314,15 @@ export type SaveState = {
   casosEnProgreso?: CasoEnProgreso;
   // Sistema de NPCs
   npcesEnProgreso: Map<string, ProgresionNpc>;
-  npcesCompletados: string[];      // IDs de NPCs cuyo arco terminó (completada OR fallida)
-  npcesDesbloqueados: string[];    // IDs de NPCs disponibles (dependencias satisfechas)
+  npcesCompletados: string[];
+  npcesDesbloqueados: string[];
+  // Sistema RPG
+  xp: number;
+  nivel: number;
+  monedas: number;
+  mundoVisual: MundoVisual;
+  misionActiva?: string;
+  misionesCompletadas: string[];
   finalizado?: boolean;
   epilogo?: string;
 };

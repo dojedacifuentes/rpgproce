@@ -4,12 +4,18 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import type {
   Expediente, Flag, Incidente, Logro, MedidaCautelar, Mundo, Personaje, SaveState,
   Escrito, Resolucion, RecursoInterpuesto, Prueba, Tribunal, CasoResuelto, CasoEnProgreso,
-  ProgresionNpc, EstadoNpc,
+  ProgresionNpc, EstadoNpc, MundoVisual,
 } from "@/types/game";
 
 type Store = SaveState & {
   setPersonaje: (p: Personaje) => void;
   setMundo: (m: Mundo) => void;
+  gainXp: (amount: number) => void;
+  gainMonedas: (amount: number) => void;
+  spendMonedas: (amount: number) => boolean;
+  setMundoVisual: (m: MundoVisual) => void;
+  setMisionActiva: (id: string | undefined) => void;
+  completarMision: (id: string, recompensa: { xp?: number; monedas?: number }) => void;
   iniciarExpediente: (e: Expediente) => void;
   cerrarExpediente: (resultado: NonNullable<Expediente["resultado"]>) => void;
   setTribunal: (t: Tribunal) => void;
@@ -69,6 +75,12 @@ const INIT: SaveState = {
   npcesEnProgreso: new Map<string, ProgresionNpc>(),
   npcesCompletados: [],
   npcesDesbloqueados: [],
+  xp: 0,
+  nivel: 1,
+  monedas: 0,
+  mundoVisual: "cybervalpo",
+  misionActiva: undefined,
+  misionesCompletadas: [],
 };
 
 export const useGame = create<Store>()(
@@ -261,6 +273,38 @@ export const useGame = create<Store>()(
           // Por ahora, todos los NPCs disponibles
           // En futuro: validar dependencias contra npcesCompletados
           return s; // placeholder
+        }),
+      gainXp: (amount) =>
+        set((s) => {
+          const newXp = s.xp + amount;
+          const xpPerLevel = 100;
+          const newNivel = Math.min(20, Math.floor(newXp / xpPerLevel) + 1);
+          return { xp: newXp, nivel: newNivel, ultimoGuardado: Date.now() };
+        }),
+      gainMonedas: (amount) =>
+        set((s) => ({ monedas: s.monedas + amount, ultimoGuardado: Date.now() })),
+      spendMonedas: (amount) => {
+        const monedas = get().monedas;
+        if (monedas < amount) return false;
+        set({ monedas: monedas - amount });
+        return true;
+      },
+      setMundoVisual: (m) => set({ mundoVisual: m, ultimoGuardado: Date.now() }),
+      setMisionActiva: (id) => set({ misionActiva: id }),
+      completarMision: (id, recompensa) =>
+        set((s) => {
+          if (s.misionesCompletadas.includes(id)) return s;
+          const newXp = s.xp + (recompensa.xp || 0);
+          const xpPerLevel = 100;
+          const newNivel = Math.min(20, Math.floor(newXp / xpPerLevel) + 1);
+          return {
+            misionesCompletadas: [...s.misionesCompletadas, id],
+            xp: newXp,
+            nivel: newNivel,
+            monedas: s.monedas + (recompensa.monedas || 0),
+            misionActiva: undefined,
+            ultimoGuardado: Date.now(),
+          };
         }),
       finalizar: (texto) => set({ finalizado: true, epilogo: texto }),
       nuevoCicloProcesal: () =>

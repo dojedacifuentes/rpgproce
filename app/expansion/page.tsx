@@ -20,6 +20,7 @@ import AtaqueRepreguntas from "@/components/AtaqueRepreguntas";
 import CasoInvestigativo from "@/components/CasoInvestigativo";
 import SubmundosPanel from "@/components/SubmundosPanel";
 import NPCInteractionPanel from "@/components/NPCInteractionPanel";
+import WorldSelector from "@/components/WorldSelector";
 import { CASOS_INVESTIGATIVOS } from "@/data/casos-investigativos";
 
 type Modulo =
@@ -42,7 +43,8 @@ type Modulo =
   | "ataque"
   | "investigacion"
   | "submundos"
-  | "npcs";
+  | "npcs"
+  | "mundos";
 
 const MODULOS: {
   id: Modulo;
@@ -87,6 +89,15 @@ const MODULOS: {
     descripcion: "Historias de vicios procesales que nunca se escriben. El Archivo Secreto · Las Cámaras Ocultas · La Doctrina Apócrifa. Desbloquea con logros.",
     zona: "nulidad",
     numeral: "SUB.01",
+    nuevo: true,
+  },
+  {
+    id: "mundos",
+    titulo: "Mundos Visuales",
+    subtitulo: "5 MUNDOS · IDENTIDAD PROPIA",
+    descripcion: "Cyber Valparaíso · Tribunal Gótico · Plataformas Jurídicas · Orbital RTS · Reino Medieval. Cada mundo transforma la estética completa del juego.",
+    zona: "competencia",
+    numeral: "MND.01",
     nuevo: true,
   },
   {
@@ -304,6 +315,7 @@ export default function ExpansionHub() {
         {m === "arcade" && <ArcadeClasificador />}
         {m === "submundos" && <SubmundosPanel />}
         {m === "npcs" && <NPCInteractionPanel />}
+        {m === "mundos" && <WorldSelector onClose={() => setM("menu")} />}
         {m === "vof" && <SpeedrunVoF />}
         {m === "sentencia" && <SalaSentencia />}
         {m === "expediente" && <ExpedienteVivo />}
