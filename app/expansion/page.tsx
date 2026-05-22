@@ -10,19 +10,133 @@ import AbandonoProcedimiento from "@/components/AbandonoProcedimiento";
 import ComparecenciaPanel from "@/components/ComparecenciaPanel";
 import SpeedrunVoF from "@/components/SpeedrunVoF";
 import SalaSentencia from "@/components/SalaSentencia";
+import JuicioEjecutivoCompleto from "@/components/JuicioEjecutivoCompleto";
+import GrimorioSkills from "@/components/GrimorioSkills";
+import ExamenGrado from "@/components/ExamenGrado";
 
-type Modulo = "menu" | "build" | "expediente" | "preclusion" | "inhibitoria" | "arcade" | "abandono" | "comparecencia" | "vof" | "sentencia";
+type Modulo =
+  | "menu"
+  | "build"
+  | "expediente"
+  | "preclusion"
+  | "inhibitoria"
+  | "arcade"
+  | "abandono"
+  | "comparecencia"
+  | "vof"
+  | "sentencia"
+  | "ejecutivo_full"
+  | "grimorio"
+  | "examen";
 
-const MODULOS: { id: Modulo; titulo: string; subtitulo: string; descripcion: string; zona: string; numeral: string }[] = [
-  { id: "arcade", titulo: "Arcade Clasificador", subtitulo: "MODO RAPIDO · COMBO", descripcion: "Resoluciones · recursos · excepciones · competencia · notificaciones · ejecutivo. Velocidad creciente. Combo multiplicador. Ranking S-A-B-C-D.", zona: "ejecutivo", numeral: "ARC.01" },
-  { id: "vof", titulo: "Verdadero o Falso", subtitulo: "PRESIÓN TEMPORAL · TRAMPAS", descripcion: "40 enunciados tramposos en 3 niveles de dificultad. La respuesta intuitiva suele ser la incorrecta. Glitch visual al fallar.", zona: "oralidad", numeral: "ARC.02" },
-  { id: "sentencia", titulo: "Sala de Sentencia", subtitulo: "HORROR JUDICIAL", descripcion: "Esperá el dictamen. El estrado holográfico observa. Las frases del tribunal pulsan en el tiempo. Veredicto aleatorio con efectos.", zona: "cosajuzgada", numeral: "INST.16" },
-  { id: "expediente", titulo: "Expediente Vivo", subtitulo: "SALUD PROCESAL", descripcion: "El expediente se degrada con cada vicio. Glitch progresivo según el daño. Si llega a 0: nulidad latente del 768 N°9.", zona: "nulidad", numeral: "INST.04" },
-  { id: "preclusion", titulo: "Preclusión Real", subtitulo: "PLAZOS FATALES", descripcion: "Timer en tiempo real. Si vencés el plazo, la preclusión es irreversible. Art. 64 CPC en su versión más cruel.", zona: "ejecutivo", numeral: "INST.06" },
-  { id: "inhibitoria", titulo: "Inhibitoria vs Declinatoria", subtitulo: "CUESTIONES DE COMPETENCIA", descripcion: "Identificá medio + tribunal correcto. Arts. 101-112 CPC. Los conflictos suspenden el principal (art. 112).", zona: "competencia", numeral: "INST.01" },
-  { id: "abandono", titulo: "Abandono del Procedimiento", subtitulo: "TIMER DE 6 MESES", descripcion: "Mantené el expediente vivo. Solo gestiones útiles interrumpen el plazo. Las administrativas no sirven. Art. 152 CPC.", zona: "incidentes", numeral: "INST.18" },
-  { id: "comparecencia", titulo: "Comparecencia", subtitulo: "PATROCINIO · LEY 18.120", descripcion: "Validá los 7 requisitos del primer escrito. La secretaria tribunalicia rechaza con humor seco. Olvidar patrocinio = humillación inmediata.", zona: "incidentes", numeral: "INST.19" },
-  { id: "build", titulo: "Especialización", subtitulo: "BUILD · 6 CLASES", descripcion: "Litigante agresivo · monstruo casacional · formalista extremo · estratega cautelar · operador práctico · doctrinario.", zona: "recursos", numeral: "RPG.01" },
+const MODULOS: {
+  id: Modulo;
+  titulo: string;
+  subtitulo: string;
+  descripcion: string;
+  zona: string;
+  numeral: string;
+  nuevo?: boolean;
+}[] = [
+  {
+    id: "ejecutivo_full",
+    titulo: "Campaña Ejecutiva",
+    subtitulo: "10 ETAPAS · ÁRBOL DECISIONAL",
+    descripcion: "Juicio ejecutivo completo: del título al remate. Verificación de art. 434, gestión preparatoria, mandamiento, embargo (con bienes inembargables del 445), excepciones tasadas del 464, fallo, apremio y tercerías. Mecánica de vida y reputación.",
+    zona: "ejecutivo",
+    numeral: "EJE.01",
+    nuevo: true,
+  },
+  {
+    id: "examen",
+    titulo: "Examen de Grado",
+    subtitulo: "CÉDULA ORAL · ALTERNATIVAS DIFÍCILES",
+    descripcion: `${15}+ cédulas con respuesta académica modelo. ${12}+ alternativas de opción múltiple con distractores basados en errores reales. Análisis normativo completo. Simula comisión examinadora.`,
+    zona: "nulidad",
+    numeral: "EXA.01",
+    nuevo: true,
+  },
+  {
+    id: "grimorio",
+    titulo: "Grimorio de Skills",
+    subtitulo: "HABILIDADES COLECCIONABLES",
+    descripcion: "11 habilidades procesales que se desbloquean al cumplir logros. Escudo del 768, Preclusión Inversa, Blindaje del 44, Casación de Oficio Simulada, Embargo Express, Cosa Juzgada Aparente y más.",
+    zona: "recursos",
+    numeral: "GRI.01",
+    nuevo: true,
+  },
+  {
+    id: "arcade",
+    titulo: "Arcade Clasificador",
+    subtitulo: "MODO RAPIDO · COMBO",
+    descripcion: "Resoluciones · recursos · excepciones · competencia · notificaciones · ejecutivo. Velocidad creciente. Combo multiplicador. Ranking S-A-B-C-D.",
+    zona: "ejecutivo",
+    numeral: "ARC.01",
+  },
+  {
+    id: "vof",
+    titulo: "Verdadero o Falso",
+    subtitulo: "PRESIÓN TEMPORAL · TRAMPAS",
+    descripcion: "70+ enunciados tramposos en 3 niveles de dificultad. La respuesta intuitiva suele ser la incorrecta. Glitch visual al fallar.",
+    zona: "oralidad",
+    numeral: "ARC.02",
+  },
+  {
+    id: "sentencia",
+    titulo: "Sala de Sentencia",
+    subtitulo: "HORROR JUDICIAL",
+    descripcion: "Esperá el dictamen. El estrado holográfico observa. Las frases del tribunal pulsan en el tiempo. Veredicto aleatorio con efectos.",
+    zona: "cosajuzgada",
+    numeral: "INST.16",
+  },
+  {
+    id: "expediente",
+    titulo: "Expediente Vivo",
+    subtitulo: "SALUD PROCESAL",
+    descripcion: "El expediente se degrada con cada vicio. Glitch progresivo según el daño. Si llega a 0: nulidad latente del 768 N°9.",
+    zona: "nulidad",
+    numeral: "INST.04",
+  },
+  {
+    id: "preclusion",
+    titulo: "Preclusión Real",
+    subtitulo: "PLAZOS FATALES",
+    descripcion: "Timer en tiempo real. Si vencés el plazo, la preclusión es irreversible. Art. 64 CPC en su versión más cruel.",
+    zona: "ejecutivo",
+    numeral: "INST.06",
+  },
+  {
+    id: "inhibitoria",
+    titulo: "Inhibitoria vs Declinatoria",
+    subtitulo: "CUESTIONES DE COMPETENCIA",
+    descripcion: "Identificá medio + tribunal correcto. Arts. 101-112 CPC. Los conflictos suspenden el principal (art. 112).",
+    zona: "competencia",
+    numeral: "INST.01",
+  },
+  {
+    id: "abandono",
+    titulo: "Abandono del Procedimiento",
+    subtitulo: "TIMER DE 6 MESES",
+    descripcion: "Mantené el expediente vivo. Solo gestiones útiles interrumpen el plazo. Las administrativas no sirven. Art. 152 CPC.",
+    zona: "incidentes",
+    numeral: "INST.18",
+  },
+  {
+    id: "comparecencia",
+    titulo: "Comparecencia",
+    subtitulo: "PATROCINIO · LEY 18.120",
+    descripcion: "Validá los 7 requisitos del primer escrito. La secretaria tribunalicia rechaza con humor seco. Olvidar patrocinio = humillación inmediata.",
+    zona: "incidentes",
+    numeral: "INST.19",
+  },
+  {
+    id: "build",
+    titulo: "Especialización",
+    subtitulo: "BUILD · 6 CLASES",
+    descripcion: "Litigante agresivo · monstruo casacional · formalista extremo · estratega cautelar · operador práctico · doctrinario.",
+    zona: "recursos",
+    numeral: "RPG.01",
+  },
 ];
 
 export default function ExpansionHub() {
@@ -31,10 +145,13 @@ export default function ExpansionHub() {
   if (m !== "menu") {
     return (
       <main className="min-h-screen px-4 md:px-8 py-6 max-w-6xl mx-auto">
-        <div className="flex justify-between mb-6">
+        <div className="flex justify-between mb-6 flex-wrap gap-2">
           <button className="btn" onClick={() => setM("menu")}>◂ Hub Expansión</button>
           <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
         </div>
+        {m === "ejecutivo_full" && <JuicioEjecutivoCompleto />}
+        {m === "examen" && <ExamenGrado />}
+        {m === "grimorio" && <GrimorioSkills />}
         {m === "arcade" && <ArcadeClasificador />}
         {m === "vof" && <SpeedrunVoF />}
         {m === "sentencia" && <SalaSentencia />}
@@ -53,7 +170,7 @@ export default function ExpansionHub() {
       <header className="flex justify-between mb-8 flex-wrap gap-2">
         <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
         <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-zona-recursos">
-          HUB EXPANSIÓN v3.0 · SISTEMAS AVANZADOS
+          HUB EXPANSIÓN v3.3 · {MODULOS.length} SISTEMAS
         </div>
       </header>
 
@@ -61,7 +178,7 @@ export default function ExpansionHub() {
         <div className="font-mono-terminal text-[10px] uppercase tracking-[.4em] text-zona-recursos mb-2">SUBSISTEMAS</div>
         <h1 className="font-display-grave text-4xl md:text-5xl text-doc-aged mb-3">Arquitectura Avanzada</h1>
         <p className="text-doc-aged/60 text-sm font-mono-terminal max-w-2xl">
-          Siete sistemas modulares para entrenamiento de examen de grado. Cada uno simula una institución del Derecho Procesal chileno con mecánicas propias.
+          Doce sistemas modulares para entrenamiento de examen de grado. Cada uno simula una institución del Derecho Procesal chileno con mecánicas propias. Los nuevos módulos están marcados con ✦.
         </p>
       </div>
 
@@ -70,9 +187,17 @@ export default function ExpansionHub() {
           <button
             key={mod.id}
             onClick={() => setM(mod.id)}
-            className="zona-card p-5 text-left"
+            className="zona-card p-5 text-left relative"
             style={{ "--zona-color": `var(--zona-${mod.zona})` } as React.CSSProperties}
           >
+            {mod.nuevo && (
+              <div
+                className="absolute top-3 right-3 text-[8px] font-mono-terminal px-2 py-0.5 border"
+                style={{ borderColor: `var(--zona-${mod.zona})`, color: `var(--zona-${mod.zona})` }}
+              >
+                ✦ NUEVO
+              </div>
+            )}
             <div className="flex justify-between items-start mb-3">
               <span className="font-display-grave text-3xl opacity-40" style={{ color: `var(--zona-${mod.zona})` }}>
                 {mod.numeral.split(".")[0]}
@@ -103,10 +228,10 @@ export default function ExpansionHub() {
           </div>
           <h3 className="font-display-grave text-lg text-doc-aged tracking-wider mb-1">Modo Oral</h3>
           <div className="text-[10px] uppercase tracking-widest font-mono-terminal text-zona-oralidad mb-2">
-            BOSSES · 6 INSTANCIAS
+            BOSSES · 9 INSTANCIAS
           </div>
           <p className="text-doc-aged/55 text-xs leading-relaxed font-mono-terminal">
-            Anfiteatro judicial. Comisión examinadora con cadenas de derivación. Ataques: directo / puente / trampa / repregunta.
+            Anfiteatro judicial. Comisión examinadora con cadenas de derivación. Ataques: directo / puente / trampa / repregunta. 9 bosses desbloqueables.
           </p>
         </Link>
       </div>

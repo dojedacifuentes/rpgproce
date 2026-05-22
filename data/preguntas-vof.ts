@@ -144,6 +144,131 @@ export const BANCO_VOF: PreguntaVoF[] = [
 
   { enunciado: "La cosa juzgada FORMAL impide volver a discutir el asunto en otro juicio.",
     respuesta: false, explicacion: "FALSO. La formal es solo dentro del mismo proceso (impide nueva impugnación). La MATERIAL es la que impide otro juicio. Confundirlas = naufragio doctrinal.", art: "Art. 175 CPC + doctrina", zona: "cosajuzgada", dificultad: 2 },
+
+  // ─── BLOQUE EXPANDIDO v3.3 — más trampas finas ───
+  { enunciado: "El recurso de revisión es un recurso ORDINARIO.",
+    respuesta: false, explicacion: "FALSO. La revisión es un recurso EXTRAORDINARIO de competencia exclusiva de la Corte Suprema (810 CPC). Procede solo contra sentencias firmes y por causales taxativas.",
+    art: "Arts. 810-811 CPC", zona: "recursos", dificultad: 1 },
+
+  { enunciado: "El plazo para apelar contra una sentencia interlocutoria es de 5 días contados desde la notificación.",
+    respuesta: true, explicacion: "VERDADERO. Art. 189: 5 días para interlocutorias y autos/decretos en apelación subsidiaria; 10 días para definitivas.",
+    art: "Art. 189 CPC", zona: "recursos", dificultad: 1 },
+
+  { enunciado: "La apelación contra sentencia definitiva puede deducirse en cualquier tiempo mientras no se cumpla.",
+    respuesta: false, explicacion: "FALSO. 10 días desde la notificación. Pasado ese plazo, queda firme.",
+    art: "Art. 189 CPC", zona: "recursos", dificultad: 1 },
+
+  { enunciado: "El juicio sumario procede SIEMPRE Y SOLO en los casos taxativos del art. 680 inc. 2°.",
+    respuesta: false, explicacion: "FALSO. El art. 680 inc. 1° tiene cláusula abierta: por su naturaleza, cuando la acción requiera tramitación rápida. Además están los del inc. 2° (taxativos).",
+    art: "Art. 680 CPC", zona: "incidentes", dificultad: 3 },
+
+  { enunciado: "La acumulación de autos requiere que las causas se encuentren en el mismo grado jurisdiccional.",
+    respuesta: true, explicacion: "VERDADERO. Art. 95 CPC: que se encuentren sometidas a una misma instancia. Es uno de los requisitos.",
+    art: "Art. 95 CPC", zona: "incidentes", dificultad: 2 },
+
+  { enunciado: "El privilegio de pobreza se concede únicamente a personas naturales.",
+    respuesta: false, explicacion: "FALSO. Art. 129 CPC extiende a personas naturales y a corporaciones de utilidad pública. Doctrinaria: las jurídicas pueden invocarlo si demuestran insolvencia.",
+    art: "Art. 129 CPC", zona: "incidentes", dificultad: 3 },
+
+  { enunciado: "El tribunal puede decretar medidas para mejor resolver de oficio.",
+    respuesta: true, explicacion: "VERDADERO. Art. 159 CPC. Plazo: dentro del término para dictar sentencia. Tipos: presentación de documentos, confesión de partes, inspección personal, etc.",
+    art: "Art. 159 CPC", zona: "prueba", dificultad: 2 },
+
+  { enunciado: "Las medidas para mejor resolver pueden decretarse aunque la causa esté en estado de fallo.",
+    respuesta: true, explicacion: "VERDADERO. Justamente, se decretan después de citada la causa para sentencia. Esto interrumpe el plazo para fallar (159 inc. final).",
+    art: "Art. 159 CPC", zona: "prueba", dificultad: 2 },
+
+  { enunciado: "El plazo para hacer observaciones a la prueba (art. 430) es de 10 días.",
+    respuesta: true, explicacion: "VERDADERO. Art. 430 CPC: vencido el probatorio se dan 10 días para observaciones. Plazo fatal.",
+    art: "Art. 430 CPC", zona: "prueba", dificultad: 2 },
+
+  { enunciado: "La preparación del recurso de casación (art. 769) es exigible incluso cuando el vicio aparece en la sentencia misma.",
+    respuesta: false, explicacion: "FALSO. Art. 769 inc. 2°: NO se exige preparación cuando el vicio nace en la sentencia o cuando no fue conocido antes. Excepción crucial.",
+    art: "Art. 769 inc. 2° CPC", zona: "recursos", dificultad: 3 },
+
+  { enunciado: "Una resolución de un tribunal arbitrador siempre es susceptible de casación en la forma.",
+    respuesta: false, explicacion: "FALSO. Las sentencias de árbitros ARBITRADORES NO admiten casación en la forma. Por eso el 545 COT contempla la excepción de la queja procediendo contra ellas (es el ÚNICO recurso disponible).",
+    art: "Arts. 545 COT, 791 CPC", zona: "recursos", dificultad: 3 },
+
+  { enunciado: "El embargo recae sobre el dominio del bien.",
+    respuesta: false, explicacion: "FALSO. El embargo NO transfiere el dominio (sigue siendo del deudor). Solo es medida de afectación que prohíbe la libre disposición. Confundir es un error básico.",
+    art: "Arts. 444-457 CPC", zona: "ejecutivo", dificultad: 2 },
+
+  { enunciado: "El depositario provisional del embargo puede ser el mismo deudor.",
+    respuesta: true, explicacion: "VERDADERO. Art. 451 inc. 2°: el ejecutado puede ser nombrado depositario si el acreedor consiente o si el tribunal lo estima conveniente. Aunque no es lo habitual.",
+    art: "Art. 451 CPC", zona: "ejecutivo", dificultad: 2 },
+
+  { enunciado: "La tercería de dominio se tramita en el cuaderno principal.",
+    respuesta: false, explicacion: "FALSO. Las tercerías SIEMPRE en CUADERNO SEPARADO (520 CPC). No suspenden el procedimiento principal ni el de apremio, salvo decisión judicial.",
+    art: "Arts. 518-520 CPC", zona: "ejecutivo", dificultad: 2 },
+
+  { enunciado: "El remate sin tasación es imposible: siempre se requiere informe pericial.",
+    respuesta: false, explicacion: "FALSO. Si las partes acuerdan el precio mínimo, no se necesita tasación (486 inc. final). También cuando se trata de bienes con valor conocido (valores mobiliarios cotizados).",
+    art: "Art. 486 CPC", zona: "ejecutivo", dificultad: 3 },
+
+  { enunciado: "En el juicio ejecutivo, la sentencia DE PAGO ordena seguir adelante con la ejecución.",
+    respuesta: true, explicacion: "VERDADERO. Art. 471 CPC: la sentencia de pago ordena seguir adelante con la ejecución y la sentencia ABSOLUTORIA ordena alzar el embargo.",
+    art: "Art. 471 CPC", zona: "ejecutivo", dificultad: 1 },
+
+  { enunciado: "El art. 1464 N°3 CC declara objeto ilícito en la enajenación de cosas embargadas, salvo autorización judicial o consentimiento del acreedor.",
+    respuesta: true, explicacion: "VERDADERO. Conexión Civil↔Procesal clave. Acción de nulidad por objeto ilícito.",
+    art: "Art. 1464 N°3 CC + 297 CPC", zona: "cautelares", dificultad: 2 },
+
+  { enunciado: "Las medidas precautorias se decretan SIEMPRE inaudita parte.",
+    respuesta: false, explicacion: "FALSO. Art. 302 CPC: pueden llevarse a efecto antes de notificarse, pero solo por motivos graves y urgentes. La REGLA es notificación previa.",
+    art: "Art. 302 CPC", zona: "cautelares", dificultad: 3 },
+
+  { enunciado: "La acción contra el fiador puede deducirse aunque no se haya intentado primero contra el deudor principal.",
+    respuesta: false, explicacion: "FALSO en regla general. El fiador goza del BENEFICIO DE EXCUSIÓN (CC 2357), que es excepción dilatoria del 303 N°5 CPC.",
+    art: "Arts. 2357 CC, 303 N°5 CPC", zona: "incidentes", dificultad: 3 },
+
+  { enunciado: "El amicus curiae está expresamente regulado en el CPC chileno.",
+    respuesta: false, explicacion: "FALSO. El amicus curiae no tiene regulación expresa en el CPC. Existe regulación parcial en procedimientos constitucionales y administrativos. Doctrina mayoritaria considera que en lo civil ordinario NO procede formalmente.",
+    art: "Doctrina + jurisprudencia TC", zona: "incidentes", dificultad: 3 },
+
+  { enunciado: "El recurso de queja prescribe en 5 días desde la notificación de la resolución impugnada.",
+    respuesta: true, explicacion: "VERDADERO. Art. 548 COT: plazo de 5 días, fatal. Se interpone directamente ante el tribunal superior.",
+    art: "Art. 548 COT", zona: "recursos", dificultad: 2 },
+
+  { enunciado: "El abandono del procedimiento puede pedirlo cualquiera de las partes.",
+    respuesta: false, explicacion: "FALSO. Art. 153: solo el demandado, en cualquier estado del juicio, por vía de acción o de excepción. NO el demandante (porque sería premiar su propia inactividad).",
+    art: "Art. 153 CPC", zona: "incidentes", dificultad: 3 },
+
+  { enunciado: "El abandono extingue las acciones y derechos del demandante.",
+    respuesta: false, explicacion: "FALSO. Art. 156: el abandono NO extingue las acciones, solo las gestiones obradas. La acción puede deducirse de nuevo si no ha prescrito.",
+    art: "Art. 156 CPC", zona: "incidentes", dificultad: 2 },
+
+  { enunciado: "El desistimiento de la demanda extingue la acción y produce cosa juzgada.",
+    respuesta: true, explicacion: "VERDADERO. Art. 150 CPC: la sentencia que acepta el desistimiento extingue las acciones que se han hecho valer. Produce cosa juzgada material.",
+    art: "Art. 150 CPC", zona: "incidentes", dificultad: 2 },
+
+  { enunciado: "El allanamiento del demandado dispensa al actor de probar los hechos.",
+    respuesta: true, explicacion: "VERDADERO. Art. 313 CPC: el demandado que se allana o acepta los hechos releva al actor de probarlos. Aún así, el tribunal puede recibir la causa a prueba si hay disposición de derechos.",
+    art: "Art. 313 CPC", zona: "incidentes", dificultad: 2 },
+
+  { enunciado: "La sentencia dictada en juicio sumario contra el demandado rebelde no es apelable en ambos efectos.",
+    respuesta: false, explicacion: "FALSO. La apelación en el sumario procede en el solo efecto devolutivo, salvo en sentencia definitiva o resolución que ponga término al juicio (art. 691). Pero ojo: ambos efectos si lo dispone la ley.",
+    art: "Art. 691 CPC", zona: "incidentes", dificultad: 3 },
+
+  { enunciado: "La rebeldía del demandado en el juicio ordinario implica reconocimiento de los hechos de la demanda.",
+    respuesta: false, explicacion: "FALSO. La rebeldía SOLO implica contestación FICTA: se entiende controvertido todo. NO es allanamiento. Diferencia clave.",
+    art: "Art. 78 CPC + doctrina", zona: "incidentes", dificultad: 2 },
+
+  { enunciado: "El art. 64 inciso final permite al tribunal proveer de oficio al vencimiento del plazo fatal.",
+    respuesta: true, explicacion: "VERDADERO. Reforma Ley 19.317. El tribunal puede dictar de oficio la resolución que corresponda. En la práctica los abogados igual acusan rebeldía por seguridad.",
+    art: "Art. 64 inc. final CPC", zona: "incidentes", dificultad: 2 },
+
+  { enunciado: "Los plazos en el CPC se cuentan SIEMPRE de fecha a fecha incluyendo días corridos.",
+    respuesta: false, explicacion: "FALSO. Los plazos del CPC se cuentan en DÍAS HÁBILES y no comprenden los feriados (art. 66 CPC), salvo que la ley o el tribunal dispongan lo contrario expresamente.",
+    art: "Art. 66 CPC", zona: "incidentes", dificultad: 1 },
+
+  { enunciado: "El término probatorio puede prorrogarse a solicitud de parte por motivos justificados.",
+    respuesta: true, explicacion: "VERDADERO. Art. 329 CPC permite término extraordinario fuera del territorio. Art. 339: especial por entorpecimiento.",
+    art: "Arts. 329, 339 CPC", zona: "prueba", dificultad: 2 },
+
+  { enunciado: "El testigo inhábil del 358 nunca puede declarar válidamente.",
+    respuesta: false, explicacion: "FALSO. El testigo puede declarar, pero su testimonio tiene menor valor o es desestimado. La tacha se interpone antes de la declaración y se resuelve en la sentencia.",
+    art: "Arts. 357-358 CPC", zona: "prueba", dificultad: 2 },
 ];
 
 export function casosAleatoriosVoF(n: number, dificultad?: 1 | 2 | 3): PreguntaVoF[] {

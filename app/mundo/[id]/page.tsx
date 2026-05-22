@@ -13,6 +13,7 @@ import DiscusionPanel from "@/components/DiscusionPanel";
 import PruebaPanel from "@/components/PruebaPanel";
 import ClasificadorRecursos from "@/components/ClasificadorRecursos";
 import EjecutivoPanel from "@/components/EjecutivoPanel";
+import JuicioEjecutivoCompleto from "@/components/JuicioEjecutivoCompleto";
 import CautelaresPanel from "@/components/CautelaresPanel";
 import { useGame } from "@/store/useGame";
 
@@ -67,7 +68,7 @@ export default function MundoPage() {
           {mundo === "prueba" && <PruebaPanel />}
           {mundo === "sentencia" && <SentenciaInfo onCerrar={() => router.push("/mundo/recursos")} />}
           {mundo === "recursos" && <ClasificadorRecursos />}
-          {mundo === "juicio_ejecutivo" && <EjecutivoPanel />}
+          {mundo === "juicio_ejecutivo" && <JuicioEjecutivoCompleto />}
           {mundo === "cautelares" && <CautelaresPanel />}
           {mundo === "examen" && <RedireccionExamen onGo={() => router.push("/examen")} />}
         </div>
