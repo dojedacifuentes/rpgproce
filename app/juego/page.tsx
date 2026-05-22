@@ -43,6 +43,8 @@ export default function Juego() {
           </p>
         </div>
         <div className="flex gap-2 flex-wrap">
+          <Link href="/expansion" className="btn" style={{ borderColor: "#a78bfa", color: "#a78bfa" }}>★ Expansión v2.0</Link>
+          <Link href="/oral" className="btn btn-danger">🎤 Modo Oral</Link>
           <Link href="/codex" className="btn">📜 Codex</Link>
           <Link href="/inventario" className="btn">📦 Expediente</Link>
           {finalizado && <Link href="/epilogo" className="btn">📜 Epílogo</Link>}

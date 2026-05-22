@@ -38,6 +38,8 @@ export default function Home() {
           {hayPartida && finalizado && <Link href="/epilogo" className="btn">📜 Leer epílogo</Link>}
           <Link href="/codex" className="btn">📜 Codex</Link>
           <Link href="/examen" className="btn">📝 Modo Examen</Link>
+          <Link href="/expansion" className="btn" style={{ borderColor: "#a78bfa", color: "#a78bfa" }}>★ Expansión v2.0</Link>
+          <Link href="/oral" className="btn btn-danger">🎤 Bosses</Link>
         </div>
         <div className="divider my-12" />
         <div className="grid md:grid-cols-3 gap-4 text-left text-xs text-parchment/60">
