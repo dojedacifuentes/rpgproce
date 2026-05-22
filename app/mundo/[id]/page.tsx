@@ -15,6 +15,7 @@ import ClasificadorRecursos from "@/components/ClasificadorRecursos";
 import EjecutivoPanel from "@/components/EjecutivoPanel";
 import JuicioEjecutivoCompleto from "@/components/JuicioEjecutivoCompleto";
 import CautelaresPanel from "@/components/CautelaresPanel";
+import ZonaExplorador from "@/components/ZonaExplorador";
 import { useGame } from "@/store/useGame";
 
 export default function MundoPage() {
@@ -43,6 +44,25 @@ export default function MundoPage() {
   const lista = escenasMundo[mundo] || [];
   const todasLasEscenasVistas = escenaIdx >= lista.length;
 
+  // Mapear Mundo a zona para el sistema de NPCs/eventos
+  const mundoAZona: Record<Mundo, string> = {
+    jurisdiccion: "competencia",
+    competencia: "competencia",
+    accion_pretension: "demanda",
+    demanda: "demanda",
+    emplazamiento: "notificaciones",
+    discusion: "cosajuzgada",
+    conciliacion: "cosajuzgada",
+    prueba: "prueba",
+    sentencia: "cosajuzgada",
+    recursos: "recursos",
+    juicio_ejecutivo: "ejecutivo",
+    cautelares: "cautelares",
+    examen: "nulidad",
+  };
+
+  const zonaMundo = mundoAZona[mundo];
+
   return (
     <main className="min-h-screen px-6 py-8 max-w-5xl mx-auto">
       <header className="flex justify-between items-center mb-6">
@@ -55,23 +75,25 @@ export default function MundoPage() {
       )}
 
       {todasLasEscenasVistas && (
-        <div className="space-y-6">
-          {mundo === "jurisdiccion" && (
-            <CaracteristicasJurisdiccion />
-          )}
-          {mundo === "competencia" && <CompetenciaPanel />}
-          {mundo === "accion_pretension" && <AccionPretension />}
-          {mundo === "demanda" && <DemandaPanel />}
-          {mundo === "emplazamiento" && <EmplazamientoPanel />}
-          {mundo === "discusion" && <DiscusionPanel />}
-          {mundo === "conciliacion" && <ConciliacionInfo />}
-          {mundo === "prueba" && <PruebaPanel />}
-          {mundo === "sentencia" && <SentenciaInfo onCerrar={() => router.push("/mundo/recursos")} />}
-          {mundo === "recursos" && <ClasificadorRecursos />}
-          {mundo === "juicio_ejecutivo" && <JuicioEjecutivoCompleto />}
-          {mundo === "cautelares" && <CautelaresPanel />}
-          {mundo === "examen" && <RedireccionExamen onGo={() => router.push("/examen")} />}
-        </div>
+        <ZonaExplorador zona={zonaMundo}>
+          <div className="space-y-6">
+            {mundo === "jurisdiccion" && (
+              <CaracteristicasJurisdiccion />
+            )}
+            {mundo === "competencia" && <CompetenciaPanel />}
+            {mundo === "accion_pretension" && <AccionPretension />}
+            {mundo === "demanda" && <DemandaPanel />}
+            {mundo === "emplazamiento" && <EmplazamientoPanel />}
+            {mundo === "discusion" && <DiscusionPanel />}
+            {mundo === "conciliacion" && <ConciliacionInfo />}
+            {mundo === "prueba" && <PruebaPanel />}
+            {mundo === "sentencia" && <SentenciaInfo onCerrar={() => router.push("/mundo/recursos")} />}
+            {mundo === "recursos" && <ClasificadorRecursos />}
+            {mundo === "juicio_ejecutivo" && <JuicioEjecutivoCompleto />}
+            {mundo === "cautelares" && <CautelaresPanel />}
+            {mundo === "examen" && <RedireccionExamen onGo={() => router.push("/examen")} />}
+          </div>
+        </ZonaExplorador>
       )}
     </main>
   );
