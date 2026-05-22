@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { sfx } from "@/lib/audio";
+import { useGame } from "@/store/useGame";
+import { isModuloUnlocked, getModuloGate, type UnlockGate } from "@/lib/unlock-gates";
 import SeleccionBuild from "@/components/SeleccionBuild";
 import ExpedienteVivo from "@/components/ExpedienteVivo";
 import PreclusionTimer from "@/components/PreclusionTimer";
@@ -261,24 +263,41 @@ function SectionLabel({ children, tag }: { children: React.ReactNode; tag?: stri
 interface CampañaCardProps {
   mod: ModuloMeta;
   completada?: boolean;
+  gate?: UnlockGate | null;
   onClick: () => void;
 }
 
-function CampañaCard({ mod, completada, onClick }: CampañaCardProps) {
+function CampañaCard({ mod, completada, gate, onClick }: CampañaCardProps) {
+  const locked = !!gate;
   return (
     <button
-      onClick={onClick}
-      onMouseEnter={() => sfx.hover()}
-      className="zona-card p-6 text-left relative group transition-all duration-200"
+      onClick={locked ? undefined : onClick}
+      onMouseEnter={() => !locked && sfx.hover()}
+      disabled={locked}
+      className={`zona-card p-6 text-left relative group transition-all duration-200 ${locked ? "opacity-50 cursor-not-allowed" : ""}`}
       style={{ "--zona-color": `var(--zona-${mod.zona})` } as React.CSSProperties}
     >
-      {completada && (
+      {/* Lock overlay */}
+      {locked && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-bg-deep/70 backdrop-blur-[1px]">
+          <div className="text-2xl mb-2">🔒</div>
+          <div className="font-mono-terminal text-[9px] text-doc-aged/70 uppercase tracking-widest text-center px-4">
+            {gate.label}
+          </div>
+          {gate.hint && (
+            <div className="font-mono-terminal text-[7px] text-doc-aged/40 mt-1 text-center px-4 italic">
+              {gate.hint}
+            </div>
+          )}
+        </div>
+      )}
+      {completada && !locked && (
         <div className="absolute top-3 right-3 text-[8px] font-mono-terminal text-zona-cautelares border border-zona-cautelares/40 px-2 py-0.5">
           ✓ VISITADO
         </div>
       )}
       <div className="flex items-start gap-4 mb-4">
-        <span className="text-4xl">{mod.icono}</span>
+        <span className={`text-4xl ${locked ? "grayscale" : ""}`}>{mod.icono}</span>
         <div>
           <div
             className="text-[9px] font-mono-terminal uppercase tracking-widest mb-1 opacity-70"
@@ -294,46 +313,55 @@ function CampañaCard({ mod, completada, onClick }: CampañaCardProps) {
       <p className="text-doc-aged/55 text-xs leading-relaxed font-mono-terminal">
         {mod.descripcion}
       </p>
-      <div
-        className="mt-4 text-[9px] font-mono-terminal uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{ color: `var(--zona-${mod.zona})` }}
-      >
-        ENTRAR →
-      </div>
+      {!locked && (
+        <div
+          className="mt-4 text-[9px] font-mono-terminal uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity"
+          style={{ color: `var(--zona-${mod.zona})` }}
+        >
+          ENTRAR →
+        </div>
+      )}
     </button>
   );
 }
 
 interface CombateCardProps {
   mod: ModuloMeta;
+  gate?: UnlockGate | null;
   onClick: () => void;
 }
 
-function CombateCard({ mod, onClick }: CombateCardProps) {
+function CombateCard({ mod, gate, onClick }: CombateCardProps) {
+  const locked = !!gate;
   return (
     <button
-      onClick={onClick}
-      onMouseEnter={() => sfx.hover()}
-      className="p-4 text-left border transition-all duration-150 hover:brightness-110"
+      onClick={locked ? undefined : onClick}
+      onMouseEnter={() => !locked && sfx.hover()}
+      disabled={locked}
+      className={`p-4 text-left border transition-all duration-150 relative ${locked ? "opacity-40 cursor-not-allowed" : "hover:brightness-110"}`}
       style={{
-        borderColor: `var(--zona-${mod.zona})30`,
-        background: `var(--zona-${mod.zona})08`,
+        borderColor: locked ? "rgba(75,75,100,.2)" : `var(--zona-${mod.zona})30`,
+        background: locked ? "rgba(6,7,11,.6)" : `var(--zona-${mod.zona})08`,
       }}
+      title={locked ? gate.label : undefined}
     >
+      {locked && (
+        <div className="absolute top-2 right-2 text-sm">🔒</div>
+      )}
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-2xl">{mod.icono}</span>
+        <span className={`text-2xl ${locked ? "grayscale" : ""}`}>{mod.icono}</span>
         <div>
           <div className="font-display-grave text-sm text-doc-aged">{mod.titulo}</div>
           <div
             className="text-[8px] font-mono-terminal uppercase tracking-widest"
-            style={{ color: `var(--zona-${mod.zona})` }}
+            style={{ color: locked ? "rgba(100,100,120,.6)" : `var(--zona-${mod.zona})` }}
           >
-            {mod.subtitulo}
+            {locked ? gate.label : mod.subtitulo}
           </div>
         </div>
       </div>
       <p className="text-doc-aged/45 text-[10px] font-mono-terminal leading-relaxed">
-        {mod.descripcion}
+        {locked ? (gate.hint ?? "Bloqueado") : mod.descripcion}
       </p>
     </button>
   );
@@ -370,6 +398,8 @@ function HerramientaCard({ mod, onClick }: HerramientaCardProps) {
 export default function ExpansionHub() {
   const [m, setM] = useState<Modulo>("menu");
   const [casoSeleccionado, setCasoSeleccionado] = useState<string | null>(null);
+  const { nivel, logros } = useGame();
+  const logrosIds = logros.map((l) => l.id);
 
   // Deep-link desde mapa: /expansion?m=arcade abre directo ese módulo
   useEffect(() => {
@@ -488,7 +518,11 @@ export default function ExpansionHub() {
   }
 
   // ─── MENÚ PRINCIPAL ───────────────────────────────────────────────────────
-  const openMod = (id: Modulo) => { sfx.confirm(); setM(id); };
+  const openMod = (id: Modulo) => {
+    if (!isModuloUnlocked(id, nivel, logrosIds)) return; // gated
+    sfx.confirm();
+    setM(id);
+  };
 
   return (
     <main className="min-h-screen px-4 md:px-8 py-6 max-w-6xl mx-auto">
@@ -515,6 +549,7 @@ export default function ExpansionHub() {
             <CampañaCard
               key={mod.id}
               mod={mod}
+              gate={isModuloUnlocked(mod.id, nivel, logrosIds) ? null : getModuloGate(mod.id)}
               onClick={() => openMod(mod.id)}
             />
           ))}
@@ -564,6 +599,7 @@ export default function ExpansionHub() {
             <CombateCard
               key={mod.id}
               mod={mod}
+              gate={isModuloUnlocked(mod.id, nivel, logrosIds) ? null : getModuloGate(mod.id)}
               onClick={() => openMod(mod.id)}
             />
           ))}

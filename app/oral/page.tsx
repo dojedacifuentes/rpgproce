@@ -8,6 +8,7 @@ import type { BossId, Boss as OralBoss } from "@/types/expansion";
 import InterrogacionOral from "@/components/InterrogacionOral";
 import { AvatarBoss } from "@/components/AvataresJuridicos";
 import { useGame } from "@/store/useGame";
+import { isBossUnlocked, getBossGate } from "@/lib/unlock-gates";
 import { motion } from "framer-motion";
 import BossEntry from "@/components/BossEntry";
 import type { Boss as CampaignBoss } from "@/data/campaign";
@@ -63,6 +64,8 @@ export default function OralPage() {
   const derrotados = game.logros
     .filter((l) => l.id.startsWith("boss_"))
     .map((l) => l.id.replace("boss_", ""));
+  const logrosIds = game.logros.map((l) => l.id);
+  const nivel = game.nivel;
 
   // ── Estado 1: Entrada cinemática del boss ──
   if (showEntry) {
@@ -129,6 +132,42 @@ export default function OralPage() {
         {TODOS_BOSSES.map((b, i) => {
           const vencido = derrotados.includes(b.id);
           const ramaColor = RAMA_COLORS[b.rama] ?? "var(--zona-oralidad)";
+          const unlocked = isBossUnlocked(b.id, nivel, logrosIds);
+          const gate = !unlocked ? getBossGate(b.id) : null;
+
+          if (!unlocked) {
+            return (
+              <motion.div
+                key={b.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08 }}
+                className="zona-card p-4 text-left overflow-hidden cursor-not-allowed"
+                style={{ "--zona-color": "rgba(60,60,80,.4)", borderColor: "rgba(60,60,80,.2)", opacity: 0.45 } as React.CSSProperties}
+              >
+                <div className="flex gap-4 items-start">
+                  <div className="shrink-0 w-[90px] h-[90px] flex items-center justify-center border border-doc-aged/10 text-3xl">
+                    🔒
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-mono-terminal text-[8px] text-doc-aged/30 uppercase tracking-widest mb-2">
+                      INSTANCIA BLOQUEADA
+                    </div>
+                    <h3 className="font-display-grave text-lg text-doc-aged/30 mb-2">???</h3>
+                    <p className="text-doc-aged/30 text-[10px] font-mono-terminal leading-relaxed">
+                      {gate?.label ?? "Requiere progresión"}
+                    </p>
+                    {gate?.hint && (
+                      <p className="text-doc-aged/20 text-[9px] font-serif-juridica italic mt-1">
+                        {gate.hint}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          }
+
           return (
             <motion.button
               key={b.id}
