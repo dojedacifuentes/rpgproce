@@ -2,7 +2,8 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGame } from "@/store/useGame";
-import { CAMPAÑA, BOSSES, type Acto, type Boss } from "@/data/campaign";
+// Campaign data available for future integration
+// import { CAMPAÑA, BOSSES } from "@/data/campaign";
 import { useRouter } from "next/navigation";
 import { sfx } from "@/lib/audio";
 
