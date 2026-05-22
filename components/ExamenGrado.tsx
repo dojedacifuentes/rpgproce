@@ -1,9 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PREGUNTAS_EXAMEN, ALTERNATIVAS_DIFICIL, type PreguntaExamen, type AlternativaDificil } from "@/data/examen-extendido";
 import { sfx } from "@/lib/audio";
 import { useGame } from "@/store/useGame";
+import { shuffleOptions, type ShuffleResult } from "@/lib/shuffleOptions";
+import AlternativaButton from "./AlternativaButton";
 
 // ============================================================================
 // EXAMEN DE GRADO — Simulador de cédula oral con respuesta modelo
@@ -213,20 +215,25 @@ function ModoAlternativas({ onVolver }: { onVolver: () => void }) {
   const pushLog = useGame((s) => s.pushLog);
   const desbloquearLogro = useGame((s) => s.desbloquearLogro);
   const [idx, setIdx] = useState(() => Math.floor(Math.random() * ALTERNATIVAS_DIFICIL.length));
-  const [seleccion, setSeleccion] = useState<string | null>(null);
+  const [seleccion, setSeleccion] = useState<number | null>(null); // Ahora es índice, no letra
   const [correctas, setCorrectas] = useState(0);
   const [respondidas, setRespondidas] = useState(0);
   const [historial, setHistorial] = useState<{ id: string; correcto: boolean }[]>([]);
 
   const pregunta = ALTERNATIVAS_DIFICIL[idx];
-  const respondida = seleccion !== null;
-  const esCorrecta = seleccion === pregunta.correcta;
 
-  function responder(letra: string) {
+  // Shuffled options (recalculated each time pregunta changes)
+  const shuffled = useMemo(() => {
+    return shuffleOptions(pregunta.opciones, "letra");
+  }, [pregunta.id]);
+
+  const respondida = seleccion !== null;
+  const esCorrecta = seleccion === shuffled.correctIndex;
+
+  function responder(index: number) {
     if (respondida) return;
-    sfx.click();
-    setSeleccion(letra);
-    const ok = letra === pregunta.correcta;
+    setSeleccion(index);
+    const ok = index === shuffled.correctIndex;
     if (ok) {
       sfx.oralCorrecta();
       setCorrectas((c) => c + 1);
@@ -278,31 +285,26 @@ function ModoAlternativas({ onVolver }: { onVolver: () => void }) {
         </div>
 
         <div className="space-y-2">
-          {pregunta.opciones.map((op) => {
-            let cls = "w-full text-left p-3 border font-mono-terminal text-xs transition-all ";
-            if (!respondida) {
-              cls += "border-doc-aged/20 text-doc-aged/70 hover:border-doc-aged/60 hover:text-doc-aged";
-            } else if (op.letra === pregunta.correcta) {
-              cls += "border-zona-cautelares text-zona-cautelares bg-zona-cautelares/5";
-            } else if (op.letra === seleccion) {
-              cls += "border-zona-nulidad text-zona-nulidad bg-zona-nulidad/5";
-            } else {
-              cls += "border-doc-aged/10 text-doc-aged/30";
-            }
-
-            return (
-              <button
-                key={op.letra}
-                onClick={() => responder(op.letra)}
-                onMouseEnter={() => !respondida && sfx.hover()}
-                className={cls}
-              >
-                <span className="font-bold mr-2">{op.letra}.</span> {op.texto}
-                {respondida && op.letra === pregunta.correcta && <span className="ml-2">✓</span>}
-                {respondida && op.letra === seleccion && op.letra !== pregunta.correcta && <span className="ml-2">✗</span>}
-              </button>
-            );
-          })}
+          {shuffled.options.map((op, idx) => (
+            <AlternativaButton
+              key={`${pregunta.id}-${idx}`}
+              letra={op.letra}
+              texto={op.texto}
+              seleccionada={seleccion === idx}
+              respondida={respondida}
+              feedback={
+                !respondida
+                  ? null
+                  : idx === shuffled.correctIndex
+                    ? "correcto"
+                    : seleccion === idx
+                      ? "incorrecto"
+                      : null
+              }
+              onClick={() => responder(idx)}
+              disabled={respondida}
+            />
+          ))}
         </div>
 
         {/* EXPLICACIÓN POST-RESPUESTA */}
