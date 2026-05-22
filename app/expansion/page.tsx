@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SeleccionBuild from "@/components/SeleccionBuild";
 import ExpedienteVivo from "@/components/ExpedienteVivo";
 import PreclusionTimer from "@/components/PreclusionTimer";
@@ -231,6 +231,19 @@ const MODULOS: {
 export default function ExpansionHub() {
   const [m, setM] = useState<Modulo>("menu");
   const [casoSeleccionado, setCasoSeleccionado] = useState<string | null>(null);
+
+  // Deep-link desde mapa: /expansion?m=arcade abre directo ese módulo
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const param = new URLSearchParams(window.location.search).get("m") as Modulo | null;
+    if (param && param !== "menu") {
+      setM(param);
+      // Limpiar el param de la URL sin redirigir
+      const url = new URL(window.location.href);
+      url.searchParams.delete("m");
+      window.history.replaceState({}, "", url.pathname);
+    }
+  }, []);
 
   // Render Investigación con selector de casos
   if (m === "investigacion") {

@@ -70,9 +70,11 @@ export default function CasoInvestigativo({
       pushLog(`Caso resuelto correctamente: ${caso.titulo}`, "SKILL");
       desbloquearLogro({
         id: `caso_${caso.id}`,
-        nombre: `${caso.titulo}`,
+        titulo: caso.titulo,
         descripcion: `Resolviste el caso investigativo: ${caso.titulo}`,
-        icono: "🔍",
+        articulo: caso.solucion.articuloClave,
+        desbloqueado: true,
+        fecha: Date.now(),
       });
       // Recompensas: XP + monedas según dificultad
       gainXp(caso.dificultad * 20);

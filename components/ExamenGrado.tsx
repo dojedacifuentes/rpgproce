@@ -244,7 +244,7 @@ function ModoAlternativas({ onVolver }: { onVolver: () => void }) {
     setHistorial((h) => [...h, { id: pregunta.id, correcto: ok }]);
     pushLog(`Alternativa ${ok ? "CORRECTA" : "INCORRECTA"}: ${pregunta.tema}`, ok ? "SKILL" : "WARN");
     if (correctas + (ok ? 1 : 0) >= 8) {
-      desbloquearLogro({ id: "examen_maestro", nombre: "Maestro Examinado", descripcion: "8+ correctas en alternativas difíciles", icono: "🎓" });
+      desbloquearLogro({ id: "examen_maestro", titulo: "Maestro Examinado", descripcion: "8+ correctas en alternativas difíciles", articulo: "—", desbloqueado: true });
     }
   }
 
