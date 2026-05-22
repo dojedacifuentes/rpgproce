@@ -904,3 +904,11 @@ body { animation: uiBreathe 12s ease-in-out infinite; }
   background: rgba(6,7,11,.95);
 }
 .bg-terminal-darker\/50 { background: rgba(6,7,11,.5); }
+
+/* ============================================================================
+   HUD CLEARANCE — Bottom padding so content isn't hidden under fixed HUD
+   ============================================================================ */
+/* All pages get at least 72px bottom clearance for the fixed bottom HUD */
+.hud-clearance {
+  padding-bottom: 5rem; /* 80px */
+}

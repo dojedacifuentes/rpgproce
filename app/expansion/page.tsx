@@ -590,7 +590,7 @@ export default function ExpansionHub() {
       </section>
 
       {/* ─── SISTEMA ─── */}
-      <section className="mb-6">
+      <section className="mb-6 pb-16">
         <SectionLabel tag="divider">SISTEMA</SectionLabel>
         <motion.div
           className="flex flex-wrap gap-2"

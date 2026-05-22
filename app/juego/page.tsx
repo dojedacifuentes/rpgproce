@@ -149,7 +149,7 @@ export default function Juego() {
       </header>
 
       {/* ─── MAIN CONTENT ─── */}
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 pb-20">
         <div className="grid lg:grid-cols-[1fr_300px] gap-6">
 
           {/* ─── MAPA VISUAL ─── */}
