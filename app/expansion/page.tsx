@@ -14,6 +14,9 @@ import JuicioEjecutivoCompleto from "@/components/JuicioEjecutivoCompleto";
 import GrimorioSkills from "@/components/GrimorioSkills";
 import ExamenGrado from "@/components/ExamenGrado";
 import SistemaCartas from "@/components/SistemaCartas";
+import TimelineOrdenamiento from "@/components/TimelineOrdenamiento";
+import DueloMediosPrueba from "@/components/DueloMediosPrueba";
+import AtaqueRepreguntas from "@/components/AtaqueRepreguntas";
 
 type Modulo =
   | "menu"
@@ -29,7 +32,10 @@ type Modulo =
   | "ejecutivo_full"
   | "grimorio"
   | "examen"
-  | "cartas";
+  | "cartas"
+  | "timeline"
+  | "duelo"
+  | "ataque";
 
 const MODULOS: {
   id: Modulo;
@@ -74,6 +80,33 @@ const MODULOS: {
     descripcion: "20 tarjetas jurídicas representando excepciones ejecutivas, recursos, medios de prueba, incidentes y estrategias. Cada carta tiene efecto, riesgo y humor negro normativo. Agregalas a tu mano y juégalas tácticamente.",
     zona: "nulidad",
     numeral: "CAR.01",
+    nuevo: true,
+  },
+  {
+    id: "timeline",
+    titulo: "Timeline Ordenamiento",
+    subtitulo: "DRAG & DROP · ORDEN LEGAL",
+    descripcion: "3 escenarios (ejecutivo, ordinario, caos). Reconstruye el orden correcto de actos procesales. Respetar orden = validez. Saltarse pasos = nulidad (art. 768 N°9).",
+    zona: "ejecutivo",
+    numeral: "ARC.03",
+    nuevo: true,
+  },
+  {
+    id: "duelo",
+    titulo: "Duelo de Medios de Prueba",
+    subtitulo: "COMBATE · TÁCTICO",
+    descripcion: "5 medios de prueba (documental, testimonial, confesión, presunción, pericial). Selecciona tu medio vs oponente al azar. 3 rondas. Gana quien tenga mayor fuerza.",
+    zona: "prueba",
+    numeral: "ARC.04",
+    nuevo: true,
+  },
+  {
+    id: "ataque",
+    titulo: "Ataque de Repreguntas",
+    subtitulo: "ARCADE · CONTRA-RELOJ",
+    descripcion: "8 preguntas de procedimiento con 30 segundos cada una. Presión máxima. Velocidad + precisión doctrinaria. Aprende bajo presión.",
+    zona: "oralidad",
+    numeral: "ARC.05",
     nuevo: true,
   },
   {
@@ -164,6 +197,9 @@ export default function ExpansionHub() {
         {m === "examen" && <ExamenGrado />}
         {m === "grimorio" && <GrimorioSkills />}
         {m === "cartas" && <SistemaCartas />}
+        {m === "timeline" && <TimelineOrdenamiento />}
+        {m === "duelo" && <DueloMediosPrueba />}
+        {m === "ataque" && <AtaqueRepreguntas />}
         {m === "arcade" && <ArcadeClasificador />}
         {m === "vof" && <SpeedrunVoF />}
         {m === "sentencia" && <SalaSentencia />}
@@ -182,7 +218,7 @@ export default function ExpansionHub() {
       <header className="flex justify-between mb-8 flex-wrap gap-2">
         <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
         <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-zona-recursos">
-          HUB EXPANSIÓN v4.0 · {MODULOS.length + 1} SISTEMAS (incl. MODO ORAL)
+          HUB EXPANSIÓN v4.1 · {MODULOS.length + 1} SISTEMAS (incl. MODO ORAL)
         </div>
       </header>
 
