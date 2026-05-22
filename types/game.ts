@@ -242,6 +242,28 @@ export type Logro = {
   fecha?: number;
 };
 
+// ============== INVESTIGACIÓN — PHASE 5 ==============
+
+export type CasoResuelto = {
+  caseId: string;
+  titulo: string;
+  resueltoBien: boolean;
+  tiempoMinutos: number;
+  pistasUtilizadas: number;
+  hipótesisElegida: string;
+  score: number;
+  fechaResolucion: number;
+};
+
+export type CasoEnProgreso = {
+  caseId: string;
+  titulo: string;
+  pistasDescubiertas: string[];
+  hipótesisSeleccionada?: number;
+  estado: "intro" | "explorando" | "deduccion" | "verificacion" | "resultado";
+  inicioTiempo: number;
+};
+
 export type SaveState = {
   version: number;
   creado: number;
@@ -255,6 +277,8 @@ export type SaveState = {
   mundoActual: Mundo;
   log: { t: number; texto: string; tag?: string }[];
   logros: Logro[];
+  casosResueltos: CasoResuelto[];
+  casosEnProgreso?: CasoEnProgreso;
   finalizado?: boolean;
   epilogo?: string;
 };

@@ -17,6 +17,8 @@ import SistemaCartas from "@/components/SistemaCartas";
 import TimelineOrdenamiento from "@/components/TimelineOrdenamiento";
 import DueloMediosPrueba from "@/components/DueloMediosPrueba";
 import AtaqueRepreguntas from "@/components/AtaqueRepreguntas";
+import CasoInvestigativo from "@/components/CasoInvestigativo";
+import { CASOS_INVESTIGATIVOS } from "@/data/casos-investigativos";
 
 type Modulo =
   | "menu"
@@ -35,7 +37,8 @@ type Modulo =
   | "cartas"
   | "timeline"
   | "duelo"
-  | "ataque";
+  | "ataque"
+  | "investigacion";
 
 const MODULOS: {
   id: Modulo;
@@ -62,6 +65,15 @@ const MODULOS: {
     descripcion: `${15}+ cédulas con respuesta académica modelo. ${12}+ alternativas de opción múltiple con distractores basados en errores reales. Análisis normativo completo. Simula comisión examinadora.`,
     zona: "nulidad",
     numeral: "EXA.01",
+    nuevo: true,
+  },
+  {
+    id: "investigacion",
+    titulo: "Casos Investigativos",
+    subtitulo: "INVESTIGACIÓN · DEDUCCIÓN",
+    descripcion: "Resuelve casos procedurales descubriendo pistas, conectando evidencia, y deduciendo vicios ocultos. Emplazamiento Fantasma · Sentencia Ultra Petita · Preclusión Oculta. Sistema de hipótesis con validación.",
+    zona: "cosa_juzgada",
+    numeral: "INV.01",
     nuevo: true,
   },
   {
@@ -185,6 +197,73 @@ const MODULOS: {
 
 export default function ExpansionHub() {
   const [m, setM] = useState<Modulo>("menu");
+  const [casoSeleccionado, setCasoSeleccionado] = useState<string | null>(null);
+
+  // Render Investigación con selector de casos
+  if (m === "investigacion") {
+    if (!casoSeleccionado) {
+      return (
+        <main className="min-h-screen px-4 md:px-8 py-6 max-w-6xl mx-auto">
+          <div className="flex justify-between mb-6 flex-wrap gap-2">
+            <button className="btn" onClick={() => setM("menu")}>◂ Hub Expansión</button>
+            <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
+          </div>
+          <div className="space-y-6">
+            <div>
+              <div className="text-[9px] font-mono-terminal text-doc-aged/40 uppercase tracking-widest mb-2">
+                INVESTIGACIÓN PROCESAL
+              </div>
+              <h2 className="font-display-grave text-3xl text-doc-aged mb-2">
+                Selecciona un Caso
+              </h2>
+              <p className="text-doc-aged/70 font-serif-juridica">
+                Resuelve casos procedurales descubriendo pistas y deduciendo vicios procesales ocultos.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              {CASOS_INVESTIGATIVOS.map((caso) => (
+                <button
+                  key={caso.id}
+                  onClick={() => setCasoSeleccionado(caso.id)}
+                  className="zona-card p-6 text-left"
+                  style={{ "--zona-color": `var(--zona-${caso.zona})` } as React.CSSProperties}
+                >
+                  <h3 className="font-display-grave text-lg text-doc-aged mb-2">{caso.titulo}</h3>
+                  <p className="text-[9px] font-mono-terminal text-doc-aged/50 mb-3">
+                    DIFICULTAD: {"⭐".repeat(caso.dificultad)}
+                  </p>
+                  <p className="font-serif-juridica text-doc-aged/70 text-sm leading-relaxed">
+                    {caso.descripcion}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </div>
+        </main>
+      );
+    }
+
+    // Mostrar caso seleccionado
+    const casoActual = CASOS_INVESTIGATIVOS.find((c) => c.id === casoSeleccionado);
+    if (!casoActual) return null;
+
+    return (
+      <main className="min-h-screen px-4 md:px-8 py-6 max-w-6xl mx-auto">
+        <div className="flex justify-between mb-6 flex-wrap gap-2">
+          <button className="btn" onClick={() => setCasoSeleccionado(null)}>◂ Casos</button>
+          <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
+        </div>
+        <CasoInvestigativo
+          caso={casoActual}
+          onVolver={() => setCasoSeleccionado(null)}
+          onResuelto={(result) => {
+            // Podría agregar lógica aquí después
+            console.log("Caso resuelto:", result);
+          }}
+        />
+      </main>
+    );
+  }
 
   if (m !== "menu") {
     return (
@@ -218,7 +297,7 @@ export default function ExpansionHub() {
       <header className="flex justify-between mb-8 flex-wrap gap-2">
         <Link href="/juego" className="btn">◂ Ciudad Judicial</Link>
         <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] text-zona-recursos">
-          HUB EXPANSIÓN v4.1 · {MODULOS.length + 1} SISTEMAS (incl. MODO ORAL)
+          HUB EXPANSIÓN v5.0 · {MODULOS.length + 1} SISTEMAS (incl. MODO ORAL)
         </div>
       </header>
 

@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type {
   Expediente, Flag, Incidente, Logro, MedidaCautelar, Mundo, Personaje, SaveState,
-  Escrito, Resolucion, RecursoInterpuesto, Prueba, Tribunal,
+  Escrito, Resolucion, RecursoInterpuesto, Prueba, Tribunal, CasoResuelto, CasoEnProgreso,
 } from "@/types/game";
 
 type Store = SaveState & {
@@ -25,6 +25,8 @@ type Store = SaveState & {
   ajustarReputacion: (delta: number) => void;
   ajustarTrauma: (delta: number) => void;
   desbloquearLogro: (l: Logro) => void;
+  iniciarCaso: (caso: CasoEnProgreso) => void;
+  resolverCaso: (caseId: string, resuelto: CasoResuelto, efectos?: { reputacion?: number; trauma?: number; conocimiento?: number }) => void;
   reset: () => void;
   finalizar: (texto: string) => void;
   nuevoCicloProcesal: () => void;
@@ -57,6 +59,7 @@ const INIT: SaveState = {
   mundoActual: "jurisdiccion",
   log: [],
   logros: [],
+  casosResueltos: [],
 };
 
 export const useGame = create<Store>()(
@@ -113,6 +116,28 @@ export const useGame = create<Store>()(
         set((s) => ({ personaje: { ...s.personaje, trauma: Math.max(0, Math.min(100, s.personaje.trauma + delta)) } })),
       desbloquearLogro: (l) =>
         set((s) => (s.logros.find((x) => x.id === l.id) ? s : { logros: [...s.logros, { ...l, desbloqueado: true, fecha: Date.now() }] })),
+      iniciarCaso: (caso) =>
+        set((s) => ({ casosEnProgreso: caso, ultimoGuardado: Date.now() })),
+      resolverCaso: (caseId, resuelto, efectos) =>
+        set((s) => {
+          const nuevosCasos = [...s.casosResueltos, resuelto];
+          const p = s.personaje;
+          const efectosAplicados = {
+            personaje: {
+              ...p,
+              reputacion: Math.max(-100, Math.min(100, p.reputacion + (efectos?.reputacion || 0))),
+              trauma: Math.max(0, Math.min(100, p.trauma + (efectos?.trauma || 0))),
+              atributos: {
+                ...p.atributos,
+                conocimiento_procesal: Math.max(0, Math.min(10, p.atributos.conocimiento_procesal + (efectos?.conocimiento || 0))),
+              },
+            },
+            casosResueltos: nuevosCasos,
+            casosEnProgreso: undefined,
+            ultimoGuardado: Date.now(),
+          };
+          return efectosAplicados;
+        }),
       finalizar: (texto) => set({ finalizado: true, epilogo: texto }),
       nuevoCicloProcesal: () =>
         set((s) => ({
