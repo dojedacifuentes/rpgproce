@@ -218,7 +218,7 @@ export default function Juego() {
                 { href: "/expansion", label: "Modos de Juego", sub: "Campaña · Examen · Casos", icon: "🎮", color: "recursos" },
                 { href: "/oral", label: "Boss Rush", sub: "9 instancias · comisión", icon: "⚔️", color: "oralidad" },
                 { href: "/codex", label: "Codex Legal", sub: "Referencia normativa", icon: "📜", color: "cosajuzgada" },
-                { href: "/inventario", label: "Inventario", sub: `${logros.length} logros desbloqueados`, icon: "📦", color: "cautelares" },
+                { href: "/expansion?m=inventario", label: "Reliquias", sub: "Inventario · bonificaciones pasivas", icon: "⚗️", color: "cautelares" },
               ].map((item) => (
                 <Link
                   key={item.href}
