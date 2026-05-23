@@ -119,7 +119,7 @@ export default function TableroDeduccion({
                   clickeable={true}
                   conectada={conectada}
                   relevancia={relevancia}
-                  onClick={() => handleToggleSeleccion(pista.id)}
+                  onClick={() => onExpandirPista(pista.id)}
                   onExpandir={() => onExpandirPista(pista.id)}
                 />
               </motion.div>

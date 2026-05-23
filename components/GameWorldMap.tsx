@@ -303,9 +303,19 @@ function NodeDetailPanel({
 
       {/* START node */}
       {node.tipo === "start" && (
-        <p className="font-serif-juridica text-doc-aged/60 text-xs italic">
-          Ciudad Judicial. El punto de partida de todo proceso.
-        </p>
+        <div className="space-y-3">
+          <p className="font-serif-juridica text-doc-aged/60 text-xs italic">
+            Ciudad Judicial. El punto de partida de todo proceso.
+          </p>
+          <button
+            onClick={() => { sfx.click?.(); onNavigate("/expansion"); }}
+            onMouseEnter={() => sfx.hover?.()}
+            className="w-full py-2.5 font-mono-terminal text-[10px] uppercase tracking-wider border transition-all hover:brightness-125"
+            style={{ borderColor: "#4BE7FF50", color: "#4BE7FF", background: "#4BE7FF10" }}
+          >
+            ▶ Explorar Módulos de Campaña
+          </button>
+        </div>
       )}
     </motion.div>
   );

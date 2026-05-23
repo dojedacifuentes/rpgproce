@@ -953,3 +953,6 @@ export const NPCS_V2: Record<NpcId, Npc> = {
     },
   },
 };
+
+// Array derivado para iteración — usado por NPCInteractionPanel
+export const TODOS_NPCS: Npc[] = Object.values(NPCS_V2);

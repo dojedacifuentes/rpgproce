@@ -79,6 +79,57 @@ export default function NPCInteractionPanel() {
     );
   }
 
+  // Panel de detalle — NPC no iniciado (primer encuentro)
+  if (panelState === "detalle" && npcActual && !progresoActual) {
+    return (
+      <div className="space-y-5">
+        <button
+          onClick={handleVolverALista}
+          onMouseEnter={() => sfx.hover?.()}
+          className="btn btn-cyan text-sm"
+        >
+          ← Volver a Mentores
+        </button>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="terminal p-6 space-y-5"
+        >
+          <div className="flex items-start gap-4">
+            <span className="text-5xl">{npcActual.emoji}</span>
+            <div>
+              <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-competencia mb-1">
+                MENTOR PROCESAL
+              </div>
+              <h2 className="font-display-grave text-2xl text-doc-aged">{npcActual.nombre}</h2>
+              <p className="font-serif-juridica text-doc-aged/60 text-sm italic mt-1">{npcActual.titulo}</p>
+            </div>
+          </div>
+          <p className="font-serif-juridica text-doc-aged/80 text-sm leading-relaxed">{npcActual.descripcion}</p>
+          <div className="border-l-4 border-zona-recursos/40 pl-4">
+            <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-recursos mb-1">
+              Arco: {npcActual.arco_principal.titulo}
+            </div>
+            <div className="space-y-1">
+              {npcActual.arco_principal.etapas.map((e) => (
+                <div key={e.numero} className="text-[9px] font-mono-terminal text-doc-aged/50">
+                  Etapa {e.numero}: {e.titulo}
+                </div>
+              ))}
+            </div>
+          </div>
+          <button
+            onClick={handleIniciarArco}
+            onMouseEnter={() => sfx.hover?.()}
+            className="btn btn-cyan w-full py-3 font-mono-terminal text-sm"
+          >
+            ▶ INICIAR MENTORÍA
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
+
   // Panel de detalle de NPC
   if (panelState === "detalle" && npcActual && progresoActual) {
     const etapa = npcActual.arco_principal.etapas[progresoActual.etapaActual - 1];

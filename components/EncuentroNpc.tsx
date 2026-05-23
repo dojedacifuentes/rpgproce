@@ -24,21 +24,17 @@ export default function EncuentroNpc({ npcId, onCerrar }: EncuentroNpcProps) {
     if (!dialogo.efecto || efectosAplicados) return;
 
     if (dialogo.efecto.reputacion) {
-      game.updateStats({ reputacion: game.stats.reputacion + dialogo.efecto.reputacion });
+      game.ajustarReputacion(dialogo.efecto.reputacion);
       sfx.oralCorrecta?.();
     }
     if (dialogo.efecto.trauma) {
-      game.updateStats({ trauma: game.stats.trauma + dialogo.efecto.trauma });
+      game.ajustarTrauma(dialogo.efecto.trauma);
       sfx.warning?.();
-    }
-    if (dialogo.efecto.nivelEconomico) {
-      game.updateStats({ nivelEconomico: game.stats.nivelEconomico + dialogo.efecto.nivelEconomico });
     }
 
     game.pushLog(`${npc.nombre}: "${dialogo.texto}"`);
     if (dialogo.efecto.reputacion) game.pushLog(`+${dialogo.efecto.reputacion} Reputación`);
     if (dialogo.efecto.trauma) game.pushLog(`+${dialogo.efecto.trauma} Trauma`);
-    if (dialogo.efecto.nivelEconomico) game.pushLog(`${dialogo.efecto.nivelEconomico > 0 ? '+' : ''}${dialogo.efecto.nivelEconomico} Nivel Económico`);
 
     setEfectosAplicados(true);
   };
