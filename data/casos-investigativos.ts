@@ -350,7 +350,7 @@ const CASO_003: CasoInvestigativo = {
   titulo: "Caso 38C — La Preclusión Oculta",
   descripcion:
     "Un plazo de prueba venció. El demandado no ofreció prueba en su momento. Años después, intenta presentar prueba nueva sobre su mejor derecho.",
-  zona: "cosa_juzgada",
+  zona: "cosajuzgada",
   dificultad: 3,
 
   pistas: [
@@ -645,7 +645,7 @@ const CASO_005: CasoInvestigativo = {
   titulo: "Caso 38E — Cosa Juzgada Aparente",
   descripcion:
     "Un nuevo juicio se interpone sobre la misma materia. Demandado alega cosa juzgada, pero la sentencia anterior nunca fue ejecutoriada (recursos pendientes).",
-  zona: "cosa_juzgada",
+  zona: "cosajuzgada",
   dificultad: 3,
 
   pistas: [

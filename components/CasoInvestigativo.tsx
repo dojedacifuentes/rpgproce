@@ -39,6 +39,7 @@ const ZONA_COLOR: Record<string, string> = {
   ejecutivo:      "var(--zona-ejecutivo)",
   competencia:    "var(--zona-competencia)",
   nulidad:        "var(--zona-nulidad)",
+  cosajuzgada:    "var(--zona-cosajuzgada)",
 };
 
 const DIFICULTAD_LABEL: Record<number, string> = {
