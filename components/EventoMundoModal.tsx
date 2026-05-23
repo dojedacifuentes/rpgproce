@@ -43,26 +43,38 @@ export default function EventoMundoModal({ evento, onCerrar }: EventoMundoModalP
   const aplicarEfectosBaseYOpcion = (opcionIdx?: number) => {
     // Aplicar efectos base del evento
     if (evento.efectos.reputacion) {
-      game.updateStats({ reputacion: game.stats.reputacion + evento.efectos.reputacion });
+      game.ajustarReputacion(evento.efectos.reputacion);
     }
     if (evento.efectos.trauma) {
-      game.updateStats({ trauma: game.stats.trauma + evento.efectos.trauma });
+      game.ajustarTrauma(evento.efectos.trauma);
     }
     if (evento.efectos.nivelEconomico) {
-      game.updateStats({ nivelEconomico: game.stats.nivelEconomico + evento.efectos.nivelEconomico });
+      game.setPersonaje({
+        ...game.personaje,
+        nivelEconomico: Math.max(0, Math.min(100, game.personaje.nivelEconomico + evento.efectos.nivelEconomico)),
+      });
     }
     if (evento.efectos.cicloProcesal) {
-      game.updateStats({ cicloProcesal: (game.stats.cicloProcesal || 0) + evento.efectos.cicloProcesal });
+      game.setPersonaje({
+        ...game.personaje,
+        cicloProcesal: Math.max(1, game.personaje.cicloProcesal + evento.efectos.cicloProcesal),
+      });
     }
 
     // Aplicar efectos extras de la opción
     if (opcionIdx !== undefined && evento.opciones && evento.opciones[opcionIdx]) {
       const opcion = evento.opciones[opcionIdx];
       if (opcion.efectoExtra?.reputacion) {
-        game.updateStats({ reputacion: game.stats.reputacion + opcion.efectoExtra.reputacion });
+        game.ajustarReputacion(opcion.efectoExtra.reputacion);
       }
       if (opcion.efectoExtra?.trauma) {
-        game.updateStats({ trauma: game.stats.trauma + opcion.efectoExtra.trauma });
+        game.ajustarTrauma(opcion.efectoExtra.trauma);
+      }
+      if (opcion.efectoExtra?.nivelEconomico) {
+        game.setPersonaje({
+          ...game.personaje,
+          nivelEconomico: Math.max(0, Math.min(100, game.personaje.nivelEconomico + opcion.efectoExtra.nivelEconomico)),
+        });
       }
     }
 

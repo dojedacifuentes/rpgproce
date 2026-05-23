@@ -78,7 +78,7 @@ export default function NPCCard({
     >
       <div className="flex gap-4">
         {/* Icono */}
-        <div className="text-4xl flex-shrink-0">{npc.icono}</div>
+        <div className="text-4xl flex-shrink-0">{npc.icono ?? npc.emoji}</div>
 
         {/* Contenido principal */}
         <div className="flex-grow min-w-0">
@@ -92,7 +92,7 @@ export default function NPCCard({
           </div>
 
           <p className="text-doc-aged/70 text-sm font-serif-juridica italic mb-3">
-            {npc.especialidad}
+            {npc.especialidad ?? npc.titulo}
           </p>
 
           {/* Barra de progreso visual */}

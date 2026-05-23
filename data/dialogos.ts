@@ -6,7 +6,7 @@ import type { Atributos } from "@/types/game";
 
 export type Opcion = {
   texto: string;
-  requiere?: { atributo?: keyof Atributos; minimo?: number; flag?: string };
+  requiere?: { atributo?: keyof Atributos; minimo?: number; flag?: string; sexo?: "masculino" | "femenino" };
   efectos?: {
     flags?: string[];
     atributos?: Partial<Record<keyof Atributos, number>>;

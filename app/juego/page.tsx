@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useGame } from "@/store/useGame";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { sfx } from "@/lib/audio";
 import GameWorldMap from "@/components/GameWorldMap";
@@ -33,11 +33,7 @@ export default function Juego() {
   const xpParaSiguiente = 100;
   const [showMisiones, setShowMisiones] = useState(false);
 
-  useEffect(() => {
-    if (!personaje.nombre) router.replace("/creacion");
-  }, [personaje.nombre, router]);
-
-  if (!personaje.nombre) return null;
+  if (!personaje.nombre) return <EmptyCampaignGate />;
 
   const rango = getRango(nivel);
   const totalMisiones = CAMPAÑA.reduce((s, a) => s + a.misiones.length, 0);
@@ -274,6 +270,41 @@ export default function Juego() {
   );
 }
 
+function EmptyCampaignGate() {
+  return (
+    <main
+      className="min-h-screen px-6 py-10 flex items-center justify-center"
+      style={{
+        background: "radial-gradient(900px 600px at 50% 0%, rgba(75,231,255,.06), transparent 70%), var(--bg-deep)",
+      }}
+    >
+      <section className="w-full max-w-3xl border border-zona-competencia/25 bg-bg-deep/80 p-6 md:p-8">
+        <div className="font-mono-terminal text-[10px] uppercase tracking-[.35em] text-zona-competencia mb-3">
+          expediente sin compareciente
+        </div>
+        <h1 className="font-display-grave text-3xl md:text-5xl text-doc-aged mb-4">
+          Antes de litigar, constituye personaje.
+        </h1>
+        <p className="font-serif-juridica text-doc-aged/65 leading-relaxed max-w-2xl">
+          El mapa de campaña requiere un litigante para guardar progreso, reputación, trauma,
+          recompensas y derrotas. Puedes crear uno o inspeccionar el mundo vivo sin comprometer una partida.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 mt-7">
+          <Link href="/creacion" className="btn btn-recurso text-[11px] px-4 py-3">
+            Crear personaje
+          </Link>
+          <Link href="/mundo" className="btn text-[11px] px-4 py-3">
+            Explorar mundo vivo
+          </Link>
+          <Link href="/" className="btn btn-danger text-[11px] px-4 py-3">
+            Volver al inicio
+          </Link>
+        </div>
+      </section>
+    </main>
+  );
+}
+
 // ────────────────────────────────────────────
 function TelemetriaBar({ label, value, min, max, zona }: { label: string; value: number; min: number; max: number; zona: string }) {
   const pct = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
@@ -339,8 +370,9 @@ const TIPO_ICON: Record<string, string> = {
 function MisionesPanel({ misionesCompletadas }: { misionesCompletadas: string[] }) {
   const router = useRouter();
 
-  const handleJugar = (href?: string, moduloId?: string, tipo?: string) => {
+  const handleJugar = (misionId: string, href?: string, moduloId?: string, tipo?: string) => {
     sfx.click();
+    if (misionId) { router.push(`/mision/${misionId}`); return; }
     if (href) { router.push(href); return; }
     if (moduloId) { router.push(`/expansion?m=${moduloId}`); return; }
     if (tipo === "boss") { router.push("/oral"); return; }
@@ -399,7 +431,7 @@ function MisionesPanel({ misionesCompletadas }: { misionesCompletadas: string[] 
                       <span className="text-[10px] text-zona-cautelares shrink-0">✓</span>
                     ) : (
                       <button
-                        onClick={() => handleJugar(mision.href, mision.moduloId, mision.tipo)}
+                        onClick={() => handleJugar(mision.id, mision.href, mision.moduloId, mision.tipo)}
                         onMouseEnter={() => sfx.hover()}
                         className="shrink-0 text-[8px] font-mono-terminal px-2 py-1 border border-zona-competencia/40 text-zona-competencia hover:border-zona-competencia hover:brightness-125 transition-all"
                       >

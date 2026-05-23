@@ -350,6 +350,12 @@ export default function ArcadeClasificador() {
     }
   }
 
+  // Shuffle opciones de forma estable por pregunta, antes de cualquier return condicional.
+  const shuffled = useMemo(
+    () => cuestionActual ? shuffleOptions(cuestionActual.opciones, "correcta") : { options: [], correctIndex: -1, originalIndices: [] },
+    [cuestionActual]
+  );
+
   // ─────────────────────────────── PANTALLA INICIO
   if (!activo && !finalizado) {
     return (
@@ -397,11 +403,6 @@ export default function ArcadeClasificador() {
   if (!cuestionActual) return null;
   const colorRama = COLOR_RAMA[cuestionActual.rama];
 
-  // Shuffle opciones cada vez que cambia la pregunta
-  const shuffled = useMemo(
-    () => shuffleOptions(cuestionActual.opciones, "correcta"),
-    [cuestionActual.id]
-  );
   const tiempoPct = (tiempo / tiempoMaximoRef.current) * 100;
   const multiplicador = 1 + Math.floor(combo / 3);
 

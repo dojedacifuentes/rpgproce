@@ -48,7 +48,7 @@ export function shuffleOptions<T extends Record<string, any>>(
   });
 
   // Remove tracking field
-  const clean = shuffled.map(({ __originalIdx, ...rest }) => rest as T);
+  const clean = shuffled.map(({ __originalIdx, ...rest }) => rest as unknown as T);
 
   return {
     options: clean,

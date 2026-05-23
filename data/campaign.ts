@@ -70,6 +70,20 @@ export const BOSSES: Record<string, Boss> = {
     recompensa: { xp: 200, monedas: 50, skill: "Escudo del art. 44" },
     href: "/oral",
   },
+  oraculo_prueba: {
+    id: "oraculo_prueba",
+    nombre: "El Oraculo de la Prueba",
+    titulo: "Jueza noir de la carga probatoria",
+    articulo: "arts. 318-427 CPC / art. 1698 CC",
+    descripcion: "Una voz bajo lluvia artificial que pregunta no que sabes, sino que puedes probar, cuando y con que medio.",
+    icono: "🔎",
+    color: "var(--zona-prueba)",
+    vidaMax: 150,
+    ataques: ["Prueba tardia", "Documento privado no reconocido", "Carga probatoria invertida por pánico"],
+    debilidad: "Relacionar hecho controvertido, medio idoneo, oportunidad y valor probatorio",
+    recompensa: { xp: 280, monedas: 70, skill: "Lámpara de Sana Crítica" },
+    href: "/oral",
+  },
   esfinge_competencia: {
     id: "esfinge_competencia",
     nombre: "La Esfinge de la Competencia",
@@ -110,6 +124,20 @@ export const BOSSES: Record<string, Boss> = {
     ataques: ["Cosa juzgada inexpugnable", "Ultra petita enmascarada", "Casación en fondo improcedente"],
     debilidad: "art. 768: causales de casación en la forma",
     recompensa: { xp: 400, monedas: 100, skill: "Cassation Master" },
+    href: "/oral",
+  },
+  corte_glitch: {
+    id: "corte_glitch",
+    nombre: "La Corte Glitch",
+    titulo: "Dimension rota de los recursos",
+    articulo: "arts. 181, 187, 766, 767 CPC / art. 545 COT",
+    descripcion: "Un tribunal fractal donde cada agravio abre una realidad distinta. Solo se sobrevive con resolucion, agravio, plazo, efecto y tribunal.",
+    icono: "🌀",
+    color: "var(--zona-recursos)",
+    vidaMax: 220,
+    ataques: ["Apelacion sin agravio", "Casacion como tercera instancia", "Queja usada como recurso ordinario"],
+    debilidad: "Metodo R-A-P-E-T y distincion entre error in procedendo e in iudicando",
+    recompensa: { xp: 430, monedas: 120, skill: "Cartografo de Recursos" },
     href: "/oral",
   },
   comision_grado: {
@@ -220,7 +248,7 @@ export const CAMPAÑA: Acto[] = [
     subtitulo: "La Sala del Tribunal de Prueba",
     descripcion: "El período de prueba ha comenzado. Debes seleccionar los medios correctos, presentarlos en plazo y valorarlos según la ley.",
     zona: "prueba",
-    bossId: "receptor_fantasma",
+    bossId: "oraculo_prueba",
     misiones: [
       {
         id: "m3_1",
@@ -302,7 +330,7 @@ export const CAMPAÑA: Acto[] = [
     subtitulo: "La Corte de Apelaciones",
     descripcion: "Subes a la Corte. Aquí los recursos son armas y las causales son escudos. Un error de forma te devuelve al origen.",
     zona: "recursos",
-    bossId: "juez_hierro",
+    bossId: "corte_glitch",
     misiones: [
       {
         id: "m5_1",

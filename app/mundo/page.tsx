@@ -45,6 +45,12 @@ const ZONAS_METADATA: Record<string, { nombre: string; descripcion: string; href
     href: "/mundo/sentencia",
     emoji: "📚",
   },
+  cosa_juzgada: {
+    nombre: "Cámara de Cosa Juzgada",
+    descripcion: "Preclusión, cosa juzgada formal y material, identidad de partes, objeto y causa. Una biblioteca que cierra puertas para que los pleitos terminen.",
+    href: "/mundo/sentencia",
+    emoji: "📚",
+  },
   demanda: {
     nombre: "Sección de Demandas",
     descripcion: "Acción, pretensión, requisitos formales. El acto procesal que pone en movimiento toda la máquina judicial.",
@@ -56,6 +62,12 @@ const ZONAS_METADATA: Record<string, { nombre: string; descripcion: string; href
     descripcion: "Juicio ejecutivo. Título ejecutivo, gestión preparatoria, mandamiento, embargo, excepciones tasadas, apremio.",
     href: "/mundo/juicio_ejecutivo",
     emoji: "💼",
+  },
+  sumario: {
+    nombre: "Autopista Sumaria",
+    descripcion: "Procedencia, comparendo, prueba breve, sustitución de procedimiento y diferencias con el ordinario.",
+    href: "/mision/m5_3",
+    emoji: "🏁",
   },
   nulidad: {
     nombre: "Sala de Nulidad",
@@ -71,6 +83,7 @@ export default function MundoHub() {
   const zonasSet = new Set<string>();
   npcs.forEach((npc) => zonasSet.add(npc.zona));
   EVENTOS_MUNDO.forEach((evento) => zonasSet.add(evento.zona));
+  zonasSet.add("sumario");
   const zonas = Array.from(zonasSet).sort();
 
   const STATS = [

@@ -32,11 +32,11 @@ const MAP_NODES: ZoneNode[] = [
   { id: "boss_2",       acto: 2, label: "RECEPTOR",       sublabel: "Boss Acto II",       x: 600, y: 150, color: "#7AD4E6", icono: "👻",  tipo: "boss"  },
   { id: "prueba",       acto: 3, label: "PRUEBA",         sublabel: "arts. 341-427",      x: 420, y: 310, color: "#D7B46A", icono: "📜",  tipo: "zona"  },
   { id: "discusion",    acto: 3, label: "DISCUSIÓN",      sublabel: "arts. 254-318",      x: 340, y: 360, color: "#D7B46A", icono: "⚡",  tipo: "zona"  },
-  { id: "boss_3",       acto: 3, label: "PRUEBA",         sublabel: "Boss Acto III",      x: 500, y: 360, color: "#D7B46A", icono: "🔮",  tipo: "boss"  },
+  { id: "boss_3",       acto: 3, label: "ORÁCULO",        sublabel: "Boss Acto III",      x: 500, y: 360, color: "#D7B46A", icono: "🔎",  tipo: "boss"  },
   { id: "sentencia",    acto: 4, label: "SENTENCIA",      sublabel: "art. 158 CPC",       x: 580, y: 300, color: "#F2F2F0", icono: "⚒️", tipo: "zona"  },
   { id: "boss_4",       acto: 4, label: "JUEZ HIERRO",    sublabel: "Boss Acto IV",       x: 660, y: 250, color: "#F2F2F0", icono: "🤖",  tipo: "boss"  },
   { id: "recursos",     acto: 5, label: "RECURSOS",       sublabel: "arts. 766-810",      x: 660, y: 350, color: "#8A5CFF", icono: "⚔️",  tipo: "zona"  },
-  { id: "boss_5",       acto: 5, label: "CASACIÓN",       sublabel: "Boss Acto V",        x: 720, y: 300, color: "#8A5CFF", icono: "👁️", tipo: "boss"  },
+  { id: "boss_5",       acto: 5, label: "CORTE GLITCH",   sublabel: "Boss Acto V",        x: 720, y: 300, color: "#8A5CFF", icono: "🌀", tipo: "boss"  },
   { id: "ejecutivo",    acto: 6, label: "EJECUTIVO",      sublabel: "arts. 434-478",      x: 700, y: 400, color: "#FF8A3D", icono: "💼",  tipo: "zona"  },
   { id: "boss_6",       acto: 6, label: "LEVIATÁN",       sublabel: "Boss Acto VI",       x: 750, y: 450, color: "#FF8A3D", icono: "🐉",  tipo: "boss"  },
   { id: "examen",       acto: 7, label: "EXAMEN",         sublabel: "GRADO",              x: 750, y: 350, color: "#FF4FCF", icono: "🎓",  tipo: "zona"  },
@@ -77,6 +77,19 @@ const ZONE_MODULE: Record<string, string> = {
   sentencia:      "sentencia",
   recursos:       "ataque",
   ejecutivo:      "ejecutivo_full",
+};
+
+const ZONE_WORLD_ROUTE: Record<string, string> = {
+  jurisdiccion: "/mundo/jurisdiccion",
+  competencia: "/mundo/competencia",
+  emplazamiento: "/mundo/emplazamiento",
+  notificaciones: "/mundo/emplazamiento",
+  prueba: "/mundo/prueba",
+  discusion: "/mundo/discusion",
+  sentencia: "/mundo/sentencia",
+  recursos: "/mundo/recursos",
+  ejecutivo: "/mundo/juicio_ejecutivo",
+  examen: "/examen",
 };
 
 // ────────────────────────────────────────────
@@ -179,6 +192,7 @@ function NodeDetailPanel({
   const acto = CAMPAÑA.find((a) => a.numero === node.acto);
   const misiones = acto?.misiones ?? [];
   const isBoss = node.tipo === "boss";
+  const bossId = acto?.bossId;
 
   return (
     <motion.div
@@ -213,7 +227,7 @@ function NodeDetailPanel({
       {/* BOSS: botón directo */}
       {isBoss && (
         <button
-          onClick={() => { sfx.click?.(); onNavigate("/oral"); }}
+          onClick={() => { sfx.click?.(); onNavigate(bossId ? `/boss/${bossId}` : "/oral"); }}
           onMouseEnter={() => sfx.hover?.()}
           className="w-full py-2.5 font-display-grave text-sm border transition-all hover:brightness-125"
           style={{
@@ -223,7 +237,7 @@ function NodeDetailPanel({
             boxShadow: `0 0 16px ${node.color}20`,
           }}
         >
-          ⚔ COMBATIR BOSS
+          ⚔ COMBATIR BOSS DE CAMPAÑA
         </button>
       )}
 
@@ -238,15 +252,7 @@ function NodeDetailPanel({
           ) : (
             misiones.map((mision) => {
               const done = misionesCompletadas.includes(mision.id);
-              const url = mision.href
-                ? mision.href
-                : mision.moduloId
-                ? `/expansion?m=${mision.moduloId}`
-                : mision.tipo === "boss"
-                ? "/oral"
-                : mision.tipo === "examen"
-                ? "/examen"
-                : null;
+              const url = `/mision/${mision.id}`;
 
               return (
                 <div
@@ -288,9 +294,9 @@ function NodeDetailPanel({
           )}
 
           {/* Botón directo al módulo principal de la zona */}
-          {ZONE_MODULE[node.id] && (
+          {(ZONE_WORLD_ROUTE[node.id] || ZONE_MODULE[node.id]) && (
             <button
-              onClick={() => { sfx.click?.(); onNavigate(`/expansion?m=${ZONE_MODULE[node.id]}`); }}
+              onClick={() => { sfx.click?.(); onNavigate(ZONE_WORLD_ROUTE[node.id] ?? `/expansion?m=${ZONE_MODULE[node.id]}`); }}
               onMouseEnter={() => sfx.hover?.()}
               className="w-full py-2 mt-2 font-mono-terminal text-[9px] uppercase tracking-wider border transition-all hover:brightness-125"
               style={{ borderColor: `${node.color}30`, color: `${node.color}90` }}
@@ -308,12 +314,12 @@ function NodeDetailPanel({
             Ciudad Judicial. El punto de partida de todo proceso.
           </p>
           <button
-            onClick={() => { sfx.click?.(); onNavigate("/expansion"); }}
+            onClick={() => { sfx.click?.(); onNavigate("/mundo"); }}
             onMouseEnter={() => sfx.hover?.()}
             className="w-full py-2.5 font-mono-terminal text-[10px] uppercase tracking-wider border transition-all hover:brightness-125"
             style={{ borderColor: "#4BE7FF50", color: "#4BE7FF", background: "#4BE7FF10" }}
           >
-            ▶ Explorar Módulos de Campaña
+            ▶ Explorar zonas vivas
           </button>
         </div>
       )}

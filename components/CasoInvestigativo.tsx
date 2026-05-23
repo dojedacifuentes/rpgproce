@@ -301,23 +301,20 @@ export default function CasoInvestigativo({
                 </p>
               </div>
 
-              {/* Solución */}
+              {/* Confirmacion sin revelar la solucion */}
               <div
                 className="p-4 space-y-2"
                 style={{
-                  background: "rgba(75,231,255,.04)",
-                  border: "1px solid rgba(75,231,255,.2)",
+                  background: "rgba(215,180,106,.04)",
+                  border: "1px solid rgba(215,180,106,.22)",
                 }}
               >
-                <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-competencia">
-                  🎯 Solución oficial
+                <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-prueba">
+                  Confirmacion previa
                 </div>
                 <p className="font-serif-juridica text-doc-aged/80 text-sm">
-                  {caso.solucion.explicacion}
+                  Vas a defender esta hipotesis. La solucion oficial aparece despues de verificar, para que el caso siga siendo investigacion y no lectura con boton.
                 </p>
-                <div className="font-mono-terminal text-[9px] text-zona-recursos">
-                  {caso.solucion.articuloClave}
-                </div>
               </div>
             </div>
 
@@ -370,6 +367,29 @@ export default function CasoInvestigativo({
                   <div className="text-[9px] text-doc-aged/40 font-mono-terminal">{s.label}</div>
                 </div>
               ))}
+            </div>
+
+            <div
+              className="p-4 space-y-2 border"
+              style={{
+                background: esCorrecta ? "rgba(88,245,176,.04)" : "rgba(217,74,74,.04)",
+                borderColor: esCorrecta ? "rgba(88,245,176,.28)" : "rgba(217,74,74,.28)",
+              }}
+            >
+              <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-zona-competencia">
+                Solucion oficial y respuesta de grado
+              </div>
+              <p className="font-serif-juridica text-doc-aged/80 text-sm leading-relaxed">
+                {caso.solucion.explicacion}
+              </p>
+              <div className="font-mono-terminal text-[9px] text-zona-recursos">
+                {caso.solucion.articuloClave} / {caso.solucion.recursoAplicable}
+              </div>
+              <ul className="text-[10px] text-doc-aged/55 font-mono-terminal space-y-1 mt-2">
+                {caso.solucion.pasosCorrectionales.map((paso) => (
+                  <li key={paso}>{paso}</li>
+                ))}
+              </ul>
             </div>
 
             {/* Actions */}

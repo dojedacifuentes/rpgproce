@@ -151,12 +151,12 @@ export default function NPCInteractionPanel() {
         >
           {/* Header */}
           <div>
-            <div className="text-5xl mb-4">{npcActual.icono}</div>
+            <div className="text-5xl mb-4">{npcActual.icono ?? npcActual.emoji}</div>
             <h2 className="font-display-grave text-3xl text-doc-aged mb-2">
               {npcActual.nombre}
             </h2>
             <p className="font-serif-juridica text-doc-aged/70 italic text-base">
-              {npcActual.especialidad}
+              {npcActual.especialidad ?? npcActual.titulo}
             </p>
           </div>
 

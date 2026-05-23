@@ -61,6 +61,8 @@ export interface Npc {
   titulo: string;
   zona: string;
   emoji: string;
+  icono?: string;
+  especialidad?: string;
   descripcion: string;
   personalidad: string;
   historia: string; // Quién es realmente

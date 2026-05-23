@@ -6,7 +6,7 @@
  */
 
 import { CASOS_INVESTIGATIVOS } from "@/data/casos-investigativos";
-import { PREGUNTAS } from "@/data/examen-extendido";
+import { PREGUNTAS_EXAMEN } from "@/data/examen-extendido";
 
 // ============================================================================
 // MAPEOS INVESTIGATIVOS
@@ -121,7 +121,7 @@ export const getPreguntasArcadeParaNpc = (npcId: string, etapa: number) => {
 
   // Filtrar preguntas que matcheen los temas (en un caso real, habría categorización en PREGUNTAS)
   // Por ahora, devolver primeras N preguntas
-  return PREGUNTAS.slice(0, Math.min(5, PREGUNTAS.length));
+  return PREGUNTAS_EXAMEN.slice(0, Math.min(5, PREGUNTAS_EXAMEN.length));
 };
 
 // ============================================================================

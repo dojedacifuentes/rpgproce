@@ -31,6 +31,7 @@ export interface EventoMundo {
     efectoExtra?: {
       reputacion?: number;
       trauma?: number;
+      nivelEconomico?: number;
     };
   }[];
 }
