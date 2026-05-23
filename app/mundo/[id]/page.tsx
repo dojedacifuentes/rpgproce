@@ -39,9 +39,12 @@ export default function MundoPage() {
     juicio_ejecutivo: ["ejecutivo_intro"],
     cautelares: [],
     examen: [],
+    submundo_archivo_secreto: [],
+    submundo_camaras_ocultas: [],
+    submundo_doctrina_apocifa: [],
   };
 
-  const lista = escenasMundo[mundo] || [];
+  const lista = escenasMundo[mundo] ?? [];
   const todasLasEscenasVistas = escenaIdx >= lista.length;
 
   // Mapear Mundo a zona para el sistema de NPCs/eventos
@@ -59,6 +62,9 @@ export default function MundoPage() {
     juicio_ejecutivo: "ejecutivo",
     cautelares: "cautelares",
     examen: "nulidad",
+    submundo_archivo_secreto: "recursos",
+    submundo_camaras_ocultas: "notificaciones",
+    submundo_doctrina_apocifa: "nulidad",
   };
 
   const zonaMundo = mundoAZona[mundo];

@@ -220,22 +220,14 @@ export default function HUDPersistente() {
       {scanlinePulse && (
         <div className="fixed inset-x-0 top-0 z-30 pointer-events-none">
           <div
-            className="h-0.5"
+            className="h-0.5 scanline-sweep"
             style={{
               background: "linear-gradient(90deg, transparent, var(--zona-competencia), transparent)",
-              animation: "scanlineDown 0.6s linear forwards",
               boxShadow: "0 0 12px var(--zona-competencia)",
             }}
           />
         </div>
       )}
-
-      <style jsx>{`
-        @keyframes scanlineDown {
-          from { transform: translateY(0); opacity: 1; }
-          to { transform: translateY(100vh); opacity: 0; }
-        }
-      `}</style>
     </>
   );
 }

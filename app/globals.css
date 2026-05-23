@@ -906,6 +906,15 @@ body { animation: uiBreathe 12s ease-in-out infinite; }
 .bg-terminal-darker\/50 { background: rgba(6,7,11,.5); }
 
 /* ============================================================================
+   HUD — Scanline sweep (used by HUDPersistente)
+   ============================================================================ */
+@keyframes scanlineDown {
+  from { transform: translateY(0); opacity: 1; }
+  to   { transform: translateY(100vh); opacity: 0; }
+}
+.scanline-sweep { animation: scanlineDown 0.6s linear forwards; }
+
+/* ============================================================================
    HUD CLEARANCE — Bottom padding so content isn't hidden under fixed HUD
    ============================================================================ */
 /* All pages get at least 72px bottom clearance for the fixed bottom HUD */

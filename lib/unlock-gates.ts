@@ -1,6 +1,7 @@
 // ============================================================================
-// UNLOCK GATES — Progresión por nivel y logros desbloqueados
-// Phase 6: Fog of war sobre módulos y bosses.
+// UNLOCK GATES — v2.1: libre acceso al contenido educativo
+// Filosofía: cualquier módulo de ESTUDIO está abierto desde nivel 1.
+// Solo quedan pequeños requisitos para jefes secretos y contenido bonus.
 // ============================================================================
 
 export interface UnlockGate {
@@ -12,78 +13,41 @@ export interface UnlockGate {
 }
 
 // ─── MÓDULOS DE EXPANSIÓN ────────────────────────────────────────────────────
-
-/**
- * Por defecto: todo desbloqueado excepto lo que aparece aquí.
- * Clave = id del módulo (type Modulo en expansion/page.tsx)
- */
-export const MODULO_GATES: Record<string, UnlockGate> = {
-  ejecutivo_full: {
-    nivelMin: 2,
-    label: "Nivel 2 requerido",
-    hint: "Consigue 100 XP en cualquier modo para desbloquear",
-  },
-  ataque: {
-    nivelMin: 2,
-    label: "Nivel 2 requerido",
-    hint: "Completa una sesión de Arcade para desbloquear",
-  },
-  investigacion: {
-    nivelMin: 3,
-    label: "Nivel 3 requerido",
-    hint: "Acumula 200 XP — los casos más oscuros esperan",
-  },
-  duelo: {
-    nivelMin: 3,
-    label: "Nivel 3 requerido",
-    hint: "200 XP — combate probatorio avanzado",
-  },
-  examen: {
-    nivelMin: 5,
-    label: "Nivel 5 requerido · Examen de grado",
-    hint: "400 XP — el examen oral no perdona a los impacientes",
-  },
-};
+// Por defecto: todo desbloqueado. Solo el modo "pesadilla" (si existiera) lo estaría.
+// Ningún módulo educativo requiere nivel — cualquier jugador puede estudiar todo.
+export const MODULO_GATES: Record<string, UnlockGate> = {};
 
 // ─── BOSSES (INTERROGACIÓN ORAL) ─────────────────────────────────────────────
-
-/**
- * Bosses siempre visibles (no en esta tabla): ministro_formalista, profesor_hostil, secretario_nihilista.
- * El resto se desbloquea progresivamente.
- */
+// Bosses base: siempre visibles.
+// Bosses extra secretos: se desbloquean derrotando a algún jefe previo.
+// NO se bloquean por nivel — solo por lógica narrativa.
 export const BOSS_GATES: Record<string, UnlockGate> = {
+  // El receptor aparece después del ministro (lógica: relación procesal)
   receptor_metafisico: {
     bossesDefeated: ["boss_ministro_formalista"],
     label: "Derrota al Ministro Formalista primero",
-    hint: "El receptor no aparece hasta que demuestra algo",
+    hint: "El receptor no aparece hasta que alguien lo convoca",
   },
-  relator_inadmisibilidades: {
-    nivelMin: 2,
-    label: "Nivel 2 — El relator espera en sala",
-    hint: "Sube de nivel para que el relator te conceda audiencia",
-  },
+  // El abogado rival solo combate si el profesor ya fue vencido
   abogado_rival_casacional: {
-    nivelMin: 3,
     bossesDefeated: ["boss_profesor_hostil"],
-    label: "Nivel 3 + Derrota al Profesor Hostil",
-    hint: "El rival solo combate contra iguales",
+    label: "Derrota al Profesor Hostil primero",
+    hint: "El rival espera a quien ya probó algo",
   },
-  // Bosses extra: mucho más escondidos
+  // Bosses extra: desbloqueados con 2 victorias acumuladas
   jueza_suplente_disociada: {
-    nivelMin: 4,
-    logrosMin: 3,
-    label: "Nivel 4 + 3 logros",
-    hint: "La jueza suplente no recibe visitas sin credenciales",
+    logrosMin: 2,
+    label: "2 logros requeridos — La jueza espera",
+    hint: "Derrota a 2 instancias para acceder a la jueza suplente",
   },
   funcionario_quemado: {
-    nivelMin: 5,
-    label: "Nivel 5 — Solo los persistentes llegan aquí",
-    hint: "El funcionario está quemado pero disponible para los dignos",
+    logrosMin: 3,
+    label: "3 logros requeridos",
+    hint: "El funcionario solo atiende a quienes ya lo han intentado varias veces",
   },
   maestro_sumario: {
-    nivelMin: 6,
     logrosMin: 5,
-    label: "Nivel 6 + 5 logros — Boss secreto",
+    label: "5 logros — Boss secreto",
     hint: "???",
   },
 };
@@ -92,6 +56,7 @@ export const BOSS_GATES: Record<string, UnlockGate> = {
 
 /**
  * Verifica si un módulo está desbloqueado para el estado actual del jugador.
+ * Con las nuevas gates vacías, siempre retorna true para módulos educativos.
  */
 export function isModuloUnlocked(
   moduloId: string,
@@ -99,7 +64,7 @@ export function isModuloUnlocked(
   logros: string[],
 ): boolean {
   const gate = MODULO_GATES[moduloId];
-  if (!gate) return true; // sin restricción = abierto
+  if (!gate) return true;
   if (gate.nivelMin && nivel < gate.nivelMin) return false;
   if (gate.logrosMin && logros.length < gate.logrosMin) return false;
   return true;
@@ -107,9 +72,6 @@ export function isModuloUnlocked(
 
 /**
  * Verifica si un boss está desbloqueado.
- * @param bossId ID del boss
- * @param nivel Nivel del jugador
- * @param logrosIds Array de IDs de logros desbloqueados
  */
 export function isBossUnlocked(
   bossId: string,

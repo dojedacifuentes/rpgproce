@@ -379,9 +379,10 @@ export default function GameWorldMap() {
     return acto.misiones.every((m) => misionesCompletadas.includes(m.id));
   }, [misionesCompletadas]);
 
-  const isLocked = useCallback((node: ZoneNode) => {
-    return node.acto > actoActual + 2;
-  }, [actoActual]);
+  // Todos los nodos son accesibles — cualquier zona puede estudiarse libremente
+  const isLocked = useCallback((_node: ZoneNode) => {
+    return false;
+  }, []);
 
   const getNodeById = (id: string) => MAP_NODES.find((n) => n.id === id);
 

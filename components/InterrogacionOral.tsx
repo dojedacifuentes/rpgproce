@@ -67,9 +67,11 @@ const PHASE_LABEL: Record<number, string> = {
 
 export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; onFin?: () => void }) {
   const game = useGame();
-  const boss = TODOS.find((b) => b.id === bossId);
-  const [saludBoss, setSaludBoss] = useState(boss?.saludInicial || 100);
-  const [saludJugador, setSaludJugador] = useState(boss?.saludJugador || 70);
+  const boss = TODOS.find((b) => b.id === bossId) ?? null;
+
+  // ── TODOS LOS HOOKS PRIMERO (sin condicionales) ──────────────────────────
+  const [saludBoss, setSaludBoss] = useState(boss?.saludInicial ?? 100);
+  const [saludJugador, setSaludJugador] = useState(boss?.saludJugador ?? 70);
   const [ataqueIdx, setAtaqueIdx] = useState(0);
   const [feedback, setFeedback] = useState<{
     ok: boolean;
@@ -82,24 +84,23 @@ export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; o
   const [xpGanado, setXpGanado] = useState(0);
   const [monedasGanadas, setMonedasGanadas] = useState(0);
 
+  // Shuffle opciones del ataque actual — SIEMPRE llamado (React hooks rule)
+  const ataque = boss?.ataques[ataqueIdx] ?? null;
+  const shuffled = useMemo(() => {
+    if (!ataque) return null;
+    return shuffleOptions(ataque.opciones, "texto");
+  }, [ataqueIdx, bossId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── RETORNO CONDICIONAL DESPUÉS DE TODOS LOS HOOKS ───────────────────────
   if (!boss) {
     return <div className="terminal p-6 text-doc-aged/60 font-mono-terminal">Boss no encontrado.</div>;
   }
 
-  const ataque = boss.ataques[ataqueIdx];
   const phase = getPhase(saludBoss, boss.saludInicial);
   const phaseColor = PHASE_COLOR[phase];
 
-  // Shuffle opciones del ataque actual
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const shuffled = useMemo(() => {
-    if (!ataque) return null;
-    return shuffleOptions(ataque.opciones, "texto");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ataqueIdx, bossId]);
-
   function responder(shuffledIdx: number) {
-    if (!ataque || !shuffled) return;
+    if (!boss || !ataque || !shuffled) return;
     const originalOp = ataque.opciones[shuffled.originalIndices[shuffledIdx]];
     const reaccion = getReaccion(boss!.id, originalOp.correcta ? "acierto" : "fallo");
     const dmg = ataque.damage;
@@ -353,14 +354,15 @@ export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; o
               className="text-[8px] font-mono-terminal uppercase tracking-widest px-2 py-0.5 border"
               style={{ borderColor: `${phaseColor}50`, color: phaseColor }}
             >
-              ATAQUE {ataqueIdx + 1} · {ataque.tipo.toUpperCase()}
+              ATAQUE {ataqueIdx + 1} · {ataque?.tipo?.toUpperCase() ?? "—"}
             </div>
             <div className="font-mono-terminal text-[8px] text-doc-aged/30">
-              Daño: {ataque.damage} pts
+              Daño: {ataque?.damage ?? 0} pts
             </div>
           </div>
 
           {/* Pregunta */}
+          {ataque && (
           <div className="border-l-2 pl-4" style={{ borderColor: phaseColor }}>
             <p className="font-serif-juridica text-doc-aged text-base leading-relaxed">
               {ataque.pregunta}
@@ -371,6 +373,7 @@ export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; o
               </div>
             )}
           </div>
+          )}
 
           {/* Opciones */}
           {!feedback && shuffled && (
