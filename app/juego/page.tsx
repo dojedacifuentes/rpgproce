@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { sfx } from "@/lib/audio";
 import GameWorldMap from "@/components/GameWorldMap";
+import PortalReinos from "@/components/reinos/PortalReinos";
 import { CAMPAÑA } from "@/data/campaign";
 
 // ============================================================================
@@ -146,6 +147,8 @@ export default function Juego() {
 
       {/* ─── MAIN CONTENT ─── */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 pb-20">
+        {/* Portal a la expansión (DLC) — contenido adicional, no altera el juego base */}
+        <PortalReinos />
         <div className="grid lg:grid-cols-[1fr_300px] gap-6">
 
           {/* ─── MAPA VISUAL ─── */}

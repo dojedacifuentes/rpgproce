@@ -1,0 +1,140 @@
+"use client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { sfx } from "@/lib/audio";
+import { ARTICULOS, articulosPorRegion, RAREZA_META, getArticulo } from "@/data/reinos/articulos";
+import { REGIONES } from "@/data/reinos/regiones";
+import { useReinos } from "@/store/useReinos";
+
+// ============================================================================
+// REINOS — Biblioteca del Litigante (coleccionables: artículos legendarios)
+// ============================================================================
+
+export default function BibliotecaPage() {
+  const desbloqueados = useReinos((s) => s.articulosDesbloqueados);
+  const [mounted, setMounted] = useState(false);
+  const [sel, setSel] = useState<string | null>(null);
+  useEffect(() => setMounted(true), []);
+
+  const tiene = (id: string) => mounted && desbloqueados.includes(id);
+  const total = ARTICULOS.length;
+  const conseguidos = mounted ? ARTICULOS.filter((a) => desbloqueados.includes(a.id)).length : 0;
+  const articuloSel = sel ? getArticulo(sel) : undefined;
+
+  return (
+    <main className="min-h-screen px-4 md:px-8 py-6 max-w-5xl mx-auto">
+      <header className="flex items-center justify-between flex-wrap gap-3 mb-6">
+        <Link href="/reinos" className="btn text-xs" onClick={() => sfx.click?.()}>◂ Overworld</Link>
+        <span className="font-mono-terminal text-[9px] text-doc-aged/40 uppercase tracking-widest">BIBLIOTECA DEL LITIGANTE</span>
+      </header>
+
+      <div className="mb-6">
+        <h1 className="font-display-grave text-3xl md:text-5xl text-doc-aged mb-2">Artículos Legendarios</h1>
+        <p className="font-serif-juridica text-doc-aged/60 max-w-2xl leading-relaxed mb-3">
+          Cada desafío y cada jefe vencido suelta un artículo del Código Civil, del CPC, del COT o de la Constitución.
+          Colecciónalos todos para dominar el examen de grado.
+        </p>
+        <div className="flex items-center gap-3 max-w-md">
+          <div className="flex-1 h-2 bg-bg-steel rounded-full overflow-hidden">
+            <motion.div className="h-full rounded-full reino-rift" animate={{ width: `${(conseguidos / total) * 100}%` }} />
+          </div>
+          <span className="font-mono-terminal text-[11px] reino-fg">{conseguidos}/{total}</span>
+        </div>
+      </div>
+
+      {/* Colección por región */}
+      <div className="space-y-8">
+        {REGIONES.map((region) => {
+          const arts = articulosPorRegion(region.id);
+          if (arts.length === 0) return null;
+          return (
+            <div key={region.id} data-reino={region.id}>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-xl">{region.icono}</span>
+                <h2 className="font-display-grave text-lg reino-fg">{region.nombre}</h2>
+                <span className="font-mono-terminal text-[9px] text-doc-aged/35">
+                  {arts.filter((a) => tiene(a.id)).length}/{arts.length}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                {arts.map((a) => {
+                  const unlocked = tiene(a.id);
+                  const rar = RAREZA_META[a.rareza];
+                  return (
+                    <button
+                      key={a.id}
+                      onClick={() => { if (unlocked) { sfx.confirm?.(); setSel(a.id); } else { sfx.warning?.(); } }}
+                      onMouseEnter={() => unlocked && sfx.hover?.()}
+                      className="reino-card p-3 text-left relative h-full"
+                      style={{ borderColor: unlocked ? `${rar.color}66` : undefined, cursor: unlocked ? "pointer" : "default" }}
+                    >
+                      {unlocked ? (
+                        <>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-2xl">{a.icono}</span>
+                            <span className="font-mono-terminal text-[7px] uppercase tracking-wider px-1.5 py-0.5 border" style={{ color: rar.color, borderColor: `${rar.color}66` }}>
+                              {rar.label}
+                            </span>
+                          </div>
+                          <div className="font-display-grave text-sm text-doc-aged leading-tight">{a.etiqueta}</div>
+                          <div className="font-serif-juridica text-doc-aged/55 text-xs italic mt-0.5">{a.titulo}</div>
+                        </>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-4 opacity-50">
+                          <span className="text-2xl grayscale mb-1">🔒</span>
+                          <span className="font-mono-terminal text-[9px] text-doc-aged/40">??? · {a.codigo}</span>
+                          <span className="font-mono-terminal text-[7px] text-doc-aged/25 mt-1">por descubrir</span>
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Detalle del artículo */}
+      <AnimatePresence>
+        {articuloSel && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => setSel(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-5"
+            style={{ background: "rgba(6,7,11,0.86)", backdropFilter: "blur(4px)" }}
+          >
+            <motion.div
+              initial={{ scale: 0.92, y: 12 }} animate={{ scale: 1, y: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="reino-card reino-parchment p-6 max-w-lg w-full"
+              data-reino={articuloSel.region}
+              style={{ borderColor: `${RAREZA_META[articuloSel.rareza].color}77` }}
+            >
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">{articuloSel.icono}</span>
+                  <div>
+                    <div className="font-mono-terminal text-[9px] uppercase tracking-widest" style={{ color: RAREZA_META[articuloSel.rareza].color }}>
+                      {RAREZA_META[articuloSel.rareza].label} · {articuloSel.codigo}
+                    </div>
+                    <div className="font-display-grave text-2xl text-doc-aged leading-none">{articuloSel.etiqueta}</div>
+                    <div className="font-serif-juridica text-doc-aged/60 italic text-sm">{articuloSel.titulo}</div>
+                  </div>
+                </div>
+                <button onClick={() => setSel(null)} className="text-doc-aged/40 hover:text-doc-aged font-mono-terminal">✕</button>
+              </div>
+              <p className="font-serif-juridica text-doc-aged/85 text-sm leading-relaxed border-l-2 pl-3 my-4" style={{ borderColor: RAREZA_META[articuloSel.rareza].color }}>
+                «{articuloSel.texto}»
+              </p>
+              <div className="font-mono-terminal text-[10px] reino-fg uppercase tracking-wider">
+                ✦ {articuloSel.efecto}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </main>
+  );
+}

@@ -1,0 +1,173 @@
+/* ============================================================================
+   REINOS DEL DERECHO — Estilos AISLADOS del DLC
+   ----------------------------------------------------------------------------
+   Este archivo SOLO se importa en app/reinos/layout.tsx. No altera globals.css
+   ni tailwind.config. Todo queda bajo .reinos-scope y se apoya en las clases
+   globales ya existentes (.terminal, .btn, .font-display-grave, etc.).
+   ============================================================================ */
+
+.reinos-scope {
+  /* paleta por defecto (overworld neutro, antes de entrar a una región) */
+  --reino-primary: #d8b45a;
+  --reino-secondary: #6fae7a;
+  --reino-accent: #e8d9b5;
+  --reino-ambient: rgba(216, 180, 90, 0.05);
+  min-height: 100vh;
+  position: relative;
+  background:
+    radial-gradient(1200px 700px at 50% -10%, var(--reino-ambient), transparent 60%),
+    linear-gradient(180deg, #06070b 0%, #0a0d14 100%);
+}
+
+/* ─── PALETAS POR REGIÓN ───────────────────────────────────────────────────
+   Se activan poniendo data-reino="<id>" en cualquier contenedor (layout o
+   wrapper de la región). Las variables cascadean al subárbol. */
+[data-reino="bosque_obligaciones"] {
+  --reino-primary: #57b06f;   /* verde bosque */
+  --reino-secondary: #d9b44a; /* dorado */
+  --reino-accent: #e8d9b5;    /* beige pergamino */
+  --reino-ambient: rgba(87, 176, 111, 0.08);
+}
+[data-reino="ciudad_mercantil"] {
+  --reino-primary: #d68a3e;   /* cobre */
+  --reino-secondary: #244b78; /* azul marino */
+  --reino-accent: #b5651d;    /* marrón cobre */
+  --reino-ambient: rgba(214, 138, 62, 0.08);
+}
+[data-reino="tierras_posesion"] {
+  --reino-primary: #d98e5a;   /* terracota / tierra */
+  --reino-secondary: #8c5a3c; /* arcilla */
+  --reino-accent: #ebd3a0;    /* arena */
+  --reino-ambient: rgba(217, 142, 90, 0.08);
+}
+[data-reino="mansion_sucesoria"] {
+  --reino-primary: #9c5a7d;   /* vino / mausoleo */
+  --reino-secondary: #c2a14a; /* oro viejo */
+  --reino-accent: #b8a9c9;    /* violeta polvo */
+  --reino-ambient: rgba(156, 90, 125, 0.09);
+}
+[data-reino="republica_administrativa"] {
+  --reino-primary: #3f7bff;   /* azul eléctrico */
+  --reino-secondary: #f2f5ff; /* blanco */
+  --reino-accent: #6fa8ff;    /* azul terminal */
+  --reino-ambient: rgba(63, 123, 255, 0.1);
+}
+[data-reino="castillo_competencia"] {
+  --reino-primary: #9a52c4;   /* púrpura oscuro */
+  --reino-secondary: #7c7c86; /* gris piedra */
+  --reino-accent: #c0392b;    /* rojo profundo */
+  --reino-ambient: rgba(154, 82, 196, 0.09);
+}
+[data-reino="tribunal_supremo"] {
+  --reino-primary: #ecc94b;   /* oro supremo */
+  --reino-secondary: #f2f2f0; /* blanco espectral */
+  --reino-accent: #8a5cff;    /* violeta casacional */
+  --reino-ambient: rgba(236, 201, 75, 0.1);
+}
+
+/* ─── TARJETA TEMÁTICA (análoga a .zona-card del core) ─────────────────────── */
+.reino-card {
+  position: relative;
+  border: 1px solid color-mix(in srgb, var(--reino-primary) 35%, transparent);
+  background:
+    linear-gradient(180deg, rgba(12, 14, 20, 0.9), rgba(8, 10, 16, 0.95)),
+    radial-gradient(90% 100% at 0% 0%, color-mix(in srgb, var(--reino-primary) 9%, transparent), transparent 60%);
+  box-shadow:
+    0 0 24px color-mix(in srgb, var(--reino-primary) 8%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: all 0.2s ease;
+}
+.reino-card:hover {
+  border-color: var(--reino-primary);
+  box-shadow:
+    0 0 38px color-mix(in srgb, var(--reino-primary) 18%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+}
+
+/* texto y bordes temáticos rápidos */
+.reino-fg { color: var(--reino-primary); }
+.reino-fg-2 { color: var(--reino-secondary); }
+.reino-border { border-color: color-mix(in srgb, var(--reino-primary) 45%, transparent); }
+.reino-chip {
+  border: 1px solid color-mix(in srgb, var(--reino-primary) 50%, transparent);
+  color: var(--reino-primary);
+  background: color-mix(in srgb, var(--reino-primary) 6%, transparent);
+}
+
+/* barra de vida / progreso temática */
+.reino-bar { background: var(--reino-primary); box-shadow: 0 0 8px color-mix(in srgb, var(--reino-primary) 60%, transparent); }
+
+/* ─── OVERWORLD ───────────────────────────────────────────────────────────── */
+.reino-node {
+  transition: transform 0.18s ease, filter 0.18s ease;
+  cursor: pointer;
+}
+.reino-node:hover { transform: scale(1.06); }
+
+/* glifo flotante de cada región */
+@keyframes reino-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.reino-float { animation: reino-float 4s ease-in-out infinite; }
+
+@keyframes reino-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.08); }
+}
+.reino-pulse { animation: reino-pulse 2.6s ease-in-out infinite; }
+
+/* destello de "rift" para el tribunal final / portal interno */
+@keyframes reino-rift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.reino-rift {
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--reino-primary) 70%, transparent),
+    color-mix(in srgb, var(--reino-accent) 70%, transparent),
+    color-mix(in srgb, var(--reino-primary) 70%, transparent));
+  background-size: 200% 100%;
+  animation: reino-rift 6s linear infinite;
+}
+
+/* glitch sutil al fallar un desafío */
+@keyframes reino-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+.reino-shake { animation: reino-shake 0.4s ease; }
+
+/* aparición de cartas */
+@keyframes reino-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reino-rise { animation: reino-rise 0.4s ease-out both; }
+
+/* corazón de vida perdido */
+@keyframes reino-flash-red {
+  0% { box-shadow: 0 0 0 0 rgba(217, 74, 74, 0.5); }
+  100% { box-shadow: 0 0 0 24px rgba(217, 74, 74, 0); }
+}
+.reino-flash-red { animation: reino-flash-red 0.5s ease-out; }
+
+/* textura de pergamino para el Bosque y la Biblioteca */
+.reino-parchment {
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(232, 217, 181, 0.05), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(217, 180, 74, 0.04), transparent 40%);
+}
+
+/* línea de escaneo cyberpunk para la República Administrativa */
+[data-reino="republica_administrativa"] .reino-card {
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(63, 123, 255, 0.04) 0 1px,
+    transparent 1px 4px
+  );
+}
