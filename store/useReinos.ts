@@ -104,7 +104,7 @@ export const useReinos = create<ReinosStore>()(
       storage: createJSONStorage(() =>
         typeof window !== "undefined"
           ? window.localStorage
-          : ({ getItem: () => null, setItem: () => {}, removeItem: () => {} } as Storage),
+          : ({ getItem: () => null, setItem: () => {}, removeItem: () => {} } as any),
       ),
     },
   ),
