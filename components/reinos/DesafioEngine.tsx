@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/audio";
+import { shuffleOptions } from "@/lib/shuffleOptions";
 import type { Desafio } from "@/types/reinos";
 import { TIPO_DESAFIO_META } from "@/data/reinos/desafios";
 import { getArticulo, RAREZA_META } from "@/data/reinos/articulos";
@@ -27,12 +28,18 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
   const [resuelto, setResuelto] = useState(false);
   const [shakeKey, setShakeKey] = useState(0);
 
+  // Mezcla las opciones una vez por encuentro: mata el sesgo posicional.
+  const opciones = useMemo(
+    () => shuffleOptions(desafio.opciones as any[]).options as Desafio["opciones"],
+    [desafio.id],
+  );
+
   const review = yaResuelto; // ya resuelto antes: modo repaso
   const articuloPremio = desafio.recompensa.articuloId ? getArticulo(desafio.recompensa.articuloId) : undefined;
 
   const handleElegir = (i: number) => {
     if (resuelto || review || intentos.includes(i)) return;
-    const op = desafio.opciones[i];
+    const op = opciones[i];
     setElegida(i);
     if (op.correcta) {
       setResuelto(true);
@@ -46,7 +53,7 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
     }
   };
 
-  const mostrarComoCorrecta = (i: number) => (resuelto || review) && desafio.opciones[i].correcta;
+  const mostrarComoCorrecta = (i: number) => (resuelto || review) && opciones[i].correcta;
   const mostrarComoError = (i: number) => intentos.includes(i);
 
   return (
@@ -68,9 +75,15 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
             </div>
           </div>
         </div>
-        <span className="reino-chip font-mono-terminal text-[9px] px-2 py-1 shrink-0">
-          {desafio.articuloClave}
-        </span>
+        {(resuelto || review) ? (
+          <span className="reino-chip font-mono-terminal text-[9px] px-2 py-1 shrink-0">
+            {desafio.articuloClave}
+          </span>
+        ) : (
+          <span className="font-mono-terminal text-[9px] px-2 py-1 shrink-0 text-doc-aged/30 border border-doc-aged/15">
+            ¿qué norma rige?
+          </span>
+        )}
       </div>
 
       {/* ── Verbo del reto ── */}
@@ -91,7 +104,7 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
 
       {/* ── Opciones ── */}
       <div className="space-y-2.5">
-        {desafio.opciones.map((op, i) => {
+        {opciones.map((op, i) => {
           const esCorrecta = mostrarComoCorrecta(i);
           const esError = mostrarComoError(i);
           const bloqueada = resuelto || review || esError;

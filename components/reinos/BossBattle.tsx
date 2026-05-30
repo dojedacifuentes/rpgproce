@@ -1,7 +1,8 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/audio";
+import { shuffleOptions } from "@/lib/shuffleOptions";
 import type { BossReino } from "@/types/reinos";
 import { useReinos } from "@/store/useReinos";
 import { getArticulo, RAREZA_META } from "@/data/reinos/articulos";
@@ -34,6 +35,11 @@ export default function BossBattle({ boss, onClose }: Props) {
 
   const articulo = boss.recompensaArticuloId ? getArticulo(boss.recompensaArticuloId) : undefined;
   const ataque = boss.ataques[idx % boss.ataques.length];
+  // Mezcla las opciones de cada ataque: la correcta no cae siempre en el mismo lugar.
+  const opciones = useMemo(
+    () => shuffleOptions(ataque.opciones as any[]).options as typeof ataque.opciones,
+    [boss.id, idx],
+  );
 
   const empezar = () => { sfx.bossEntrada?.(); setFase("combate"); };
 
@@ -48,7 +54,7 @@ export default function BossBattle({ boss, onClose }: Props) {
 
   const handleElegir = (i: number) => {
     if (acertada || intentos.includes(i) || fase !== "combate") return;
-    const op = ataque.opciones[i];
+    const op = opciones[i];
     if (op.correcta) {
       setAcertada(true);
       const nuevoHp = bossHp - 1;
@@ -213,14 +219,14 @@ export default function BossBattle({ boss, onClose }: Props) {
       </div>
 
       <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-doc-aged/40 mb-2">
-        Ataque {idx + 1} {ataque.articulo && `· ${ataque.articulo}`}
+        Ataque {idx + 1}{acertada && ataque.articulo ? ` · ${ataque.articulo}` : ""}
       </div>
       <motion.p key={shakeKey} className={`font-display-grave text-doc-aged text-lg leading-snug mb-5 ${shakeKey ? "reino-shake" : ""}`}>
         {ataque.enunciado}
       </motion.p>
 
       <div className="space-y-2.5">
-        {ataque.opciones.map((op, i) => {
+        {opciones.map((op, i) => {
           const esError = intentos.includes(i);
           const esCorrecta = acertada && op.correcta;
           const bloqueada = acertada || esError;
