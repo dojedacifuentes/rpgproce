@@ -85,8 +85,8 @@ export default function ReinosOverworld() {
               transition={{ delay: 0.05 * i, type: "spring", stiffness: 180 }}
               onClick={() => entrar(r.id)}
               onMouseEnter={() => !locked && sfx.hover?.()}
-              className="reino-node absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
-              style={{ left: `${r.x}%`, top: `${r.y}%`, width: 96 }}
+              className="reino-node absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center w-[72px] md:w-[96px]"
+              style={{ left: `${r.x}%`, top: `${r.y}%` }}
               title={r.nombre}
             >
               {/* halo */}

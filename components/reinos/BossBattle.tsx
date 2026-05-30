@@ -278,7 +278,7 @@ export default function BossBattle({ boss, onClose }: Props) {
       {/* ESCENA: jugador (abajo-izq) vs jefe (arriba-der) */}
       <div className="relative" style={{ minHeight: 150 }}>
         {/* Jefe */}
-        <div className="absolute right-3 top-1 flex flex-col items-center" style={{ width: 150 }}>
+        <div className="absolute right-1 md:right-3 top-1 flex flex-col items-center w-[116px] md:w-[150px]">
           <div className="w-full mb-2">
             <div className="flex items-center justify-between font-mono-terminal text-[8px] mb-1">
               <span className="text-doc-aged/70 truncate">{boss.nombre}</span>
@@ -290,17 +290,17 @@ export default function BossBattle({ boss, onClose }: Props) {
           </div>
           <div className="relative">
             <div className="reino-platform absolute -bottom-2 left-1/2 -translate-x-1/2" style={{ width: 90, height: 22 }} />
-            <div className={`inline-block ${bossHitting ? "reino-boss-hit" : "reino-boss-idle"}`}>
+            <div className={`reino-bsprite inline-block ${bossHitting ? "reino-boss-hit" : "reino-boss-idle"}`}>
               <ReinoSprite bossId={boss.id} size={92} />
             </div>
           </div>
         </div>
 
         {/* Jugador */}
-        <div className="absolute left-3 bottom-0 flex flex-col items-center" style={{ width: 140 }}>
+        <div className="absolute left-1 md:left-3 bottom-0 flex flex-col items-center w-[112px] md:w-[140px]">
           <div className="relative mb-2">
             <div className="reino-platform absolute -bottom-2 left-1/2 -translate-x-1/2" style={{ width: 70, height: 18 }} />
-            <span className="text-5xl inline-block">🧑‍⚖️</span>
+            <span className="text-4xl md:text-5xl inline-block">🧑‍⚖️</span>
           </div>
           <div className="w-full">
             <div className="flex items-center justify-between font-mono-terminal text-[8px] mb-1">
@@ -322,7 +322,7 @@ export default function BossBattle({ boss, onClose }: Props) {
               </motion.div>
             )}
           </AnimatePresence>
-          <div className="font-mono-terminal text-[8px] text-doc-aged/40 mt-1">Ataque {idx + 1}/{totalGolpes}</div>
+          <div className="hidden md:block font-mono-terminal text-[8px] text-doc-aged/40 mt-1">Ataque {idx + 1}/{totalGolpes}</div>
         </div>
       </div>
 
@@ -337,7 +337,7 @@ export default function BossBattle({ boss, onClose }: Props) {
           </div>
         )}
         <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-doc-aged/40 mb-1">
-          {boss.nombre} contraataca{acertada && ataque.articulo ? ` · ${ataque.articulo}` : ""}
+          <span className="md:hidden">Ataque {idx + 1}/{totalGolpes} · </span>{boss.nombre} contraataca{acertada && ataque.articulo ? ` · ${ataque.articulo}` : ""}
         </div>
         <p className="font-display-grave text-doc-aged text-base md:text-lg leading-snug mb-4">{ataque.enunciado}</p>
 
