@@ -122,5 +122,6 @@ export interface EstadoReinos {
   bossesDerrotados: string[];     // ids de bosses vencidos
   regionesCompletadas: RegionId[];// regiones con boss vencido
   cristales: number;              // moneda de la expansión (Cristales de Justicia)
+  xp: number;                     // experiencia → rango del jugador
   ultimaRegion?: RegionId;        // para "continuar"
 }

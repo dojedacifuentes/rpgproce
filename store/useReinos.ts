@@ -19,6 +19,7 @@ const INIT: EstadoReinos = {
   bossesDerrotados: [],
   regionesCompletadas: [],
   cristales: 0,
+  xp: 0,
   ultimaRegion: undefined,
 };
 
@@ -59,6 +60,7 @@ export const useReinos = create<ReinosStore>()(
           return {
             desafiosResueltos: [...s.desafiosResueltos, id],
             cristales: s.cristales + (recompensa.cristales ?? 0),
+            xp: s.xp + (recompensa.xp ?? 0),
             articulosDesbloqueados: articulos,
           };
         }),
@@ -86,6 +88,7 @@ export const useReinos = create<ReinosStore>()(
             regionesCompletadas: regiones,
             articulosDesbloqueados: articulos,
             cristales: s.cristales + (recompensa.cristales ?? 0),
+            xp: s.xp + 70,
           };
         }),
 

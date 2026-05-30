@@ -7,6 +7,7 @@ import ReinosOverworld from "@/components/reinos/ReinosOverworld";
 import { REGIONES } from "@/data/reinos/regiones";
 import { ARTICULOS } from "@/data/reinos/articulos";
 import { DESAFIOS } from "@/data/reinos/desafios";
+import { rangoDe, LOGROS, logrosDesbloqueados } from "@/data/reinos/rangos";
 import { useReinos } from "@/store/useReinos";
 
 // ============================================================================
@@ -20,6 +21,8 @@ export default function ReinosHome() {
   const articulos = useReinos((s) => s.articulosDesbloqueados);
   const completadas = useReinos((s) => s.regionesCompletadas);
   const resueltos = useReinos((s) => s.desafiosResueltos);
+  const bosses = useReinos((s) => s.bossesDerrotados);
+  const xp = useReinos((s) => s.xp);
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -39,6 +42,11 @@ export default function ReinosHome() {
 
   const todasConquistadas = mounted && completadas.length === REGIONES.length;
   useEffect(() => { if (todasConquistadas) sfx.casacion?.(); }, [todasConquistadas]);
+
+  const rango = rangoDe(mounted ? xp : 0);
+  const logrosOk = mounted
+    ? logrosDesbloqueados({ desafiosResueltos: resueltos, regionesCompletadas: completadas, articulosDesbloqueados: articulos, bossesDerrotados: bosses, cristales, xp })
+    : [];
 
   return (
     <main className="min-h-screen px-4 md:px-8 py-6 max-w-6xl mx-auto">
@@ -70,6 +78,28 @@ export default function ReinosHome() {
           competencia convertidos en desafíos, enemigos y jefes. Conquista cada región, colecciona los
           artículos legendarios y enfrenta al Guardián de la Cosa Juzgada en el Tribunal Supremo Final.
         </p>
+
+        {/* Rango RPG */}
+        <div className="mt-4 reino-card p-3 flex items-center gap-3 max-w-md">
+          <div
+            className="w-11 h-11 rounded-full border-2 flex items-center justify-center font-display-grave text-lg shrink-0"
+            style={{ borderColor: rango.color, color: rango.color, boxShadow: `0 0 14px ${rango.color}45` }}
+          >
+            {rango.nivel}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="font-mono-terminal text-[9px] uppercase tracking-widest" style={{ color: rango.color }}>
+              Rango · Nivel {rango.nivel}
+            </div>
+            <div className="font-display-grave text-base text-doc-aged leading-tight">{rango.titulo}</div>
+            <div className="mt-1 h-1.5 bg-bg-steel rounded-full overflow-hidden">
+              <div className="h-full rounded-full transition-all duration-500" style={{ width: `${rango.esMax ? 100 : rango.pct}%`, background: rango.color }} />
+            </div>
+            <div className="font-mono-terminal text-[8px] text-doc-aged/50 mt-0.5">
+              {rango.esMax ? "Rango máximo alcanzado" : `${rango.xpEnNivel}/${rango.xpParaSiguiente} XP al siguiente nivel`}
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       {/* GRAN FINAL — las 7 regiones conquistadas */}
@@ -131,6 +161,29 @@ export default function ReinosHome() {
           OVERWORLD · TOCA UNA REGIÓN PARA VIAJAR
         </div>
         <ReinosOverworld />
+      </div>
+
+      {/* Logros */}
+      <div className="mb-6">
+        <div className="font-mono-terminal text-[9px] uppercase tracking-widest reino-fg mb-2">
+          LOGROS · {logrosOk.length}/{LOGROS.length}
+        </div>
+        <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+          {LOGROS.map((l) => {
+            const ok = logrosOk.includes(l.id);
+            return (
+              <div
+                key={l.id}
+                title={`${l.nombre} — ${l.desc}`}
+                className="reino-card p-2 flex flex-col items-center text-center transition-all"
+                style={{ opacity: ok ? 1 : 0.45 }}
+              >
+                <span className="text-xl" style={{ filter: ok ? "none" : "grayscale(1)" }}>{ok ? l.icono : "🔒"}</span>
+                <span className="font-mono-terminal text-[7px] text-doc-aged/65 mt-1 leading-tight">{l.nombre}</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Pie: cómo se juega */}

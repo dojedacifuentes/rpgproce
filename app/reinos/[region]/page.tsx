@@ -39,6 +39,7 @@ export default function RegionPage({ params }: { params: { region: string } }) {
   const [encuentro, setEncuentro] = useState<Encuentro>(null);
   const [derrota, setDerrota] = useState(false);
   const [ambiente, setAmbiente] = useState(false);
+  const [racha, setRacha] = useState(0);
 
   useEffect(() => setMounted(true), []);
   useEffect(() => () => stopAmbient(), []);
@@ -90,8 +91,14 @@ export default function RegionPage({ params }: { params: { region: string } }) {
         <DesafioEngine
           desafio={d}
           yaResuelto={mounted && desafiosResueltos.includes(d.id)}
-          onCorrect={() => resolverDesafio(d.id, d.recompensa)}
-          onWrong={perderVida}
+          onCorrect={() => {
+            const nueva = racha + 1;
+            setRacha(nueva);
+            if (nueva >= 3) sfx.combo?.(nueva);
+            const bonus = nueva >= 3 ? (nueva - 2) * 5 : 0; // +5 cristales por acierto encadenado (desde el 3º)
+            resolverDesafio(d.id, { ...d.recompensa, cristales: d.recompensa.cristales + bonus });
+          }}
+          onWrong={() => { setRacha(0); perderVida(); }}
           onClose={() => { setEncuentro(null); sfx.click?.(); }}
         />
       );
@@ -110,8 +117,11 @@ export default function RegionPage({ params }: { params: { region: string } }) {
               {ambiente ? "♪ Ambiente ON" : "♪ Ambiente"}
             </button>
           </div>
-          {/* Vidas */}
+          {/* Vidas + racha */}
           <div className="flex items-center gap-2">
+            {racha >= 2 && (
+              <span key={racha} className="reino-combo-pop reino-chip font-mono-terminal text-[10px] px-2 py-0.5">🔥 Racha ×{racha}</span>
+            )}
             <span className="font-mono-terminal text-[9px] uppercase tracking-widest text-doc-aged/40">Vida</span>
             <div className="flex gap-1">
               {Array.from({ length: VIDAS_INICIALES }).map((_, i) => (
