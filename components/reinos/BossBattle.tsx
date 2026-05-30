@@ -1,11 +1,12 @@
 "use client";
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/audio";
 import { shuffleOptions } from "@/lib/shuffleOptions";
 import type { BossReino, AtaqueBoss } from "@/types/reinos";
 import { useReinos } from "@/store/useReinos";
 import { getArticulo, RAREZA_META } from "@/data/reinos/articulos";
+import ReinoSprite from "@/components/reinos/ReinoSprite";
 
 // ============================================================================
 // REINOS — Duelo de Boss · arena estilo Pokémon / arcade SNES
@@ -16,6 +17,9 @@ import { getArticulo, RAREZA_META } from "@/data/reinos/articulos";
 
 type Fase = "intro" | "combate" | "victoria" | "derrota";
 type Float = { id: number; text: string; color: string; side: "boss" | "player" };
+
+const DURACION_S = 20;   // segundos por ataque antes de recibir un golpe por demora
+const TIMEOUT_DMG = 10;  // daño por dejar correr el tiempo
 
 function pickRonda(boss: BossReino): AtaqueBoss[] {
   const n = Math.min(boss.hp, boss.ataques.length);
@@ -44,6 +48,7 @@ export default function BossBattle({ boss, onClose }: Props) {
   const [arenaShake, setArenaShake] = useState(false);
   const [redFlash, setRedFlash] = useState(0);
   const [floats, setFloats] = useState<Float[]>([]);
+  const [timeLeft, setTimeLeft] = useState(100);
   const floatId = useRef(0);
 
   const articulo = boss.recompensaArticuloId ? getArticulo(boss.recompensaArticuloId) : undefined;
@@ -127,6 +132,35 @@ export default function BossBattle({ boss, onClose }: Props) {
     sfx.click?.();
   };
 
+  // ── Presión de tiempo: barra que corre por ataque ─────────────────────────
+  useEffect(() => {
+    if (fase !== "combate" || acertada) return;
+    setTimeLeft(100);
+    let t = 100;
+    const step = 100 / (DURACION_S * 20); // 20 ticks/seg
+    const iv = setInterval(() => {
+      t -= step;
+      if (t <= 0) {
+        // golpe por demora: rompe combo, daña y reinicia la ventana
+        setCombo(0);
+        setArenaShake(true);
+        setTimeout(() => setArenaShake(false), 400);
+        setRedFlash((r) => r + 1);
+        sfx.plazoCritico?.();
+        spawnFloat(`-${TIMEOUT_DMG} ⏰`, "var(--zona-ejecutivo)", "player");
+        setVida((v) => {
+          const nv = Math.max(0, v - TIMEOUT_DMG);
+          if (nv <= 0) setTimeout(() => setFase("derrota"), 400);
+          return nv;
+        });
+        t = 100;
+      }
+      setTimeLeft(t);
+    }, 50);
+    return () => clearInterval(iv);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idx, acertada, fase, rondaKey]);
+
   // ── INTRO ──────────────────────────────────────────────────────────────
   if (fase === "intro") {
     return (
@@ -139,9 +173,9 @@ export default function BossBattle({ boss, onClose }: Props) {
         </div>
         <motion.div className="relative inline-block mt-10 mb-5">
           <div className="reino-platform absolute -bottom-3 left-1/2 -translate-x-1/2" style={{ width: 130, height: 30 }} />
-          <span className="reino-boss-enter text-7xl md:text-8xl inline-block" style={{ filter: `drop-shadow(0 8px 16px color-mix(in srgb, var(--reino-primary) 50%, transparent))` }}>
-            {boss.icono}
-          </span>
+          <div className="reino-boss-enter inline-block">
+            <ReinoSprite bossId={boss.id} size={150} />
+          </div>
         </motion.div>
         <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] reino-fg mb-2">
           ⚔ Boss de Región · {boss.arquetipo}
@@ -207,7 +241,11 @@ export default function BossBattle({ boss, onClose }: Props) {
   if (fase === "derrota") {
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="reino-arena p-6 md:p-10 text-center" style={{ minHeight: 360 }}>
-        <div className="text-7xl mb-3 reino-boss-idle" style={{ filter: "drop-shadow(0 0 18px rgba(217,74,74,.4))" }}>{boss.icono}</div>
+        <div className="flex justify-center mb-3">
+          <div className="reino-boss-idle" style={{ filter: "grayscale(.7) brightness(.7)" }}>
+            <ReinoSprite bossId={boss.id} size={96} />
+          </div>
+        </div>
         <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em]" style={{ color: "var(--zona-nulidad)" }}>Has sido refutado</div>
         <h2 className="font-display-grave text-2xl text-doc-aged mt-2 mb-3">El expediente se desploma</h2>
         <p className="font-serif-juridica text-doc-aged/60 text-sm max-w-md mx-auto mb-6">
@@ -252,10 +290,9 @@ export default function BossBattle({ boss, onClose }: Props) {
           </div>
           <div className="relative">
             <div className="reino-platform absolute -bottom-2 left-1/2 -translate-x-1/2" style={{ width: 90, height: 22 }} />
-            <span className={`text-6xl inline-block ${bossHitting ? "reino-boss-hit" : "reino-boss-idle"}`}
-              style={{ filter: `drop-shadow(0 6px 12px color-mix(in srgb, var(--reino-primary) 50%, transparent))` }}>
-              {boss.icono}
-            </span>
+            <div className={`inline-block ${bossHitting ? "reino-boss-hit" : "reino-boss-idle"}`}>
+              <ReinoSprite bossId={boss.id} size={92} />
+            </div>
           </div>
         </div>
 
@@ -291,6 +328,14 @@ export default function BossBattle({ boss, onClose }: Props) {
 
       {/* CAJA DE COMANDO: pregunta + opciones */}
       <div className="reino-card mt-2 p-4" style={{ background: "linear-gradient(180deg, rgba(8,10,16,.96), rgba(6,7,11,.98))" }}>
+        {!acertada && (
+          <div className="flex items-center gap-2 mb-2">
+            <span className="font-mono-terminal text-[9px]" style={{ color: timeLeft > 40 ? "var(--reino-primary)" : timeLeft > 20 ? "var(--zona-prueba)" : "var(--zona-nulidad)" }}>⏱</span>
+            <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,.08)" }}>
+              <div className="h-full rounded-full" style={{ width: `${timeLeft}%`, background: timeLeft > 40 ? "var(--reino-primary)" : timeLeft > 20 ? "var(--zona-prueba)" : "var(--zona-nulidad)", boxShadow: timeLeft <= 20 ? "0 0 8px var(--zona-nulidad)" : "none" }} />
+            </div>
+          </div>
+        )}
         <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-doc-aged/40 mb-1">
           {boss.nombre} contraataca{acertada && ataque.articulo ? ` · ${ataque.articulo}` : ""}
         </div>

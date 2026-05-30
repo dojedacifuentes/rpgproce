@@ -83,6 +83,13 @@ export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; o
   const [terminado, setTerminado] = useState<"victoria" | "derrota" | null>(null);
   const [xpGanado, setXpGanado] = useState(0);
   const [monedasGanadas, setMonedasGanadas] = useState(0);
+  // Daño flotante (juice arcade) — autocontenido con framer-motion
+  const [floats, setFloats] = useState<{ id: number; text: string; color: string; side: "boss" | "player" }[]>([]);
+  const spawnFloat = (text: string, color: string, side: "boss" | "player") => {
+    const id = Date.now() + Math.random();
+    setFloats((f) => [...f, { id, text, color, side }]);
+    setTimeout(() => setFloats((f) => f.filter((x) => x.id !== id)), 950);
+  };
 
   // Orden barajado de los ataques: el boss ya no pregunta siempre lo mismo primero.
   const orden = useMemo(() => {
@@ -121,6 +128,7 @@ export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; o
       fx.reward();
       const nuevoSaludBoss = Math.max(0, saludBoss - dmg);
       setSaludBoss(nuevoSaludBoss);
+      spawnFloat(`-${dmg}`, "var(--zona-cautelares)", "boss");
       game.pushLog(`✓ "${boss!.nombre}": ${originalOp.art}`, "ORAL");
       game.ajustarAtributo("conocimiento_procesal", 1);
       if (nuevoSaludBoss <= 0) {
@@ -150,6 +158,7 @@ export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; o
       fx.shake();
       const nuevoSaludJugador = Math.max(0, saludJugador - dmg);
       setSaludJugador(nuevoSaludJugador);
+      spawnFloat(`-${dmg}`, "var(--zona-nulidad)", "player");
       game.ajustarTrauma(3);
       game.pushLog(`✗ "${boss!.nombre}" — ${originalOp.explicacion}`, "ORAL");
       if (nuevoSaludJugador <= 0) {
@@ -259,11 +268,29 @@ export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; o
 
       {/* ─── BOSS CARD ─── */}
       <motion.div
-        className="terminal p-5"
+        className="terminal p-5 relative"
         style={{ borderColor: `${phaseColor}40`, boxShadow: `0 0 30px ${phaseColor}08` }}
         animate={{ borderColor: `${phaseColor}40` }}
         transition={{ duration: 0.5 }}
       >
+        {/* daño flotante */}
+        <div className="absolute inset-0 pointer-events-none z-20" style={{ overflow: "visible" }}>
+          <AnimatePresence>
+            {floats.map((f) => (
+              <motion.span
+                key={f.id}
+                initial={{ opacity: 0, y: 0, scale: 0.7 }}
+                animate={{ opacity: 1, y: -34, scale: 1.1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.9, ease: "easeOut" }}
+                className="absolute font-display-grave text-2xl"
+                style={{ left: f.side === "boss" ? "7%" : "76%", top: f.side === "boss" ? "30%" : "72%", color: f.color, textShadow: "0 2px 6px rgba(0,0,0,.8)" }}
+              >
+                {f.text}
+              </motion.span>
+            ))}
+          </AnimatePresence>
+        </div>
         <div className="flex gap-5 flex-wrap items-start">
           {/* Avatar */}
           <div className="shrink-0 relative">
