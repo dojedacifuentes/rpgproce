@@ -398,6 +398,34 @@
   border-radius: 6px;
 }
 
+/* ════════════════════════════════════════════════════════════════════════
+   ESCENARIOS DE REGIÓN — decorado colorido y animado (vibra Mario/SNES)
+   ════════════════════════════════════════════════════════════════════════ */
+.reino-scenery {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+@keyframes reino-drift { from { transform: translateX(0); } to { transform: translateX(-70px); } }
+@keyframes reino-driftR { from { transform: translateX(0); } to { transform: translateX(70px); } }
+@keyframes reino-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes reino-twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+@keyframes reino-sway { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+@keyframes reino-rise2 { 0% { transform: translateY(10px); opacity: 0; } 50% { opacity: .8; } 100% { transform: translateY(-26px); opacity: 0; } }
+.reino-drift { animation: reino-drift 26s linear infinite alternate; }
+.reino-driftR { animation: reino-driftR 32s linear infinite alternate; }
+.reino-bob { animation: reino-bob 5.5s ease-in-out infinite; }
+.reino-bob2 { animation: reino-bob 7s ease-in-out infinite; }
+.reino-twinkle { animation: reino-twinkle 3.2s ease-in-out infinite; }
+.reino-sway { transform-box: fill-box; transform-origin: bottom center; animation: reino-sway 6s ease-in-out infinite; }
+.reino-rise2 { animation: reino-rise2 4.5s ease-in-out infinite; }
+
+/* anillo dorado de victoria/finale */
+@keyframes reino-crown-glow { 0%,100% { filter: drop-shadow(0 0 6px rgba(236,201,75,.4)); } 50% { filter: drop-shadow(0 0 22px rgba(236,201,75,.85)); } }
+.reino-crown-glow { animation: reino-crown-glow 2.4s ease-in-out infinite; }
+
 /* ─── AJUSTES SOLO MÓVIL (≤640px) — el escritorio queda intacto ───────────── */
 @media (max-width: 640px) {
   /* sprite del jefe más pequeño en la arena de combate */

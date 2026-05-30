@@ -10,6 +10,7 @@ import { articulosPorRegion } from "@/data/reinos/articulos";
 import { useReinos } from "@/store/useReinos";
 import DesafioEngine from "@/components/reinos/DesafioEngine";
 import BossBattle from "@/components/reinos/BossBattle";
+import RegionScenery from "@/components/reinos/RegionScenery";
 import type { RegionId } from "@/types/reinos";
 
 const AMBIENTE_REGION: Record<RegionId, "ambiente" | "oral" | "ejecutivo" | "nulidad" | "recursos"> = {
@@ -122,20 +123,23 @@ export default function RegionPage({ params }: { params: { region: string } }) {
           </div>
         </header>
 
-        {/* Título de región */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-1">
-            <span className="text-4xl">{region.icono}</span>
-            <div>
-              <div className="font-mono-terminal text-[9px] uppercase tracking-[.25em] reino-fg">
-                Región {region.orden} · {region.materia}
+        {/* Título de región — sobre el escenario decorado del mundo */}
+        <div className="relative overflow-hidden rounded-xl mb-6 -mx-1 px-4 pt-5 pb-5 border border-doc-aged/10">
+          <RegionScenery region={region.id} />
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-1">
+              <span className="text-4xl inline-block reino-bob">{region.icono}</span>
+              <div>
+                <div className="font-mono-terminal text-[10px] uppercase tracking-[.25em] reino-fg">
+                  Región {region.orden} · {region.materia}
+                </div>
+                <h1 className="font-display-grave text-3xl md:text-4xl text-doc-aged leading-none" style={{ textShadow: "0 2px 10px rgba(0,0,0,.75)" }}>{region.nombre}</h1>
               </div>
-              <h1 className="font-display-grave text-3xl md:text-4xl text-doc-aged leading-none">{region.nombre}</h1>
             </div>
-          </div>
-          <p className="font-serif-juridica text-doc-aged/60 text-sm max-w-2xl leading-relaxed mt-2">{region.descripcion}</p>
-          <div className="font-mono-terminal text-[9px] text-doc-aged/35 mt-2 uppercase tracking-wider">
-            Estética: {region.estetica}
+            <p className="reino-explain text-doc-aged/80 text-sm md:text-[15px] max-w-2xl leading-relaxed mt-2" style={{ textShadow: "0 1px 6px rgba(0,0,0,.85)" }}>{region.descripcion}</p>
+            <div className="font-mono-terminal text-[9px] text-doc-aged/50 mt-2 uppercase tracking-wider">
+              Estética: {region.estetica}
+            </div>
           </div>
         </div>
 

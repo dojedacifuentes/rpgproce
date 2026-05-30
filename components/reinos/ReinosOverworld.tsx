@@ -50,6 +50,14 @@ export default function ReinosOverworld() {
           className="absolute inset-0 opacity-[0.18] pointer-events-none"
           style={{ backgroundImage: "linear-gradient(rgba(216,180,90,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(216,180,90,0.12) 1px, transparent 1px)", backgroundSize: "44px 44px" }}
         />
+        {/* estrellas titilantes */}
+        {Array.from({ length: 14 }).map((_, i) => (
+          <span key={`star${i}`} className="reino-twinkle absolute rounded-full pointer-events-none" style={{
+            left: `${(i * 37) % 96 + 2}%`, top: `${(i * 53) % 62 + 4}%`,
+            width: i % 3 === 0 ? 3 : 2, height: i % 3 === 0 ? 3 : 2,
+            background: "rgba(236,201,75,0.7)", animationDelay: `${(i * 0.37) % 3}s`,
+          }} />
+        ))}
 
         {/* Sendero (SVG por encima de la rejilla, debajo de los nodos) */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -64,11 +72,13 @@ export default function ReinosOverworld() {
                 key={i}
                 d={`M${a.x},${a.y} Q${mx},${my} ${b.x},${b.y}`}
                 fill="none"
-                stroke={sellada ? "rgba(120,120,140,0.35)" : "rgba(216,180,90,0.45)"}
-                strokeWidth="0.6"
-                strokeDasharray={sellada ? "1.5 2" : "0"}
+                stroke={sellada ? "rgba(120,120,140,0.35)" : "rgba(216,180,90,0.6)"}
+                strokeWidth="0.8"
+                strokeDasharray={sellada ? "1.5 2" : "2.5 2.5"}
                 vectorEffect="non-scaling-stroke"
-              />
+              >
+                {!sellada && <animate attributeName="stroke-dashoffset" from="0" to="-10" dur="1.1s" repeatCount="indefinite" />}
+              </path>
             );
           })}
         </svg>
