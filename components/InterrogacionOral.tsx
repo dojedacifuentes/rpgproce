@@ -84,8 +84,17 @@ export default function InterrogacionOral({ bossId, onFin }: { bossId: BossId; o
   const [xpGanado, setXpGanado] = useState(0);
   const [monedasGanadas, setMonedasGanadas] = useState(0);
 
+  // Orden barajado de los ataques: el boss ya no pregunta siempre lo mismo primero.
+  const orden = useMemo(() => {
+    const idxs = (boss?.ataques ?? []).map((_, i) => i);
+    for (let i = idxs.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [idxs[i], idxs[j]] = [idxs[j], idxs[i]];
+    }
+    return idxs;
+  }, [bossId]); // eslint-disable-line react-hooks/exhaustive-deps
   // Shuffle opciones del ataque actual — SIEMPRE llamado (React hooks rule)
-  const ataque = boss?.ataques[ataqueIdx] ?? null;
+  const ataque = boss?.ataques[orden[ataqueIdx]] ?? null;
   const shuffled = useMemo(() => {
     if (!ataque) return null;
     return shuffleOptions(ataque.opciones, "texto");

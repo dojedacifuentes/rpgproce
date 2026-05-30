@@ -1,20 +1,26 @@
 "use client";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/audio";
 import { shuffleOptions } from "@/lib/shuffleOptions";
-import type { BossReino } from "@/types/reinos";
+import type { BossReino, AtaqueBoss } from "@/types/reinos";
 import { useReinos } from "@/store/useReinos";
 import { getArticulo, RAREZA_META } from "@/data/reinos/articulos";
 
 // ============================================================================
-// REINOS — Duelo de Boss
-// Intercambio por turnos: cada ataque es una pregunta-trampa. Acertar quita
-// 1 HP al jefe; fallar te quita vida (daño del ataque). Vencerlo suelta un
-// artículo legendario y marca la región como completada.
+// REINOS — Duelo de Boss · arena estilo Pokémon / arcade SNES
+// Variedad: cada combate extrae un SUBCONJUNTO de ataques en ORDEN ALEATORIO
+// (nunca la misma pregunta primero). Juice: golpes, flash, screen-shake, daño
+// flotante, combos y secuencias cinemáticas de intro y victoria.
 // ============================================================================
 
 type Fase = "intro" | "combate" | "victoria" | "derrota";
+type Float = { id: number; text: string; color: string; side: "boss" | "player" };
+
+function pickRonda(boss: BossReino): AtaqueBoss[] {
+  const n = Math.min(boss.hp, boss.ataques.length);
+  return (shuffleOptions(boss.ataques as any[]).options as AtaqueBoss[]).slice(0, n);
+}
 
 interface Props {
   boss: BossReino;
@@ -26,57 +32,91 @@ export default function BossBattle({ boss, onClose }: Props) {
   const yaDerrotado = useReinos((s) => s.bossesDerrotados.includes(boss.id));
 
   const [fase, setFase] = useState<Fase>("intro");
-  const [bossHp, setBossHp] = useState(boss.hp);
-  const [vida, setVida] = useState(boss.vidaJugador);
+  const [rondaKey, setRondaKey] = useState(0);
+  const [ronda, setRonda] = useState<AtaqueBoss[]>(() => pickRonda(boss));
   const [idx, setIdx] = useState(0);
+  const [vida, setVida] = useState(boss.vidaJugador);
   const [intentos, setIntentos] = useState<number[]>([]);
   const [acertada, setAcertada] = useState(false);
-  const [shakeKey, setShakeKey] = useState(0);
+  const [combo, setCombo] = useState(0);
+  const [comboMax, setComboMax] = useState(0);
+  const [bossHitting, setBossHitting] = useState(false);
+  const [arenaShake, setArenaShake] = useState(false);
+  const [redFlash, setRedFlash] = useState(0);
+  const [floats, setFloats] = useState<Float[]>([]);
+  const floatId = useRef(0);
 
   const articulo = boss.recompensaArticuloId ? getArticulo(boss.recompensaArticuloId) : undefined;
-  const ataque = boss.ataques[idx % boss.ataques.length];
-  // Mezcla las opciones de cada ataque: la correcta no cae siempre en el mismo lugar.
+  const totalGolpes = ronda.length;
+  const ataque = ronda[idx % ronda.length];
+  const golpesDados = idx; // ataques resueltos antes del actual (avanza con "siguiente")
+  const bossHp = Math.max(0, totalGolpes - golpesDados - (acertada ? 1 : 0));
+  const bossPct = Math.round((bossHp / totalGolpes) * 100);
+  const vidaPct = Math.max(0, Math.round((vida / boss.vidaJugador) * 100));
+  const comboBonus = comboMax * 3;
+
   const opciones = useMemo(
     () => shuffleOptions(ataque.opciones as any[]).options as typeof ataque.opciones,
-    [boss.id, idx],
+    [boss.id, idx, rondaKey],
   );
+
+  const hp = (pct: number) => (pct > 55 ? "high" : pct > 25 ? "mid" : "low");
+
+  const spawnFloat = (text: string, color: string, side: "boss" | "player") => {
+    const id = ++floatId.current;
+    setFloats((f) => [...f, { id, text, color, side }]);
+    setTimeout(() => setFloats((f) => f.filter((x) => x.id !== id)), 1000);
+  };
 
   const empezar = () => { sfx.bossEntrada?.(); setFase("combate"); };
 
   const reiniciar = useCallback(() => {
-    setBossHp(boss.hp);
+    setRonda(pickRonda(boss));
+    setRondaKey((k) => k + 1);
     setVida(boss.vidaJugador);
     setIdx(0);
     setIntentos([]);
     setAcertada(false);
+    setCombo(0);
+    setComboMax(0);
+    setFloats([]);
     setFase("combate");
-  }, [boss.hp, boss.vidaJugador]);
+  }, [boss]);
 
   const handleElegir = (i: number) => {
     if (acertada || intentos.includes(i) || fase !== "combate") return;
     const op = opciones[i];
+
     if (op.correcta) {
+      const nuevoCombo = combo + 1;
+      setCombo(nuevoCombo);
+      setComboMax((m) => Math.max(m, nuevoCombo));
       setAcertada(true);
-      const nuevoHp = bossHp - 1;
-      setBossHp(nuevoHp);
+      setBossHitting(true);
+      setTimeout(() => setBossHitting(false), 420);
+      spawnFloat(nuevoCombo > 1 ? `¡ACIERTO! ×${nuevoCombo}` : "¡ACIERTO!", "var(--zona-cautelares)", "boss");
+      if (nuevoCombo > 1) sfx.combo?.(nuevoCombo); else sfx.oralCorrecta?.();
+
+      const nuevoHp = totalGolpes - golpesDados - 1;
       if (nuevoHp <= 0) {
         sfx.casacion?.();
-        // recompensa (idempotente en el store)
         derrotarBoss(boss.id, boss.region, {
-          cristales: boss.recompensaCristales,
+          cristales: boss.recompensaCristales + comboBonus,
           articuloId: boss.recompensaArticuloId,
         });
-        setTimeout(() => setFase("victoria"), 450);
-      } else {
-        sfx.oralCorrecta?.();
+        setTimeout(() => setFase("victoria"), 700);
       }
     } else {
+      setCombo(0);
       setIntentos((prev) => [...prev, i]);
-      setShakeKey((k) => k + 1);
+      setArenaShake(true);
+      setRedFlash((r) => r + 1);
+      setTimeout(() => setArenaShake(false), 400);
       sfx.glitch?.();
       const nuevaVida = Math.max(0, vida - ataque.dano);
+      spawnFloat(`-${ataque.dano}`, "var(--zona-nulidad)", "player");
       setVida(nuevaVida);
-      if (nuevaVida <= 0) setTimeout(() => setFase("derrota"), 450);
+      if (nuevaVida <= 0) setTimeout(() => setFase("derrota"), 500);
     }
   };
 
@@ -87,42 +127,38 @@ export default function BossBattle({ boss, onClose }: Props) {
     sfx.click?.();
   };
 
-  const vidaPct = Math.max(0, Math.round((vida / boss.vidaJugador) * 100));
-
   // ── INTRO ──────────────────────────────────────────────────────────────
   if (fase === "intro") {
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="reino-card p-6 md:p-8 text-center">
-        <motion.div
-          className="text-6xl mb-4 reino-pulse"
-          initial={{ scale: 0.5 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200 }}
-        >
-          {boss.icono}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="reino-arena p-6 md:p-10 text-center" style={{ minHeight: 360 }}>
+        {/* banner sweep */}
+        <div className="absolute inset-x-0 top-6 flex justify-center pointer-events-none">
+          <div className="reino-banner-sweep font-display-grave text-sm md:text-lg uppercase tracking-[.3em]" style={{ color: "var(--reino-primary)" }}>
+            ¡Un adversario bloquea el paso!
+          </div>
+        </div>
+        <motion.div className="relative inline-block mt-10 mb-5">
+          <div className="reino-platform absolute -bottom-3 left-1/2 -translate-x-1/2" style={{ width: 130, height: 30 }} />
+          <span className="reino-boss-enter text-7xl md:text-8xl inline-block" style={{ filter: `drop-shadow(0 8px 16px color-mix(in srgb, var(--reino-primary) 50%, transparent))` }}>
+            {boss.icono}
+          </span>
         </motion.div>
         <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em] reino-fg mb-2">
           ⚔ Boss de Región · {boss.arquetipo}
         </div>
-        <h2 className="font-display-grave text-3xl md:text-4xl text-doc-aged mb-3">{boss.nombre}</h2>
-        <p className="font-serif-juridica text-doc-aged/65 text-sm max-w-xl mx-auto mb-3 leading-relaxed">
-          {boss.descripcion}
-        </p>
+        <h2 className="font-display-grave text-3xl md:text-5xl text-doc-aged mb-3">{boss.nombre}</h2>
+        <p className="font-serif-juridica text-doc-aged/65 text-sm max-w-xl mx-auto mb-3 leading-relaxed">{boss.descripcion}</p>
         <div className="reino-chip inline-block font-mono-terminal text-[10px] px-3 py-1.5 mb-6">
-          Problema jurídico: {boss.problemaJuridico}
+          {boss.problemaJuridico}
         </div>
         <div className="flex flex-wrap gap-3 justify-center">
-          <button onClick={empezar} className="btn btn-oral text-sm px-6 py-3">
-            ⚔ {yaDerrotado ? "Volver a desafiar" : "Comenzar duelo"}
-          </button>
-          <button onClick={() => { sfx.click?.(); onClose(); }} className="btn text-xs px-4 py-3">
-            ◂ Huir
-          </button>
+          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.96 }} onClick={empezar} className="btn btn-oral text-sm px-7 py-3">
+            ⚔ {yaDerrotado ? "Volver a desafiar" : "¡Combatir!"}
+          </motion.button>
+          <button onClick={() => { sfx.click?.(); onClose(); }} className="btn text-xs px-4 py-3">◂ Huir</button>
         </div>
         {yaDerrotado && (
-          <div className="font-mono-terminal text-[9px] text-doc-aged/40 mt-4">
-            Ya venciste a este jefe. Puedes repetir el duelo para practicar.
-          </div>
+          <div className="font-mono-terminal text-[9px] text-doc-aged/40 mt-4">Ya lo venciste. Las preguntas se barajan: cada duelo es distinto.</div>
         )}
       </motion.div>
     );
@@ -131,22 +167,26 @@ export default function BossBattle({ boss, onClose }: Props) {
   // ── VICTORIA ─────────────────────────────────────────────────────────────
   if (fase === "victoria") {
     return (
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="reino-card p-6 md:p-8 text-center">
-        <div className="text-6xl mb-3">🏆</div>
-        <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em]" style={{ color: "var(--zona-cautelares)" }}>
-          Boss derrotado
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="reino-arena p-6 md:p-10 text-center" style={{ minHeight: 360 }}>
+        {/* chispas */}
+        {Array.from({ length: 14 }).map((_, i) => (
+          <span key={i} className="reino-spark text-lg" style={{
+            left: `${50 + (Math.random() * 40 - 20)}%`, top: `${40 + (Math.random() * 20 - 10)}%`,
+            ["--sx" as any]: `${Math.random() * 80 - 40}px`, ["--sy" as any]: `${-40 - Math.random() * 60}px`,
+            animationDelay: `${Math.random() * 0.4}s`,
+          }}>{["✦", "✧", "★", "💥"][i % 4]}</span>
+        ))}
+        <div className="text-7xl mb-3">🏆</div>
+        <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em]" style={{ color: "var(--zona-cautelares)" }}>Boss derrotado</div>
+        <h2 className="font-display-grave text-3xl text-doc-aged mt-2 mb-2">{boss.nombre} ha caído</h2>
+        <div className="flex items-center justify-center gap-4 font-mono-terminal text-sm mb-5">
+          <span className="reino-fg">💎 +{boss.recompensaCristales + comboBonus}</span>
+          {comboMax > 1 && <span style={{ color: "var(--zona-oralidad)" }}>combo máx ×{comboMax} (+{comboBonus})</span>}
         </div>
-        <h2 className="font-display-grave text-3xl text-doc-aged mt-2 mb-3">{boss.nombre} ha caído</h2>
-        <div className="font-mono-terminal text-sm reino-fg mb-5">💎 +{boss.recompensaCristales} cristales</div>
 
         {articulo && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="max-w-md mx-auto p-4 mb-6 border"
-            style={{ borderColor: `${RAREZA_META[articulo.rareza].color}66`, background: `${RAREZA_META[articulo.rareza].color}10` }}
-          >
+          <motion.div initial={{ opacity: 0, y: 14, rotateX: -30 }} animate={{ opacity: 1, y: 0, rotateX: 0 }} transition={{ delay: 0.25 }}
+            className="max-w-md mx-auto p-4 mb-6 border" style={{ borderColor: `${RAREZA_META[articulo.rareza].color}66`, background: `${RAREZA_META[articulo.rareza].color}10` }}>
             <div className="text-3xl mb-2">{articulo.icono}</div>
             <div className="font-mono-terminal text-[9px] uppercase tracking-widest" style={{ color: RAREZA_META[articulo.rareza].color }}>
               Artículo {RAREZA_META[articulo.rareza].label} desbloqueado
@@ -155,10 +195,10 @@ export default function BossBattle({ boss, onClose }: Props) {
             <p className="font-serif-juridica text-doc-aged/60 text-xs mt-2 leading-relaxed">{articulo.texto}</p>
           </motion.div>
         )}
-
-        <button onClick={() => { sfx.confirm?.(); onClose(); }} className="btn btn-cautelar text-sm px-6 py-3">
-          Reclamar y volver ▸
-        </button>
+        <div className="flex flex-wrap gap-3 justify-center">
+          <button onClick={() => { sfx.confirm?.(); onClose(); }} className="btn btn-cautelar text-sm px-6 py-3">Reclamar y volver ▸</button>
+          <button onClick={reiniciar} className="btn text-xs px-4 py-3">↻ Revancha</button>
+        </div>
       </motion.div>
     );
   }
@@ -166,18 +206,16 @@ export default function BossBattle({ boss, onClose }: Props) {
   // ── DERROTA ──────────────────────────────────────────────────────────────
   if (fase === "derrota") {
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="reino-card p-6 md:p-8 text-center">
-        <div className="text-6xl mb-3 grayscale">{boss.icono}</div>
-        <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em]" style={{ color: "var(--zona-nulidad)" }}>
-          Has sido refutado
-        </div>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="reino-arena p-6 md:p-10 text-center" style={{ minHeight: 360 }}>
+        <div className="text-7xl mb-3 reino-boss-idle" style={{ filter: "drop-shadow(0 0 18px rgba(217,74,74,.4))" }}>{boss.icono}</div>
+        <div className="font-mono-terminal text-[10px] uppercase tracking-[.3em]" style={{ color: "var(--zona-nulidad)" }}>Has sido refutado</div>
         <h2 className="font-display-grave text-2xl text-doc-aged mt-2 mb-3">El expediente se desploma</h2>
         <p className="font-serif-juridica text-doc-aged/60 text-sm max-w-md mx-auto mb-6">
-          {boss.nombre} desarticuló tu defensa. Reordena tus argumentos y vuelve a intentarlo: ningún artículo se pierde.
+          {boss.nombre} desarticuló tu defensa. Reordena tus argumentos: ningún artículo se pierde y las preguntas se barajan.
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
-          <button onClick={reiniciar} className="btn btn-oral text-sm px-6 py-3">↻ Reintentar duelo</button>
-          <button onClick={() => { sfx.click?.(); onClose(); }} className="btn text-xs px-4 py-3">◂ Volver a la región</button>
+          <motion.button whileHover={{ scale: 1.05 }} onClick={reiniciar} className="btn btn-oral text-sm px-6 py-3">↻ Reintentar duelo</motion.button>
+          <button onClick={() => { sfx.click?.(); onClose(); }} className="btn text-xs px-4 py-3">◂ Volver</button>
         </div>
       </motion.div>
     );
@@ -185,99 +223,130 @@ export default function BossBattle({ boss, onClose }: Props) {
 
   // ── COMBATE ──────────────────────────────────────────────────────────────
   return (
-    <div className="reino-card p-5 md:p-6">
-      {/* Barras de estado */}
-      <div className="flex items-center justify-between gap-4 mb-4">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="text-3xl shrink-0">{boss.icono}</span>
-          <div className="min-w-0">
-            <div className="font-display-grave text-doc-aged text-sm truncate">{boss.nombre}</div>
-            <div className="flex gap-1 mt-1">
-              {Array.from({ length: boss.hp }).map((_, k) => (
-                <span
-                  key={k}
-                  className="w-4 h-2 rounded-sm"
-                  style={{ background: k < bossHp ? "var(--reino-primary)" : "rgba(255,255,255,0.12)", boxShadow: k < bossHp ? "0 0 6px var(--reino-primary)" : "none" }}
-                />
-              ))}
+    <div className={`reino-arena ${arenaShake ? "reino-arena-shake" : ""}`} style={{ padding: "1rem" }}>
+      {/* flash rojo al recibir daño */}
+      {redFlash > 0 && <span key={redFlash} className="reino-redflash" />}
+
+      {/* daño flotante */}
+      <AnimatePresence>
+        {floats.map((f) => (
+          <span key={f.id} className="reino-dmgfloat font-display-grave text-2xl"
+            style={{ color: f.color, left: f.side === "boss" ? "62%" : "24%", top: f.side === "boss" ? "16%" : "60%" }}>
+            {f.text}
+          </span>
+        ))}
+      </AnimatePresence>
+
+      {/* ESCENA: jugador (abajo-izq) vs jefe (arriba-der) */}
+      <div className="relative" style={{ minHeight: 150 }}>
+        {/* Jefe */}
+        <div className="absolute right-3 top-1 flex flex-col items-center" style={{ width: 150 }}>
+          <div className="w-full mb-2">
+            <div className="flex items-center justify-between font-mono-terminal text-[8px] mb-1">
+              <span className="text-doc-aged/70 truncate">{boss.nombre}</span>
+              <span className="reino-fg">HP</span>
+            </div>
+            <div className="reino-hpbar">
+              <div className="reino-hpbar-fill" data-h={hp(bossPct)} style={{ width: `${bossPct}%` }} />
+            </div>
+          </div>
+          <div className="relative">
+            <div className="reino-platform absolute -bottom-2 left-1/2 -translate-x-1/2" style={{ width: 90, height: 22 }} />
+            <span className={`text-6xl inline-block ${bossHitting ? "reino-boss-hit" : "reino-boss-idle"}`}
+              style={{ filter: `drop-shadow(0 6px 12px color-mix(in srgb, var(--reino-primary) 50%, transparent))` }}>
+              {boss.icono}
+            </span>
+          </div>
+        </div>
+
+        {/* Jugador */}
+        <div className="absolute left-3 bottom-0 flex flex-col items-center" style={{ width: 140 }}>
+          <div className="relative mb-2">
+            <div className="reino-platform absolute -bottom-2 left-1/2 -translate-x-1/2" style={{ width: 70, height: 18 }} />
+            <span className="text-5xl inline-block">🧑‍⚖️</span>
+          </div>
+          <div className="w-full">
+            <div className="flex items-center justify-between font-mono-terminal text-[8px] mb-1">
+              <span style={{ color: "var(--zona-cautelares)" }}>TÚ</span>
+              <span className="text-doc-aged/60">{vida}</span>
+            </div>
+            <div className="reino-hpbar">
+              <div className="reino-hpbar-fill" data-h={hp(vidaPct)} style={{ width: `${vidaPct}%` }} />
             </div>
           </div>
         </div>
-        <div className="w-40 shrink-0">
-          <div className="flex justify-between font-mono-terminal text-[9px] mb-1">
-            <span className="text-doc-aged/50">TU VIDA</span>
-            <span style={{ color: vidaPct > 30 ? "var(--zona-cautelares)" : "var(--zona-nulidad)" }}>{vida}</span>
-          </div>
-          <div className="h-2 bg-bg-steel rounded-full overflow-hidden">
-            <motion.div
-              className="h-full rounded-full"
-              animate={{ width: `${vidaPct}%` }}
-              style={{ background: vidaPct > 30 ? "var(--zona-cautelares)" : "var(--zona-nulidad)" }}
-            />
-          </div>
+
+        {/* Combo + progreso */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 text-center">
+          <AnimatePresence mode="wait">
+            {combo > 1 && (
+              <motion.div key={combo} className="reino-combo-pop font-display-grave text-xl" style={{ color: "var(--zona-oralidad)" }}>
+                COMBO ×{combo}
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <div className="font-mono-terminal text-[8px] text-doc-aged/40 mt-1">Ataque {idx + 1}/{totalGolpes}</div>
         </div>
       </div>
 
-      <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-doc-aged/40 mb-2">
-        Ataque {idx + 1}{acertada && ataque.articulo ? ` · ${ataque.articulo}` : ""}
-      </div>
-      <motion.p key={shakeKey} className={`font-display-grave text-doc-aged text-lg leading-snug mb-5 ${shakeKey ? "reino-shake" : ""}`}>
-        {ataque.enunciado}
-      </motion.p>
+      {/* CAJA DE COMANDO: pregunta + opciones */}
+      <div className="reino-card mt-2 p-4" style={{ background: "linear-gradient(180deg, rgba(8,10,16,.96), rgba(6,7,11,.98))" }}>
+        <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-doc-aged/40 mb-1">
+          {boss.nombre} contraataca{acertada && ataque.articulo ? ` · ${ataque.articulo}` : ""}
+        </div>
+        <p className="font-display-grave text-doc-aged text-base md:text-lg leading-snug mb-4">{ataque.enunciado}</p>
 
-      <div className="space-y-2.5">
-        {opciones.map((op, i) => {
-          const esError = intentos.includes(i);
-          const esCorrecta = acertada && op.correcta;
-          const bloqueada = acertada || esError;
-          return (
-            <button
-              key={i}
-              onClick={() => handleElegir(i)}
-              onMouseEnter={() => !bloqueada && sfx.hover?.()}
-              disabled={bloqueada}
-              className="w-full text-left p-3 border transition-all duration-150"
-              style={{
-                borderColor: esCorrecta ? "var(--zona-cautelares)" : esError ? "var(--zona-nulidad)" : "color-mix(in srgb, var(--reino-primary) 28%, transparent)",
-                background: esCorrecta ? "rgba(88,245,176,0.08)" : esError ? "rgba(217,74,74,0.08)" : "rgba(255,255,255,0.015)",
-                opacity: esError && !esCorrecta ? 0.7 : 1,
-              }}
-            >
-              <div className="flex items-start gap-2">
-                <span className="font-mono-terminal text-xs shrink-0" style={{ color: esCorrecta ? "var(--zona-cautelares)" : esError ? "var(--zona-nulidad)" : "var(--reino-primary)" }}>
-                  {esCorrecta ? "✓" : esError ? "✕" : String.fromCharCode(65 + i)}
-                </span>
-                <span className="font-mono-terminal text-[13px] text-doc-aged/90 leading-snug">{op.texto}</span>
-              </div>
-              <AnimatePresence>
-                {(esError || esCorrecta) && (
-                  <motion.p
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    className="font-serif-juridica text-[12px] mt-2 pl-6 leading-relaxed"
-                    style={{ color: esCorrecta ? "rgba(88,245,176,0.85)" : "rgba(217,74,74,0.8)" }}
-                  >
-                    {op.explicacion}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </button>
-          );
-        })}
-      </div>
+        <div className="space-y-2">
+          {opciones.map((op, i) => {
+            const esError = intentos.includes(i);
+            const esCorrecta = acertada && op.correcta;
+            const bloqueada = acertada || esError;
+            return (
+              <motion.button
+                key={`${rondaKey}-${idx}-${i}`}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.04 }}
+                whileHover={!bloqueada ? { scale: 1.01, x: 2 } : {}}
+                onClick={() => handleElegir(i)}
+                onMouseEnter={() => !bloqueada && sfx.hover?.()}
+                disabled={bloqueada}
+                className="w-full text-left p-3 border transition-colors duration-150"
+                style={{
+                  borderColor: esCorrecta ? "var(--zona-cautelares)" : esError ? "var(--zona-nulidad)" : "color-mix(in srgb, var(--reino-primary) 28%, transparent)",
+                  background: esCorrecta ? "rgba(88,245,176,0.08)" : esError ? "rgba(217,74,74,0.08)" : "rgba(255,255,255,0.015)",
+                  opacity: esError && !esCorrecta ? 0.65 : 1,
+                }}
+              >
+                <div className="flex items-start gap-2">
+                  <span className="font-mono-terminal text-xs shrink-0" style={{ color: esCorrecta ? "var(--zona-cautelares)" : esError ? "var(--zona-nulidad)" : "var(--reino-primary)" }}>
+                    {esCorrecta ? "✓" : esError ? "✕" : String.fromCharCode(65 + i)}
+                  </span>
+                  <span className="font-mono-terminal text-[13px] text-doc-aged/90 leading-snug">{op.texto}</span>
+                </div>
+                <AnimatePresence>
+                  {(esError || esCorrecta) && (
+                    <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
+                      className="font-serif-juridica text-[12px] mt-2 pl-6 leading-relaxed"
+                      style={{ color: esCorrecta ? "rgba(88,245,176,0.85)" : "rgba(217,74,74,0.8)" }}>
+                      {op.explicacion}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+            );
+          })}
+        </div>
 
-      <div className="mt-5 pt-4 border-t border-doc-aged/10 flex items-center justify-between gap-3">
-        <button onClick={() => { sfx.click?.(); onClose(); }} className="btn text-[10px] px-3 py-1.5">◂ Huir</button>
-        {acertada && bossHp > 0 && (
-          <motion.button
-            initial={{ opacity: 0, x: 8 }}
-            animate={{ opacity: 1, x: 0 }}
-            onClick={siguiente}
-            className="btn btn-oral text-[11px] px-4 py-2"
-          >
-            Siguiente ataque ▸
-          </motion.button>
-        )}
+        <div className="mt-4 pt-3 border-t border-doc-aged/10 flex items-center justify-between gap-3">
+          <button onClick={() => { sfx.click?.(); onClose(); }} className="btn text-[10px] px-3 py-1.5">◂ Huir</button>
+          {acertada && bossHp > 0 && (
+            <motion.button initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} whileHover={{ scale: 1.04 }}
+              onClick={siguiente} className="btn btn-oral text-[11px] px-4 py-2 reino-pulse">
+              Siguiente ataque ▸
+            </motion.button>
+          )}
+        </div>
       </div>
     </div>
   );

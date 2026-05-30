@@ -169,12 +169,26 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
                 ✓ Desafío ya superado — repaso
               </div>
             ) : (
-              <div className="flex flex-wrap items-center gap-3 mb-3">
-                <span className="font-display-grave text-lg" style={{ color: "var(--zona-cautelares)" }}>
+              <div className="relative flex flex-wrap items-center gap-3 mb-3">
+                {/* chispas de victoria */}
+                {Array.from({ length: 6 }).map((_, k) => (
+                  <span key={k} className="reino-spark text-sm" style={{
+                    left: `${6 + k * 7}%`, top: "10%",
+                    ["--sx" as any]: `${Math.random() * 40 - 20}px`, ["--sy" as any]: `${-26 - Math.random() * 24}px`,
+                    animationDelay: `${k * 0.05}s`,
+                  }}>{["✦", "✧", "★"][k % 3]}</span>
+                ))}
+                <motion.span
+                  initial={{ scale: 0.6, rotate: -4 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 380, damping: 12 }}
+                  className="font-display-grave text-lg"
+                  style={{ color: "var(--zona-cautelares)" }}
+                >
                   ¡Enemigo derrotado!
-                </span>
-                <span className="font-mono-terminal text-[11px] reino-fg-2">+{desafio.recompensa.xp} XP</span>
-                <span className="font-mono-terminal text-[11px] reino-fg">💎 {desafio.recompensa.cristales} cristales</span>
+                </motion.span>
+                <motion.span initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="font-mono-terminal text-[11px] reino-fg-2">+{desafio.recompensa.xp} XP</motion.span>
+                <motion.span initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }} className="font-mono-terminal text-[11px] reino-fg">💎 {desafio.recompensa.cristales} cristales</motion.span>
               </div>
             )}
 

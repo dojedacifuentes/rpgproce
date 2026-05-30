@@ -27,6 +27,28 @@ export const BOSSES: BossReino[] = [
     recompensaCristales: 40,
     ataques: [
       {
+        enunciado: "«Dices que no estabas en mora cuando te exigí.» Por regla general, ¿cuándo queda el deudor constituido en mora?",
+        articulo: "Art. 1551 CC",
+        dano: 30,
+        opciones: [
+          { texto: "Cuando el acreedor lo requiere, salvo plazo expreso pactado.", correcta: true, explicacion: "Art. 1551: la mora exige interpelación, salvo plazo estipulado u otros casos legales.", art: "1551 CC" },
+          { texto: "Por el solo vencimiento del plazo, en todo caso.", correcta: false, explicacion: "La mora automática es la excepción, no la regla general.", art: "1551 CC" },
+          { texto: "Desde que incurre en cualquier culpa leve.", correcta: false, explicacion: "La culpa funda responsabilidad, no constituye por sí la mora.", art: "1551 CC" },
+          { texto: "Nunca: en lo civil no existe mora del deudor.", correcta: false, explicacion: "La mora del deudor está regulada en el art. 1551.", art: "1551 CC" },
+        ],
+      },
+      {
+        enunciado: "Ambos nos debemos sumas de dinero líquidas y actualmente exigibles. ¿Qué opera entre las dos deudas?",
+        articulo: "Art. 1656 CC",
+        dano: 30,
+        opciones: [
+          { texto: "La compensación legal, que las extingue hasta la concurrencia de la menor.", correcta: true, explicacion: "Arts. 1655-1656: opera de pleno derecho entre deudas líquidas y exigibles.", art: "1656 CC" },
+          { texto: "La novación, que las sustituye por una obligación nueva.", correcta: false, explicacion: "La novación exige ánimo de novar y una obligación nueva.", art: "1628 CC" },
+          { texto: "La confusión de ambas deudas.", correcta: false, explicacion: "La confusión reúne en una persona las calidades de acreedor y deudor.", art: "1665 CC" },
+          { texto: "La remisión de ambas deudas.", correcta: false, explicacion: "La remisión es condonación voluntaria; no opera de pleno derecho.", art: "1652 CC" },
+        ],
+      },
+      {
         enunciado:
           "«Te exijo el pago. Y afirmo que NUNCA pagaste.» En el juicio, ¿sobre quién pesa probar que la obligación se EXTINGUIÓ por pago?",
         articulo: "Art. 1698 CC",
@@ -80,6 +102,28 @@ export const BOSSES: BossReino[] = [
     recompensaArticuloId: "art_1546_cc",
     recompensaCristales: 45,
     ataques: [
+      {
+        enunciado: "En nuestro contrato se cumplió la condición resolutoria pactada. ¿Qué efecto produce?",
+        articulo: "Art. 1487 CC",
+        dano: 30,
+        opciones: [
+          { texto: "Resuelve el contrato y obliga a restituir lo recibido.", correcta: true, explicacion: "Art. 1487: cumplida la condición resolutoria, debe restituirse lo que se hubiere recibido bajo tal condición.", art: "1487 CC" },
+          { texto: "Lo confirma y lo vuelve irrevocable.", correcta: false, explicacion: "La condición resolutoria cumplida extingue, no confirma.", art: "1487 CC" },
+          { texto: "Lo transforma en un contrato unilateral.", correcta: false, explicacion: "No altera la naturaleza del contrato: lo resuelve.", art: "1487 CC" },
+          { texto: "Lo hace inoponible a terceros, sin más.", correcta: false, explicacion: "El efecto propio es resolutorio, con restitución.", art: "1487 CC" },
+        ],
+      },
+      {
+        enunciado: "Vendí y no entregué la cosa, ya pagada. El comprador pide la resolución. ¿Puede sumar indemnización?",
+        articulo: "Art. 1489 CC",
+        dano: 30,
+        opciones: [
+          { texto: "Sí: la indemnización procede junto con la resolución.", correcta: true, explicacion: "Art. 1489: la indemnización acompaña tanto al cumplimiento como a la resolución.", art: "1489 CC" },
+          { texto: "No: resolución e indemnización son incompatibles.", correcta: false, explicacion: "Son compatibles; la indemnización es accesoria a la opción elegida.", art: "1489 CC" },
+          { texto: "Solo si acredita dolo del vendedor.", correcta: false, explicacion: "Basta el incumplimiento imputable; no se exige dolo.", art: "1489 CC" },
+          { texto: "Solo puede pedir el cumplimiento, no la resolución.", correcta: false, explicacion: "El acreedor elige entre cumplimiento o resolución.", art: "1489 CC" },
+        ],
+      },
       {
         enunciado:
           "«Cumplí EXACTAMENTE lo escrito, aunque sabía que así frustraba el fin del contrato.» ¿Qué te permite condenarme?",
@@ -135,6 +179,28 @@ export const BOSSES: BossReino[] = [
     recompensaCristales: 45,
     ataques: [
       {
+        enunciado: "No discutes mi dominio, solo perturbas mi POSESIÓN de un inmueble. ¿Qué acción ejerzo para ampararla?",
+        articulo: "Art. 916 CC",
+        dano: 30,
+        opciones: [
+          { texto: "Las acciones posesorias (querellas de amparo o restitución).", correcta: true, explicacion: "Arts. 916 ss.: las posesorias protegen la posesión de inmuebles, sin discutir el dominio.", art: "916 CC" },
+          { texto: "La acción reivindicatoria de dominio.", correcta: false, explicacion: "Esa protege el dominio del que no posee, no la posesión perturbada.", art: "889 CC" },
+          { texto: "La acción de petición de herencia.", correcta: false, explicacion: "Es propia del heredero sobre la universalidad.", art: "1264 CC" },
+          { texto: "La acción pauliana revocatoria.", correcta: false, explicacion: "Revoca actos fraudulentos del deudor: ajena al caso.", art: "2468 CC" },
+        ],
+      },
+      {
+        enunciado: "«Soy mero tenedor, pero llevo años comportándome como dueño.» ¿Muta mi mera tenencia en posesión por el solo tiempo?",
+        articulo: "Art. 716 CC",
+        dano: 30,
+        opciones: [
+          { texto: "No: nadie puede mudar por sí mismo su mera tenencia en posesión.", correcta: true, explicacion: "Art. 716: el simple lapso no muda la mera tenencia en posesión.", art: "716 CC" },
+          { texto: "Sí, automáticamente al cumplir un año.", correcta: false, explicacion: "El plazo posesorio no convierte la mera tenencia en posesión.", art: "716 CC" },
+          { texto: "Sí, de inmediato, por su sola voluntad.", correcta: false, explicacion: "La sola voluntad no transforma el título.", art: "716 CC" },
+          { texto: "Sí, si inscribe el inmueble a su nombre.", correcta: false, explicacion: "La inscripción no sanea la falta de ánimo originario de dueño.", art: "716 CC" },
+        ],
+      },
+      {
         enunciado:
           "«Tengo la cosa con ánimo de dueño.» Mientras no pruebes lo contrario, ¿qué se me reputa?",
         articulo: "Art. 700 CC",
@@ -189,6 +255,28 @@ export const BOSSES: BossReino[] = [
     recompensaCristales: 50,
     ataques: [
       {
+        enunciado: "¿Desde qué momento sucede el heredero al causante en el dominio de sus bienes?",
+        articulo: "Art. 955 CC",
+        dano: 30,
+        opciones: [
+          { texto: "Desde la muerte del causante (apertura y delación).", correcta: true, explicacion: "Art. 955: la sucesión se abre al fallecer y la herencia se defiere a los herederos.", art: "955 CC" },
+          { texto: "Desde la partición de la herencia.", correcta: false, explicacion: "La partición distribuye, pero la sucesión se abre con la muerte.", art: "955 CC" },
+          { texto: "Desde la concesión de la posesión efectiva.", correcta: false, explicacion: "La posesión efectiva es un trámite; la delación es a la muerte.", art: "955 CC" },
+          { texto: "Desde la inscripción en el Conservador.", correcta: false, explicacion: "La inscripción cumple otra función; la sucesión se abre antes.", art: "955 CC" },
+        ],
+      },
+      {
+        enunciado: "El heredero aceptó sin beneficio de inventario. ¿Cómo responde de las deudas hereditarias?",
+        articulo: "Art. 1247 CC",
+        dano: 30,
+        opciones: [
+          { texto: "Con todo su patrimonio, más allá de lo heredado (ultra vires).", correcta: true, explicacion: "Sin beneficio de inventario el heredero responde ilimitadamente (art. 1247 a contrario).", art: "1247 CC" },
+          { texto: "Solo hasta el monto de lo que recibe, en todo caso.", correcta: false, explicacion: "Esa limitación exige beneficio de inventario.", art: "1247 CC" },
+          { texto: "No responde de las deudas del causante.", correcta: false, explicacion: "El heredero continúa la persona del causante en sus deudas.", art: "1097 CC" },
+          { texto: "Solo con los bienes hereditarios, siempre separados.", correcta: false, explicacion: "Sin inventario, los patrimonios se confunden.", art: "1247 CC" },
+        ],
+      },
+      {
         enunciado:
           "«Ocupo la herencia en calidad de heredero, aunque el verdadero eres tú.» ¿Qué acción ejerces contra mí?",
         articulo: "Art. 1264 CC",
@@ -242,6 +330,28 @@ export const BOSSES: BossReino[] = [
     recompensaArticuloId: "art_42_18575",
     recompensaCristales: 55,
     ataques: [
+      {
+        enunciado: "Quieres impugnar un acto ante la propia Administración (reposición o jerárquico). ¿Cuál es el plazo general de la Ley 19.880?",
+        articulo: "Art. 59 Ley 19.880",
+        dano: 26,
+        opciones: [
+          { texto: "Cinco días hábiles desde la notificación del acto.", correcta: true, explicacion: "Art. 59 Ley 19.880: reposición y jerárquico se interponen dentro de 5 días.", art: "Art. 59 Ley 19.880" },
+          { texto: "Treinta días corridos desde la dictación.", correcta: false, explicacion: "Confunde el plazo administrativo con plazos de otras vías.", art: "Art. 59 Ley 19.880" },
+          { texto: "Seis meses, como la protección.", correcta: false, explicacion: "La protección tiene su propio plazo; no es el del recurso administrativo.", art: "Art. 59 Ley 19.880" },
+          { texto: "No hay plazo: puede impugnarse en cualquier tiempo.", correcta: false, explicacion: "La ley fija un plazo breve de 5 días.", art: "Art. 59 Ley 19.880" },
+        ],
+      },
+      {
+        enunciado: "¿Qué naturaleza tiene la TOMA DE RAZÓN que ejerce la Contraloría sobre los actos de la Administración?",
+        articulo: "Art. 98 CPR",
+        dano: 26,
+        opciones: [
+          { texto: "Un control PREVENTIVO de juridicidad del acto.", correcta: true, explicacion: "La toma de razón es control preventivo de legalidad, previo a la vigencia del acto.", art: "98 CPR" },
+          { texto: "Un control represivo de tipo jurisdiccional.", correcta: false, explicacion: "No es jurisdiccional ni represivo: es preventivo y administrativo.", art: "98 CPR" },
+          { texto: "Un recurso que interpone el particular afectado.", correcta: false, explicacion: "Es una potestad de la Contraloría, no un recurso de parte.", art: "98 CPR" },
+          { texto: "Una sanción administrativa al órgano emisor.", correcta: false, explicacion: "No sanciona: verifica la legalidad antes de que el acto rija.", art: "98 CPR" },
+        ],
+      },
       {
         enunciado:
           "Un hospital público te dañó por una organización deficiente del servicio, sin individualizar al culpable. ¿Cuál es el fundamento de la responsabilidad del Estado?",
@@ -309,6 +419,28 @@ export const BOSSES: BossReino[] = [
     recompensaCristales: 55,
     ataques: [
       {
+        enunciado: "Radicado el asunto ante un tribunal competente, sobreviene un cambio de domicilio del demandado. ¿Altera eso la competencia?",
+        articulo: "Art. 109 COT",
+        dano: 26,
+        opciones: [
+          { texto: "No: radicado el asunto, queda fijo (regla de la fijeza o radicación).", correcta: true, explicacion: "Art. 109 COT: radicado el negocio, no se altera por causa sobreviniente.", art: "109 COT" },
+          { texto: "Sí: la competencia cambia en cualquier momento.", correcta: false, explicacion: "La radicación da estabilidad; no se altera por hechos posteriores.", art: "109 COT" },
+          { texto: "Sí: el nuevo domicilio fija un nuevo tribunal.", correcta: false, explicacion: "El cambio sobreviniente no desplaza la competencia ya radicada.", art: "109 COT" },
+          { texto: "Sí, pero solo con acuerdo de las partes.", correcta: false, explicacion: "Ni el acuerdo altera la radicación ya producida.", art: "109 COT" },
+        ],
+      },
+      {
+        enunciado: "Quieres reclamar la incompetencia del tribunal. ¿Cuáles son las DOS vías para promover la cuestión de competencia?",
+        articulo: "Art. 101 CPC",
+        dano: 26,
+        opciones: [
+          { texto: "La inhibitoria y la declinatoria.", correcta: true, explicacion: "Art. 101 CPC: inhibitoria (ante el que se cree competente) y declinatoria (ante el que conoce).", art: "101 CPC" },
+          { texto: "La apelación y la casación.", correcta: false, explicacion: "Son recursos contra resoluciones, no vías para la cuestión de competencia.", art: "101 CPC" },
+          { texto: "La reposición y el recurso de queja.", correcta: false, explicacion: "Ajenas a la promoción de la incompetencia.", art: "101 CPC" },
+          { texto: "La protección y el amparo.", correcta: false, explicacion: "Son acciones constitucionales, no cuestiones de competencia.", art: "101 CPC" },
+        ],
+      },
+      {
         enunciado:
           "¿Qué factores determinan la competencia ABSOLUTA de un tribunal?",
         articulo: "COT (competencia absoluta)",
@@ -374,6 +506,28 @@ export const BOSSES: BossReino[] = [
     recompensaArticuloId: "art_177_cpc",
     recompensaCristales: 90,
     ataques: [
+      {
+        enunciado: "[CONST] Un precepto legal resultaría contrario a la Constitución en una gestión pendiente. ¿Qué órgano conoce la inaplicabilidad por inconstitucionalidad?",
+        articulo: "Art. 93 N°6 CPR",
+        dano: 22,
+        opciones: [
+          { texto: "El Tribunal Constitucional.", correcta: true, explicacion: "Art. 93 N°6 CPR: la inaplicabilidad por inconstitucionalidad radica en el TC.", art: "93 CPR" },
+          { texto: "La Corte Suprema en pleno.", correcta: false, explicacion: "La inaplicabilidad hoy es del TC, no de la CS.", art: "93 CPR" },
+          { texto: "La Contraloría General de la República.", correcta: false, explicacion: "Controla legalidad administrativa, no constitucionalidad de la ley.", art: "98 CPR" },
+          { texto: "El tribunal de la gestión pendiente.", correcta: false, explicacion: "Debe elevar la cuestión al TC; no resuelve la inaplicabilidad.", art: "93 CPR" },
+        ],
+      },
+      {
+        enunciado: "[PROC] Tienes una sentencia firme a tu favor que el vencido no cumple. ¿Qué te permite la ACCIÓN de cosa juzgada?",
+        articulo: "Art. 176 CPC",
+        dano: 22,
+        opciones: [
+          { texto: "Exigir el cumplimiento de lo resuelto.", correcta: true, explicacion: "Art. 176: la acción de cosa juzgada permite pedir la ejecución de lo fallado.", art: "176 CPC" },
+          { texto: "Impedir un nuevo juicio sobre lo resuelto.", correcta: false, explicacion: "Eso es la EXCEPCIÓN de cosa juzgada (177), no la acción.", art: "177 CPC" },
+          { texto: "Anular la propia sentencia firme.", correcta: false, explicacion: "La cosa juzgada protege el fallo, no lo anula.", art: "176 CPC" },
+          { texto: "Suspender indefinidamente su ejecución.", correcta: false, explicacion: "Es lo contrario: habilita la ejecución.", art: "176 CPC" },
+        ],
+      },
       {
         enunciado:
           "Vuelves a demandar lo ya fallado. ¿Qué excepción te fulmina y bajo qué requisitos?",

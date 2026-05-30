@@ -171,3 +171,153 @@
     transparent 1px 4px
   );
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   ARENA DE COMBATE — feel Pokémon / arcade SNES
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* Lienzo de la arena: degradado de "piso" + brillo cenital */
+.reino-arena {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--reino-primary) 30%, transparent);
+  background:
+    radial-gradient(120% 80% at 50% 120%, color-mix(in srgb, var(--reino-primary) 14%, transparent), transparent 60%),
+    radial-gradient(90% 60% at 50% -20%, color-mix(in srgb, var(--reino-accent) 10%, transparent), transparent 55%),
+    linear-gradient(180deg, #05060a 0%, #0a0d15 55%, #0d1118 100%);
+}
+/* rejilla de perspectiva del piso */
+.reino-arena::after {
+  content: "";
+  position: absolute; left: -10%; right: -10%; bottom: 0; height: 42%;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--reino-primary) 18%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--reino-primary) 14%, transparent) 1px, transparent 1px);
+  background-size: 36px 22px;
+  transform: perspective(320px) rotateX(58deg);
+  transform-origin: bottom center;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Plataforma elíptica bajo cada combatiente */
+.reino-platform {
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--reino-primary) 22%, transparent), transparent 80%);
+  filter: blur(1px);
+}
+
+/* Barra de HP estilo juego */
+.reino-hpbar {
+  position: relative;
+  height: 12px;
+  border-radius: 7px;
+  background: #0a0d14;
+  border: 1px solid rgba(255,255,255,0.14);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.6);
+}
+.reino-hpbar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width .45s cubic-bezier(.2,.8,.2,1), background .3s;
+  background: linear-gradient(90deg, #58F5B0, #9be7a0);
+  box-shadow: 0 0 10px rgba(88,245,176,.5);
+}
+.reino-hpbar-fill[data-h="mid"] { background: linear-gradient(90deg, #E6C84B, #f0d97a); box-shadow: 0 0 10px rgba(230,200,75,.5); }
+.reino-hpbar-fill[data-h="low"] { background: linear-gradient(90deg, #D94A4A, #ff7a7a); box-shadow: 0 0 12px rgba(217,74,74,.6); animation: reino-lowhp .7s steps(2,end) infinite; }
+
+@keyframes reino-lowhp { 50% { opacity: .55; } }
+
+/* Entrada del jefe: cae y rebota */
+@keyframes reino-boss-enter {
+  0% { opacity: 0; transform: translateY(-40px) scale(.6); }
+  60% { opacity: 1; transform: translateY(8px) scale(1.08); }
+  80% { transform: translateY(-4px) scale(.98); }
+  100% { transform: translateY(0) scale(1); }
+}
+.reino-boss-enter { animation: reino-boss-enter .7s cubic-bezier(.2,.9,.2,1) both; }
+
+/* Idle flotante del jefe */
+@keyframes reino-boss-idle { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+.reino-boss-idle { animation: reino-boss-idle 3.2s ease-in-out infinite; }
+
+/* Golpe al jefe: destello + retroceso */
+@keyframes reino-boss-hit {
+  0% { filter: brightness(1); transform: translateX(0) scale(1); }
+  15% { filter: brightness(3) saturate(0); transform: translateX(10px) scale(1.04); }
+  30% { filter: brightness(3) saturate(0); transform: translateX(-8px); }
+  100% { filter: brightness(1); transform: translateX(0) scale(1); }
+}
+.reino-boss-hit { animation: reino-boss-hit .42s ease-out; }
+
+/* Jefe derrotado: cae, gira y se desvanece en gris */
+@keyframes reino-boss-faint {
+  0% { opacity: 1; transform: translateY(0) rotate(0) scale(1); filter: saturate(1); }
+  100% { opacity: 0; transform: translateY(70px) rotate(-18deg) scale(.7); filter: saturate(0) brightness(.4); }
+}
+.reino-boss-faint { animation: reino-boss-faint 1s ease-in forwards; }
+
+/* Screen-shake de la arena al recibir daño */
+@keyframes reino-arena-shake {
+  0%,100% { transform: translate(0,0); }
+  20% { transform: translate(-6px,3px); }
+  40% { transform: translate(6px,-3px); }
+  60% { transform: translate(-4px,-2px); }
+  80% { transform: translate(4px,2px); }
+}
+.reino-arena-shake { animation: reino-arena-shake .4s ease; }
+
+/* Flash rojo de daño al jugador */
+@keyframes reino-redflash { 0% { opacity: .55; } 100% { opacity: 0; } }
+.reino-redflash {
+  position: absolute; inset: 0; pointer-events: none; z-index: 30;
+  background: radial-gradient(circle at 50% 80%, rgba(217,74,74,.5), transparent 70%);
+  animation: reino-redflash .5s ease-out forwards;
+}
+
+/* Número de daño flotante */
+@keyframes reino-dmgfloat {
+  0% { opacity: 0; transform: translateY(0) scale(.7); }
+  20% { opacity: 1; transform: translateY(-10px) scale(1.15); }
+  100% { opacity: 0; transform: translateY(-46px) scale(1); }
+}
+.reino-dmgfloat {
+  position: absolute; z-index: 40; pointer-events: none;
+  font-weight: 800; letter-spacing: .03em;
+  text-shadow: 0 2px 6px rgba(0,0,0,.8);
+  animation: reino-dmgfloat 1s ease-out forwards;
+}
+
+/* Pop del contador de combo */
+@keyframes reino-combo-pop {
+  0% { transform: scale(.5) rotate(-6deg); opacity: 0; }
+  50% { transform: scale(1.25) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+.reino-combo-pop { animation: reino-combo-pop .35s cubic-bezier(.2,1.4,.4,1); }
+
+/* Banner "¡Apareció …!" barriendo */
+@keyframes reino-banner-sweep {
+  0% { transform: translateX(-110%) skewX(-12deg); opacity: 0; }
+  18% { opacity: 1; }
+  82% { transform: translateX(0) skewX(-12deg); opacity: 1; }
+  100% { transform: translateX(110%) skewX(-12deg); opacity: 0; }
+}
+.reino-banner-sweep { animation: reino-banner-sweep 1.8s ease-in-out both; }
+
+/* Destello "VS" */
+@keyframes reino-vs {
+  0% { transform: scale(2.2); opacity: 0; }
+  40% { transform: scale(1); opacity: 1; }
+  70% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.1); opacity: 0; }
+}
+.reino-vs { animation: reino-vs 1.2s ease-out both; }
+
+/* Confeti/chispas de victoria (elementos pequeños) */
+@keyframes reino-spark {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(var(--sy,-60px)) translateX(var(--sx,0)) scale(.3); opacity: 0; }
+}
+.reino-spark { position: absolute; animation: reino-spark 1.1s ease-out forwards; pointer-events: none; }
