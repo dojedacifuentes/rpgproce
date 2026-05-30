@@ -87,17 +87,17 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
       </div>
 
       {/* ── Verbo del reto ── */}
-      <div className="font-mono-terminal text-[10px] uppercase tracking-[.2em] text-doc-aged/45 mb-2">
+      <div className="font-mono-terminal text-[11px] uppercase tracking-[.2em] reino-fg mb-2 opacity-90">
         ▸ {meta.verbo}
       </div>
 
       {/* ── Contexto + enunciado ── */}
       {desafio.contexto && (
-        <p className="font-serif-juridica text-doc-aged/55 text-sm mb-2">{desafio.contexto}</p>
+        <p className="reino-explain italic text-doc-aged/70 text-sm md:text-[15px] mb-2.5">{desafio.contexto}</p>
       )}
       <motion.p
         key={shakeKey}
-        className={`font-display-grave text-doc-aged text-lg leading-snug mb-5 ${shakeKey ? "reino-shake" : ""}`}
+        className={`reino-question text-[19px] md:text-[22px] mb-5 ${shakeKey ? "reino-shake" : ""}`}
       >
         {desafio.enunciado}
       </motion.p>
@@ -114,7 +114,7 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
                 onClick={() => handleElegir(i)}
                 onMouseEnter={() => !bloqueada && sfx.hover?.()}
                 disabled={bloqueada}
-                className="w-full text-left p-3 border transition-all duration-150"
+                className="reino-opt w-full text-left p-3.5 border transition-all duration-150"
                 style={{
                   borderColor: esCorrecta
                     ? "var(--zona-cautelares)"
@@ -130,24 +130,24 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
                   opacity: esError && !esCorrecta ? 0.7 : 1,
                 }}
               >
-                <div className="flex items-start gap-2">
-                  <span className="font-mono-terminal text-xs shrink-0" style={{ color: esCorrecta ? "var(--zona-cautelares)" : esError ? "var(--zona-nulidad)" : "var(--reino-primary)" }}>
+                <div className="flex items-start gap-3">
+                  <span className="reino-badge mt-0.5" data-state={esCorrecta ? "ok" : esError ? "bad" : undefined}>
                     {esCorrecta ? "✓" : esError ? "✕" : String.fromCharCode(65 + i)}
                   </span>
-                  <span className="font-mono-terminal text-[13px] text-doc-aged/90 leading-snug">{op.texto}</span>
+                  <span className="reino-optext text-[14px] md:text-[15px] text-doc-aged">{op.texto}</span>
                 </div>
                 {/* Explicación: al fallar esa opción o al revelar la correcta */}
                 <AnimatePresence>
                   {(esError || esCorrecta) && (
-                    <motion.p
+                    <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
-                      className="font-serif-juridica text-[12px] mt-2 pl-6 leading-relaxed"
-                      style={{ color: esCorrecta ? "rgba(88,245,176,0.85)" : "rgba(217,74,74,0.8)" }}
+                      className="reino-explain text-[13px] md:text-[14.5px] mt-2.5 pl-[38px] pr-1 leading-relaxed"
+                      style={{ color: esCorrecta ? "rgba(176,246,214,0.96)" : "rgba(242,176,176,0.92)" }}
                     >
                       {op.explicacion}
-                      {op.art && <span className="font-mono-terminal text-[10px] opacity-70"> · {op.art}</span>}
-                    </motion.p>
+                      {op.art && <span className="reino-optext text-[11px] opacity-80"> · {op.art}</span>}
+                    </motion.div>
                   )}
                 </AnimatePresence>
               </button>
@@ -164,6 +164,11 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
             animate={{ opacity: 1, y: 0 }}
             className="mt-5 pt-4 border-t border-doc-aged/10"
           >
+            {/* Norma clave a memorizar — el aprendizaje primero */}
+            <div className="reino-lesson p-3 mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+              <span className="reino-norma text-[12px]">📖 {desafio.articuloClave}</span>
+              <span className="reino-explain text-doc-aged/75 text-[13px]">Norma clave de este desafío — fíjala en tu memoria.</span>
+            </div>
             {review ? (
               <div className="font-mono-terminal text-[10px] uppercase tracking-widest text-doc-aged/40 mb-3">
                 ✓ Desafío ya superado — repaso

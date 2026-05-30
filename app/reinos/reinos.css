@@ -322,8 +322,86 @@
 }
 .reino-spark { position: absolute; animation: reino-spark 1.1s ease-out forwards; pointer-events: none; }
 
+/* ════════════════════════════════════════════════════════════════════════
+   SISTEMA DE LECTURA / APRENDIZAJE — legibilidad y jerarquía
+   La pregunta y la explicación priorizan LEER y RAZONAR sobre lo decorativo.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* Pregunta: serif legible (no la display con tracking ancho) */
+.reino-question {
+  font-family: var(--font-serif);
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.34;
+  color: #f3ecd6;
+}
+
+/* Texto de opción: monoespaciada cómoda */
+.reino-optext {
+  font-family: var(--font-mono);
+  letter-spacing: 0.01em;
+  line-height: 1.45;
+}
+
+/* Explicación / lección: serif legible, no diminuta */
+.reino-explain {
+  font-family: var(--font-serif);
+  font-style: normal;
+  line-height: 1.5;
+}
+
+/* Insignia de letra (A/B/C/D) de cada opción */
+.reino-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+  border: 1px solid color-mix(in srgb, var(--reino-primary) 45%, transparent);
+  color: var(--reino-primary);
+  background: color-mix(in srgb, var(--reino-primary) 9%, transparent);
+}
+.reino-badge[data-state="ok"] { border-color: var(--zona-cautelares); color: var(--zona-cautelares); background: rgba(88, 245, 176, 0.12); }
+.reino-badge[data-state="bad"] { border-color: var(--zona-nulidad); color: var(--zona-nulidad); background: rgba(217, 74, 74, 0.12); }
+
+/* Opción interactiva: tap-target cómodo */
+.reino-opt {
+  border-radius: 8px;
+  min-height: 48px;
+}
+
+/* Panel de "lección" — la norma clave a memorizar */
+.reino-lesson {
+  border: 1px solid color-mix(in srgb, var(--reino-primary) 30%, transparent);
+  border-left: 3px solid var(--reino-primary);
+  background: color-mix(in srgb, var(--reino-primary) 7%, transparent);
+  border-radius: 8px;
+}
+.reino-norma {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--reino-accent);
+  border: 1px solid color-mix(in srgb, var(--reino-accent) 45%, transparent);
+  background: color-mix(in srgb, var(--reino-accent) 10%, transparent);
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+}
+
 /* ─── AJUSTES SOLO MÓVIL (≤640px) — el escritorio queda intacto ───────────── */
 @media (max-width: 640px) {
   /* sprite del jefe más pequeño en la arena de combate */
   .reino-bsprite svg { width: 74px !important; height: 74px !important; }
+  /* tap-targets más generosos al tocar */
+  .reino-opt { min-height: 54px; }
 }

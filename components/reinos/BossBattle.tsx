@@ -336,10 +336,10 @@ export default function BossBattle({ boss, onClose }: Props) {
             </div>
           </div>
         )}
-        <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-doc-aged/40 mb-1">
+        <div className="font-mono-terminal text-[10px] uppercase tracking-widest text-doc-aged/55 mb-1">
           <span className="md:hidden">Ataque {idx + 1}/{totalGolpes} · </span>{boss.nombre} contraataca{acertada && ataque.articulo ? ` · ${ataque.articulo}` : ""}
         </div>
-        <p className="font-display-grave text-doc-aged text-base md:text-lg leading-snug mb-4">{ataque.enunciado}</p>
+        <p className="reino-question text-[18px] md:text-[21px] mb-4">{ataque.enunciado}</p>
 
         <div className="space-y-2">
           {opciones.map((op, i) => {
@@ -356,26 +356,26 @@ export default function BossBattle({ boss, onClose }: Props) {
                 onClick={() => handleElegir(i)}
                 onMouseEnter={() => !bloqueada && sfx.hover?.()}
                 disabled={bloqueada}
-                className="w-full text-left p-3 border transition-colors duration-150"
+                className="reino-opt w-full text-left p-3.5 border transition-colors duration-150"
                 style={{
                   borderColor: esCorrecta ? "var(--zona-cautelares)" : esError ? "var(--zona-nulidad)" : "color-mix(in srgb, var(--reino-primary) 28%, transparent)",
                   background: esCorrecta ? "rgba(88,245,176,0.08)" : esError ? "rgba(217,74,74,0.08)" : "rgba(255,255,255,0.015)",
                   opacity: esError && !esCorrecta ? 0.65 : 1,
                 }}
               >
-                <div className="flex items-start gap-2">
-                  <span className="font-mono-terminal text-xs shrink-0" style={{ color: esCorrecta ? "var(--zona-cautelares)" : esError ? "var(--zona-nulidad)" : "var(--reino-primary)" }}>
+                <div className="flex items-start gap-3">
+                  <span className="reino-badge mt-0.5" data-state={esCorrecta ? "ok" : esError ? "bad" : undefined}>
                     {esCorrecta ? "✓" : esError ? "✕" : String.fromCharCode(65 + i)}
                   </span>
-                  <span className="font-mono-terminal text-[13px] text-doc-aged/90 leading-snug">{op.texto}</span>
+                  <span className="reino-optext text-[14px] md:text-[15px] text-doc-aged">{op.texto}</span>
                 </div>
                 <AnimatePresence>
                   {(esError || esCorrecta) && (
-                    <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
-                      className="font-serif-juridica text-[12px] mt-2 pl-6 leading-relaxed"
-                      style={{ color: esCorrecta ? "rgba(88,245,176,0.85)" : "rgba(217,74,74,0.8)" }}>
+                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
+                      className="reino-explain text-[13px] md:text-[14.5px] mt-2.5 pl-[38px] pr-1 leading-relaxed"
+                      style={{ color: esCorrecta ? "rgba(176,246,214,0.96)" : "rgba(242,176,176,0.92)" }}>
                       {op.explicacion}
-                    </motion.p>
+                    </motion.div>
                   )}
                 </AnimatePresence>
               </motion.button>
