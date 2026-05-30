@@ -222,9 +222,15 @@ function ModoAlternativas({ onVolver }: { onVolver: () => void }) {
 
   const pregunta = ALTERNATIVAS_DIFICIL[idx];
 
-  // Shuffled options (recalculated each time pregunta changes)
+  // Shuffled options (recalculated each time pregunta changes).
+  // FIX: las opciones traen {letra, texto} pero la correcta vive en pregunta.correcta.
+  // Antes se pasaba "letra" a shuffleOptions y correctIndex quedaba en -1 (nunca acertaba).
+  // Ahora se marca un flag booleano `correcta` por opción y se re-letran A-D en orden visual.
   const shuffled = useMemo(() => {
-    return shuffleOptions(pregunta.opciones, "letra");
+    const conFlag = pregunta.opciones.map((o) => ({ ...o, correcta: o.letra === pregunta.correcta }));
+    const r = shuffleOptions(conFlag, "correcta");
+    const relettered = r.options.map((o, i) => ({ ...o, letra: String.fromCharCode(65 + i) }));
+    return { ...r, options: relettered };
   }, [pregunta.id]);
 
   const respondida = seleccion !== null;
