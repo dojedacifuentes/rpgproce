@@ -11,6 +11,7 @@ import { useReinos } from "@/store/useReinos";
 import DesafioEngine from "@/components/reinos/DesafioEngine";
 import BossBattle from "@/components/reinos/BossBattle";
 import RegionScenery from "@/components/reinos/RegionScenery";
+import ReinoSprite from "@/components/reinos/ReinoSprite";
 import { rangoDe } from "@/data/reinos/rangos";
 
 const VIDAS_INICIALES = 3;
@@ -198,13 +199,15 @@ export default function RegionPage({ params }: { params: { region: string } }) {
                     >
                       {done && <span className="absolute top-2 right-2 text-[9px] font-mono-terminal" style={{ color: "var(--zona-cautelares)" }}>✓ vencido</span>}
                       <div className="flex items-center gap-3">
-                        <span className="text-3xl">{d.iconoEnemigo}</span>
-                        <div className="min-w-0">
+                        <span className="text-3xl shrink-0">{d.iconoEnemigo}</span>
+                        <div className="min-w-0 flex-1">
                           <div className="font-display-grave text-base text-doc-aged leading-tight">{d.enemigo}</div>
-                          <div className="font-mono-terminal text-[8px] uppercase tracking-wider reino-fg mt-0.5">
-                            {meta.icono} {meta.label} · {"★".repeat(d.dificultad)} · {d.articuloClave}
+                          <div className="font-mono-terminal text-[9px] uppercase tracking-wider reino-fg mt-0.5">
+                            {meta.icono} {meta.label} · <span style={{ color: "var(--reino-secondary)" }}>{"★".repeat(d.dificultad)}</span>
                           </div>
+                          <div className="font-mono-terminal text-[8px] text-doc-aged/45 mt-0.5 truncate">{meta.verbo}</div>
                         </div>
+                        <span className="font-mono-terminal text-[9px] shrink-0" style={{ color: done ? "var(--zona-cautelares)" : "var(--reino-primary)" }}>{done ? "↻" : "▸"}</span>
                       </div>
                     </button>
                   );
@@ -225,11 +228,17 @@ export default function RegionPage({ params }: { params: { region: string } }) {
                   style={{ opacity: todosResueltos ? 1 : 0.55, cursor: todosResueltos ? "pointer" : "not-allowed" }}
                 >
                   <div className="flex items-center gap-4">
-                    <span className={`text-5xl ${todosResueltos ? "reino-float" : "grayscale"}`}>{todosResueltos ? boss.icono : "🔒"}</span>
+                    <span className="shrink-0">
+                      {todosResueltos ? (
+                        <span className="reino-float inline-block"><ReinoSprite bossId={boss.id} size={58} /></span>
+                      ) : (
+                        <span className="text-5xl grayscale inline-block">🔒</span>
+                      )}
+                    </span>
                     <div className="flex-1 min-w-0">
                       <div className="font-mono-terminal text-[9px] uppercase tracking-widest reino-fg">⚔ {boss.arquetipo}</div>
-                      <div className="font-display-grave text-xl text-doc-aged">{boss.nombre}</div>
-                      <div className="font-serif-juridica text-doc-aged/55 text-xs mt-1">{boss.problemaJuridico}</div>
+                      <div className="font-display-grave text-xl md:text-2xl text-doc-aged">{boss.nombre}</div>
+                      <div className="reino-explain text-doc-aged/70 text-[13px] mt-1">{boss.problemaJuridico}</div>
                     </div>
                     {bossVencido ? (
                       <span className="font-mono-terminal text-[9px] shrink-0" style={{ color: "var(--zona-cautelares)" }}>👑 DERROTADO</span>
