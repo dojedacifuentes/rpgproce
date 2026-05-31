@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useGame } from "@/store/useGame";
 import { sfx, isMuted, setMuted, startAmbient, stopAmbient } from "@/lib/audio";
 import { motion, AnimatePresence } from "framer-motion";
@@ -108,12 +109,15 @@ export default function HUDPersistente() {
     else { startAmbient("ambiente"); sfx.click(); }
   }
 
+  // En el Hub (/juego) el shell propio reemplaza estos paneles flotantes.
+  const pathname = usePathname();
+  const enHub = pathname === "/juego";
   const hayPartida = !!personaje.nombre;
 
   return (
     <>
       {/* ─── BARRA SUPERIOR IZQUIERDA — XP + Nivel ─── */}
-      {hayPartida && (
+      {hayPartida && !enHub && (
         <div className="fixed top-3 left-3 z-40 pointer-events-none">
           <div className="flex flex-col gap-1.5">
             {/* Nombre + nivel */}
@@ -151,7 +155,7 @@ export default function HUDPersistente() {
       </div>
 
       {/* ─── PANEL INFERIOR IZQUIERDA — Telemetría + Monedas + Misión ─── */}
-      {hayPartida && (
+      {hayPartida && !enHub && (
         <div className="fixed bottom-3 left-3 z-40 pointer-events-none">
           <div className="flex flex-col gap-1.5">
             {/* Stats Row */}
