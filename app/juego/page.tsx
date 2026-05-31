@@ -75,18 +75,18 @@ export default function Juego() {
             </div>
 
             <div>
-              <div className="font-mono-terminal text-[8px] uppercase tracking-widest mb-0.5" style={{ color: rango.color }}>
+              <div className="font-mono-terminal text-[9px] uppercase tracking-widest mb-0.5" style={{ color: rango.color }}>
                 {rango.titulo}
               </div>
               <h1 className="font-display-grave text-lg md:text-2xl text-doc-aged leading-tight">
                 {personaje.nombre}
               </h1>
               <div className="flex items-center gap-3 mt-1">
-                <p className="text-[9px] font-mono-terminal text-doc-aged/40 uppercase">
+                <p className="text-[10px] font-mono-terminal text-doc-aged/55 uppercase">
                   {personaje.rol.replace(/_/g, " ")}
                 </p>
-                <span className="text-[9px] font-mono-terminal text-zona-prueba">⭐ {xp} XP</span>
-                <span className="text-[9px] font-mono-terminal text-zona-competencia">🪙 {monedas}</span>
+                <span className="text-[10px] font-mono-terminal text-zona-prueba">⭐ {xp} XP</span>
+                <span className="text-[10px] font-mono-terminal text-zona-competencia">🪙 {monedas}</span>
               </div>
               {/* XP bar dentro del nivel */}
               <div className="mt-1.5 w-32 h-0.5 bg-bg-steel rounded-full overflow-hidden">
@@ -117,7 +117,7 @@ export default function Juego() {
                 transition={{ duration: 1, delay: 0.5 }}
               />
             </div>
-            <div className="text-[8px] font-mono-terminal text-doc-aged/30 mt-0.5">
+            <div className="text-[9px] font-mono-terminal text-doc-aged/50 mt-0.5">
               {misionesHechas} / {totalMisiones} misiones
             </div>
           </div>
@@ -229,7 +229,7 @@ export default function Juego() {
                   <span className="text-base shrink-0">{item.icon}</span>
                   <div className="min-w-0">
                     <div className="font-display-grave text-xs text-doc-aged group-hover:text-white transition-colors">{item.label}</div>
-                    <div className="font-mono-terminal text-[7px] text-doc-aged/35 truncate">{item.sub}</div>
+                    <div className="font-mono-terminal text-[9px] text-doc-aged/50 truncate">{item.sub}</div>
                   </div>
                 </Link>
               ))}
@@ -241,10 +241,10 @@ export default function Juego() {
                 <div className="font-mono-terminal text-[9px] text-zona-cautelares uppercase tracking-widest">
                   LOGROS
                 </div>
-                <span className="font-mono-terminal text-[8px] text-doc-aged/40">{logros.length} desbloqueados</span>
+                <span className="font-mono-terminal text-[9px] text-doc-aged/55">{logros.length} desbloqueados</span>
               </div>
               {logros.length === 0 ? (
-                <div className="text-[9px] font-mono-terminal text-doc-aged/25 italic">
+                <div className="text-[10px] font-mono-terminal text-doc-aged/50 italic">
                   Completa misiones para desbloquear logros.
                 </div>
               ) : (
@@ -259,7 +259,7 @@ export default function Juego() {
                     </div>
                   ))}
                   {logros.length > 4 && (
-                    <div className="font-mono-terminal text-[8px] text-doc-aged/30">
+                    <div className="font-mono-terminal text-[9px] text-doc-aged/50">
                       + {logros.length - 4} más
                     </div>
                   )}
