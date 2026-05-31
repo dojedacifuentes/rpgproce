@@ -1,10 +1,11 @@
 "use client";
-import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useCallback, useRef } from "react";
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useGame } from "@/store/useGame";
 import { CAMPAÑA } from "@/data/campaign";
 import { useRouter } from "next/navigation";
 import { sfx } from "@/lib/audio";
+import { MapDefs, CityBackdrop, MapAtmosphere, EnergyConduit } from "./MapCity";
 
 // ============================================================================
 // GAME WORLD MAP — Mapa visual estilo Pokémon/Mario overworld
@@ -111,32 +112,53 @@ function MapNode({
   const r = size / 2;
   const baseColor = locked ? "rgba(60,70,90,0.8)" : node.color;
 
+  const labelW = node.label.length * 5.2 + 10;
+
   return (
     <motion.g
       onClick={onClick}
       style={{ cursor: locked ? "not-allowed" : "pointer" }}
-      whileHover={!locked ? { scale: 1.2 } : {}}
+      whileHover={!locked ? { scale: 1.16 } : {}}
       whileTap={!locked ? { scale: 0.95 } : {}}
     >
+      {/* footprint en el suelo */}
+      <ellipse cx={node.x} cy={node.y + r + 3} rx={r * 0.95} ry={r * 0.3}
+        fill={locked ? "rgba(0,0,0,0.45)" : `${node.color}22`} />
+
+      {/* halo radial: el nodo irradia */}
+      {!locked && (
+        <circle cx={node.x} cy={node.y} r={r + 6} fill={node.color}
+          opacity={isBoss ? 0.3 : 0.2} filter="url(#softGlow)" />
+      )}
+
+      {/* aura pulsante (boss / nodo activo) */}
       {(activo || isBoss) && !locked && (
         <motion.circle
-          cx={node.x} cy={node.y} r={r + 8}
-          fill="none"
-          stroke={node.color}
-          strokeWidth="1.5"
-          opacity={0.4}
-          animate={{ r: [r + 6, r + 12, r + 6], opacity: [0.4, 0.1, 0.4] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          cx={node.x} cy={node.y} r={r + 6} fill="none" stroke={node.color} strokeWidth="1.3"
+          animate={{ r: [r + 5, r + 13, r + 5], opacity: [0.5, 0, 0.5] }}
+          transition={{ duration: isBoss ? 1.8 : 2.4, repeat: Infinity, ease: "easeInOut" }}
         />
       )}
 
+      {/* haz vertical bajo el waypoint */}
+      {!locked && (
+        <rect x={node.x - 1} y={node.y} width={2} height={r + 11} fill={node.color} opacity="0.18" />
+      )}
+
+      {/* disco del waypoint */}
       <circle
         cx={node.x} cy={node.y} r={r}
-        fill={locked ? "rgba(20,25,40,0.9)" : "rgba(10,15,25,0.95)"}
-        stroke={locked ? "rgba(60,70,90,0.6)" : node.color}
-        strokeWidth={activo ? 2.5 : 1.5}
-        style={{ filter: !locked ? `drop-shadow(0 0 8px ${node.color}60)` : undefined }}
+        fill={locked ? "rgba(18,22,34,0.92)" : "rgba(8,12,20,0.93)"}
+        stroke={baseColor} strokeWidth={activo ? 2.6 : 1.6}
+        style={{ filter: !locked ? `drop-shadow(0 0 9px ${node.color}88)` : undefined }}
       />
+      {/* anillo giratorio para boss */}
+      {isBoss && !locked && (
+        <circle cx={node.x} cy={node.y} r={r - 4} fill="none" stroke={`${node.color}66`} strokeWidth="0.75" strokeDasharray="2 3">
+          <animateTransform attributeName="transform" type="rotate"
+            from={`0 ${node.x} ${node.y}`} to={`360 ${node.x} ${node.y}`} dur="9s" repeatCount="indefinite" />
+        </circle>
+      )}
 
       {completado && (
         <text x={node.x} y={node.y + 4} textAnchor="middle" fontSize="14" fill="#58F5B0">✓</text>
@@ -145,20 +167,23 @@ function MapNode({
         <text x={node.x} y={node.y + 4} textAnchor="middle" fontSize="12" fill="rgba(255,255,255,0.3)">🔒</text>
       )}
       {!completado && !locked && (
-        <text x={node.x} y={node.y + 5} textAnchor="middle" fontSize={isBoss ? 16 : 14}>{node.icono}</text>
+        <text x={node.x} y={node.y + (isBoss ? 6 : 5)} textAnchor="middle" fontSize={isBoss ? 18 : 14}>{node.icono}</text>
       )}
 
+      {/* etiqueta holográfica */}
       {!locked && (
-        <>
+        <g>
+          <rect x={node.x - labelW / 2} y={node.y + r + 6} width={labelW} height={11}
+            rx="2" fill="rgba(6,10,18,0.74)" stroke={`${node.color}40`} strokeWidth="0.5" />
           <text x={node.x} y={node.y + r + 14} textAnchor="middle" fontSize="8"
             fontFamily="JetBrains Mono, monospace" fill={node.color} letterSpacing="1">
             {node.label}
           </text>
-          <text x={node.x} y={node.y + r + 23} textAnchor="middle" fontSize="7"
+          <text x={node.x} y={node.y + r + 24} textAnchor="middle" fontSize="6.5"
             fontFamily="JetBrains Mono, monospace" fill="rgba(232,223,197,0.5)">
             {node.sublabel}
           </text>
-        </>
+        </g>
       )}
     </motion.g>
   );
@@ -378,6 +403,24 @@ export default function GameWorldMap() {
   const misionesCompletadas = useGame((s) => s.misionesCompletadas);
   const router = useRouter();
 
+  // ── Parallax de puntero (capas de ciudad) ────────────────────────────────
+  const svgRef = useRef<SVGSVGElement>(null);
+  const pmx = useMotionValue(0);
+  const pmy = useMotionValue(0);
+  const sx = useSpring(pmx, { stiffness: 60, damping: 18 });
+  const sy = useSpring(pmy, { stiffness: 60, damping: 18 });
+  const farX = useTransform(sx, (v) => v * 12);
+  const farY = useTransform(sy, (v) => v * 7);
+  const fgX = useTransform(sx, (v) => v * -30);
+  const fgY = useTransform(sy, (v) => v * -16);
+  const onMapMove = (e: React.MouseEvent) => {
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    pmx.set((e.clientX - rect.left) / rect.width - 0.5);
+    pmy.set((e.clientY - rect.top) / rect.height - 0.5);
+  };
+  const onMapLeave = () => { pmx.set(0); pmy.set(0); };
+
   // Acto actual: primer acto que aún tiene misiones sin completar
   const actoActual = (() => {
     for (const acto of CAMPAÑA) {
@@ -432,60 +475,62 @@ export default function GameWorldMap() {
 
   return (
     <div className="relative w-full" onClick={(e) => e.stopPropagation()}>
-      {/* SVG MAP */}
-      <svg viewBox="30 100 780 380" className="w-full" style={{ minHeight: 300, maxHeight: 420 }}>
-        <defs>
-          <pattern id="mapGrid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(75,231,255,0.04)" strokeWidth="0.5" />
-          </pattern>
-        </defs>
-        <rect width="800" height="500" fill="url(#mapGrid)" />
+      {/* MAPA — Ciudad Judicial cyberpunk */}
+      <div
+        className="relative w-full rounded-lg overflow-hidden"
+        onMouseMove={onMapMove}
+        onMouseLeave={onMapLeave}
+        style={{ border: "1px solid rgba(75,231,255,0.14)", boxShadow: "inset 0 0 70px rgba(4,7,14,0.9), 0 0 26px rgba(75,231,255,0.06)" }}
+      >
+        <svg ref={svgRef} viewBox="30 100 780 380" className="w-full block" style={{ minHeight: 320, maxHeight: 500 }}>
+          <MapDefs />
 
-        {/* Territory zones */}
-        {[1, 2, 3, 4, 5, 6, 7].map((acto) => {
-          const nodes = MAP_NODES.filter((n) => n.acto === acto);
-          if (nodes.length === 0) return null;
-          const cx = nodes.reduce((s, n) => s + n.x, 0) / nodes.length;
-          const cy = nodes.reduce((s, n) => s + n.y, 0) / nodes.length;
-          const color = nodes[0].color;
-          return (
-            <circle key={acto} cx={cx} cy={cy} r={70}
-              fill={`${color}08`} stroke={`${color}15`}
-              strokeWidth="1" strokeDasharray="4 6" />
-          );
-        })}
+          {/* Capa lejana: skyline + megaestructura (parallax lento) */}
+          <motion.g style={{ x: farX, y: farY }}>
+            <CityBackdrop />
+          </motion.g>
 
-        {/* Paths */}
-        {MAP_PATHS.map(([from, to], i) => {
-          const fromNode = getNodeById(from);
-          const toNode = getNodeById(to);
-          if (!fromNode || !toNode) return null;
-          const locked = isLocked(toNode);
-          return (
-            <path
-              key={i}
-              d={getPathD(from, to)}
-              fill="none"
-              stroke={locked ? "rgba(60,70,90,0.4)" : `${fromNode.color}40`}
-              strokeWidth="1.5"
-              strokeDasharray={locked ? "4 6" : "none"}
-              style={{ filter: !locked ? `drop-shadow(0 0 3px ${fromNode.color}30)` : undefined }}
+          {/* Distritos: plataformas de neón por acto */}
+          {[1, 2, 3, 4, 5, 6, 7].map((acto) => {
+            const nodes = MAP_NODES.filter((n) => n.acto === acto);
+            if (nodes.length === 0) return null;
+            const cx = nodes.reduce((s, n) => s + n.x, 0) / nodes.length;
+            const cy = nodes.reduce((s, n) => s + n.y, 0) / nodes.length;
+            const color = nodes[0].color;
+            return (
+              <g key={acto}>
+                <ellipse cx={cx} cy={cy} rx={80} ry={30} fill={`${color}0c`} stroke={`${color}22`} strokeWidth="1" />
+                <ellipse cx={cx} cy={cy} rx={80} ry={30} fill="none" stroke={`${color}10`} strokeWidth="6" />
+              </g>
+            );
+          })}
+
+          {/* Conductos de energía entre nodos */}
+          {MAP_PATHS.map(([from, to], i) => {
+            const fromNode = getNodeById(from);
+            const toNode = getNodeById(to);
+            if (!fromNode || !toNode) return null;
+            return <EnergyConduit key={i} d={getPathD(from, to)} color={fromNode.color} dim={isLocked(toNode)} />;
+          })}
+
+          {/* Nodos (waypoints) */}
+          {MAP_NODES.map((node) => (
+            <MapNode
+              key={node.id}
+              node={node}
+              activo={selectedNode?.id === node.id}
+              completado={isCompletado(node.id)}
+              locked={isLocked(node)}
+              onClick={(e) => handleCampaignNodeClick(e, node)}
             />
-          );
-        })}
+          ))}
 
-        {/* Nodes */}
-        {MAP_NODES.map((node) => (
-          <MapNode
-            key={node.id}
-            node={node}
-            activo={selectedNode?.id === node.id}
-            completado={isCompletado(node.id)}
-            locked={isLocked(node)}
-            onClick={(e) => handleCampaignNodeClick(e, node)}
-          />
-        ))}
-      </svg>
+          {/* Atmósfera de primer plano: lluvia digital + artículos (parallax rápido) */}
+          <motion.g style={{ x: fgX, y: fgY }}>
+            <MapAtmosphere />
+          </motion.g>
+        </svg>
+      </div>
 
       {/* Detail / Locked panels */}
       <AnimatePresence mode="wait">
