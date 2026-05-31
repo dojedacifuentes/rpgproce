@@ -6,7 +6,7 @@ import { sfx, startAmbientReino, stopAmbient } from "@/lib/audio";
 import { getRegion } from "@/data/reinos/regiones";
 import { desafiosPorRegion, TIPO_DESAFIO_META } from "@/data/reinos/desafios";
 import { getBoss } from "@/data/reinos/bosses";
-import { articulosPorRegion } from "@/data/reinos/articulos";
+import { articulosPorRegion, getArticulo, RAREZA_META } from "@/data/reinos/articulos";
 import { useReinos } from "@/store/useReinos";
 import DesafioEngine from "@/components/reinos/DesafioEngine";
 import BossBattle from "@/components/reinos/BossBattle";
@@ -33,6 +33,7 @@ export default function RegionPage({ params }: { params: { region: string } }) {
   const [ambiente, setAmbiente] = useState(false);
   const [racha, setRacha] = useState(0);
   const [nivelToast, setNivelToast] = useState<number | null>(null);
+  const [articuloToast, setArticuloToast] = useState<string | null>(null);
   const prevNivel = useRef<number | null>(null);
 
   useEffect(() => setMounted(true), []);
@@ -108,7 +109,14 @@ export default function RegionPage({ params }: { params: { region: string } }) {
             setRacha(nueva);
             if (nueva >= 3) sfx.combo?.(nueva);
             const bonus = nueva >= 3 ? (nueva - 2) * 5 : 0; // +5 cristales por acierto encadenado (desde el 3º)
+            const artId = d.recompensa.articuloId;
+            const esArticuloNuevo = !!artId && !useReinos.getState().articulosDesbloqueados.includes(artId);
             resolverDesafio(d.id, { ...d.recompensa, cristales: d.recompensa.cristales + bonus });
+            if (esArticuloNuevo && artId) {
+              setArticuloToast(artId);
+              setTimeout(() => sfx.unlock?.(), 220);
+              setTimeout(() => setArticuloToast(null), 4200);
+            }
           }}
           onWrong={() => { setRacha(0); perderVida(); }}
           onClose={() => { setEncuentro(null); sfx.click?.(); }}
@@ -282,6 +290,33 @@ export default function RegionPage({ params }: { params: { region: string } }) {
             <div className="font-display-grave text-lg text-doc-aged">Nivel {nivelToast} · {rangoDe(xp).titulo}</div>
           </motion.div>
         )}
+      </AnimatePresence>
+
+      {/* Toast: ¡artículo legendario obtenido! (premio de colección) */}
+      <AnimatePresence>
+        {articuloToast && (() => {
+          const art = getArticulo(articuloToast);
+          if (!art) return null;
+          const rar = RAREZA_META[art.rareza];
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 34, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 22 }}
+              transition={{ type: "spring", stiffness: 140, damping: 15 }}
+              className="fixed left-1/2 -translate-x-1/2 bottom-24 z-50 px-5 py-3 reino-card flex items-center gap-3 max-w-[20rem]"
+              data-reino={art.region}
+              style={{ borderColor: `${rar.color}88`, boxShadow: `0 0 32px ${rar.color}40` }}
+            >
+              <span className="text-3xl shrink-0" style={{ filter: `drop-shadow(0 0 8px ${rar.color}aa)` }}>{art.icono}</span>
+              <div className="min-w-0">
+                <div className="font-mono-terminal text-[9px] uppercase tracking-[.25em]" style={{ color: rar.color }}>✦ {rar.label} obtenido</div>
+                <div className="font-display-grave text-base text-doc-aged leading-tight truncate">{art.etiqueta}</div>
+                <div className="font-serif-juridica text-doc-aged/55 text-[11px] italic truncate">{art.titulo}</div>
+              </div>
+            </motion.div>
+          );
+        })()}
       </AnimatePresence>
 
       {/* Overlay de derrota (sin vidas) */}
