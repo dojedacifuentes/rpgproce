@@ -6,6 +6,7 @@ import { shuffleOptions } from "@/lib/shuffleOptions";
 import type { Desafio } from "@/types/reinos";
 import { TIPO_DESAFIO_META } from "@/data/reinos/desafios";
 import { getArticulo, RAREZA_META } from "@/data/reinos/articulos";
+import { useReinos } from "@/store/useReinos";
 
 // ============================================================================
 // REINOS — Motor de Desafío (encuentro individual)
@@ -27,6 +28,10 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
   const [elegida, setElegida] = useState<number | null>(null);
   const [resuelto, setResuelto] = useState(false);
   const [shakeKey, setShakeKey] = useState(0);
+  const [eliminadas, setEliminadas] = useState<number[]>([]);
+  const [pistaUsada, setPistaUsada] = useState(false);
+  const cristales = useReinos((s) => s.cristales);
+  const gastarCristales = useReinos((s) => s.gastarCristales);
 
   // Mezcla las opciones una vez por encuentro: mata el sesgo posicional.
   const opciones = useMemo(
@@ -38,7 +43,7 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
   const articuloPremio = desafio.recompensa.articuloId ? getArticulo(desafio.recompensa.articuloId) : undefined;
 
   const handleElegir = (i: number) => {
-    if (resuelto || review || intentos.includes(i)) return;
+    if (resuelto || review || intentos.includes(i) || eliminadas.includes(i)) return;
     const op = opciones[i];
     setElegida(i);
     if (op.correcta) {
@@ -55,6 +60,18 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
 
   const mostrarComoCorrecta = (i: number) => (resuelto || review) && opciones[i].correcta;
   const mostrarComoError = (i: number) => intentos.includes(i);
+
+  // Pista: gasta cristales para descartar una opción incorrecta
+  const COSTO_PISTA = 15;
+  const candidatasPista = opciones.map((_, i) => i).filter((i) => !opciones[i].correcta && !eliminadas.includes(i) && !intentos.includes(i));
+  const usarPista = () => {
+    if (pistaUsada || resuelto || review || candidatasPista.length === 0) return;
+    if (!gastarCristales(COSTO_PISTA)) { sfx.warning?.(); return; }
+    const pick = candidatasPista[Math.floor(Math.random() * candidatasPista.length)];
+    setEliminadas((p) => [...p, pick]);
+    setPistaUsada(true);
+    sfx.confirm?.();
+  };
 
   return (
     <motion.div
@@ -102,12 +119,29 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
         {desafio.enunciado}
       </motion.p>
 
+      {/* ── Pista: gasta cristales para descartar una incorrecta ── */}
+      {!resuelto && !review && (
+        <div className="flex justify-end mb-2.5">
+          <button
+            onClick={usarPista}
+            onMouseEnter={() => !pistaUsada && cristales >= COSTO_PISTA && sfx.hover?.()}
+            disabled={pistaUsada || cristales < COSTO_PISTA || candidatasPista.length === 0}
+            className="font-mono-terminal text-[10px] px-3 py-1.5 border transition-all disabled:opacity-40"
+            style={{ borderColor: "color-mix(in srgb, var(--reino-primary) 40%, transparent)", color: "var(--reino-primary)", background: "color-mix(in srgb, var(--reino-primary) 7%, transparent)" }}
+            title="Descarta una opción incorrecta"
+          >
+            {pistaUsada ? "💡 Pista usada" : `💡 Pista · descartar 1 (${COSTO_PISTA} 💎)`}
+          </button>
+        </div>
+      )}
+
       {/* ── Opciones ── */}
       <div className="space-y-2.5">
         {opciones.map((op, i) => {
           const esCorrecta = mostrarComoCorrecta(i);
           const esError = mostrarComoError(i);
-          const bloqueada = resuelto || review || esError;
+          const esEliminada = eliminadas.includes(i);
+          const bloqueada = resuelto || review || esError || esEliminada;
           return (
             <div key={i} className="reino-rise" style={{ animationDelay: `${i * 50}ms` }}>
               <button
@@ -127,14 +161,14 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
                     ? "rgba(217,74,74,0.08)"
                     : "rgba(255,255,255,0.015)",
                   cursor: bloqueada ? "default" : "pointer",
-                  opacity: esError && !esCorrecta ? 0.7 : 1,
+                  opacity: esEliminada ? 0.32 : esError && !esCorrecta ? 0.7 : 1,
                 }}
               >
                 <div className="flex items-start gap-3">
-                  <span className="reino-badge mt-0.5" data-state={esCorrecta ? "ok" : esError ? "bad" : undefined}>
-                    {esCorrecta ? "✓" : esError ? "✕" : String.fromCharCode(65 + i)}
+                  <span className="reino-badge mt-0.5" data-state={esCorrecta ? "ok" : esError || esEliminada ? "bad" : undefined}>
+                    {esCorrecta ? "✓" : esError || esEliminada ? "✕" : String.fromCharCode(65 + i)}
                   </span>
-                  <span className="reino-optext text-[14px] md:text-[15px] text-doc-aged">{op.texto}</span>
+                  <span className="reino-optext text-[14px] md:text-[15px] text-doc-aged" style={esEliminada ? { textDecoration: "line-through" } : undefined}>{op.texto}</span>
                 </div>
                 {/* Explicación: al fallar esa opción o al revelar la correcta */}
                 <AnimatePresence>

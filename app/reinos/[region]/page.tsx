@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { sfx, startAmbient, stopAmbient } from "@/lib/audio";
+import { sfx, startAmbientReino, stopAmbient } from "@/lib/audio";
 import { getRegion } from "@/data/reinos/regiones";
 import { desafiosPorRegion, TIPO_DESAFIO_META } from "@/data/reinos/desafios";
 import { getBoss } from "@/data/reinos/bosses";
@@ -11,17 +11,7 @@ import { useReinos } from "@/store/useReinos";
 import DesafioEngine from "@/components/reinos/DesafioEngine";
 import BossBattle from "@/components/reinos/BossBattle";
 import RegionScenery from "@/components/reinos/RegionScenery";
-import type { RegionId } from "@/types/reinos";
-
-const AMBIENTE_REGION: Record<RegionId, "ambiente" | "oral" | "ejecutivo" | "nulidad" | "recursos"> = {
-  bosque_obligaciones: "ambiente",
-  ciudad_mercantil: "ejecutivo",
-  tierras_posesion: "ambiente",
-  mansion_sucesoria: "nulidad",
-  republica_administrativa: "recursos",
-  castillo_competencia: "oral",
-  tribunal_supremo: "oral",
-};
+import { rangoDe } from "@/data/reinos/rangos";
 
 const VIDAS_INICIALES = 3;
 
@@ -33,6 +23,7 @@ export default function RegionPage({ params }: { params: { region: string } }) {
   const resolverDesafio = useReinos((s) => s.resolverDesafio);
   const desafiosResueltos = useReinos((s) => s.desafiosResueltos);
   const bossesDerrotados = useReinos((s) => s.bossesDerrotados);
+  const xp = useReinos((s) => s.xp);
 
   const [mounted, setMounted] = useState(false);
   const [vidas, setVidas] = useState(VIDAS_INICIALES);
@@ -40,9 +31,29 @@ export default function RegionPage({ params }: { params: { region: string } }) {
   const [derrota, setDerrota] = useState(false);
   const [ambiente, setAmbiente] = useState(false);
   const [racha, setRacha] = useState(0);
+  const [nivelToast, setNivelToast] = useState<number | null>(null);
+  const prevNivel = useRef<number | null>(null);
 
   useEffect(() => setMounted(true), []);
   useEffect(() => () => stopAmbient(), []);
+  // baseline de nivel tras hidratación (evita un toast falso al cargar)
+  useEffect(() => {
+    const t = setTimeout(() => { prevNivel.current = rangoDe(useReinos.getState().xp).nivel; }, 350);
+    return () => clearTimeout(t);
+  }, []);
+  // detecta subida de nivel
+  useEffect(() => {
+    if (prevNivel.current === null) return;
+    const n = rangoDe(xp).nivel;
+    if (n > prevNivel.current) {
+      prevNivel.current = n;
+      setNivelToast(n);
+      sfx.casacion?.();
+      const tt = setTimeout(() => setNivelToast(null), 3500);
+      return () => clearTimeout(tt);
+    }
+    prevNivel.current = n;
+  }, [xp]);
 
   const desafios = useMemo(() => (region ? desafiosPorRegion(region.id) : []), [region]);
   const boss = region ? getBoss(region.bossId) : undefined;
@@ -64,7 +75,7 @@ export default function RegionPage({ params }: { params: { region: string } }) {
 
   const toggleAmbiente = () => {
     if (ambiente) { stopAmbient(); setAmbiente(false); }
-    else { startAmbient(AMBIENTE_REGION[region.id]); setAmbiente(true); }
+    else { startAmbientReino(region.id); setAmbiente(true); }
     sfx.click?.();
   };
 
@@ -246,6 +257,23 @@ export default function RegionPage({ params }: { params: { region: string } }) {
           )}
         </AnimatePresence>
       </main>
+
+      {/* Toast: subiste de nivel */}
+      <AnimatePresence>
+        {nivelToast !== null && (
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed left-1/2 -translate-x-1/2 bottom-6 z-50 px-5 py-3 text-center reino-card"
+            style={{ borderColor: "rgba(236,201,75,.55)", boxShadow: "0 0 30px rgba(236,201,75,.25)" }}
+          >
+            <div className="text-2xl mb-0.5 reino-crown-glow inline-block">⬆️</div>
+            <div className="font-mono-terminal text-[9px] uppercase tracking-[.3em]" style={{ color: "#ecc94b" }}>¡Subiste de nivel!</div>
+            <div className="font-display-grave text-lg text-doc-aged">Nivel {nivelToast} · {rangoDe(xp).titulo}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Overlay de derrota (sin vidas) */}
       <AnimatePresence>

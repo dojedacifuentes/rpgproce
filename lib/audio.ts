@@ -246,3 +246,42 @@ export function stopAmbient() {
   });
   droneNodes = [];
 }
+
+// ─── AMBIENTES TEMÁTICOS POR REGIÓN (Reinos del Derecho) ───────────────────
+// 7 atmósferas distintas: cada bioma su drone. Aditivo, no toca el resto.
+const AMBIENTE_REINOS: Record<string, { freqs: number[]; vol: number; lfoRate: number }> = {
+  bosque_obligaciones: { freqs: [55, 110, 165], vol: 0.022, lfoRate: 0.1 },     // bosque cálido
+  ciudad_mercantil: { freqs: [49, 73.5, 98], vol: 0.026, lfoRate: 0.18 },        // puerto, oleaje
+  tierras_posesion: { freqs: [46, 92], vol: 0.024, lfoRate: 0.07 },              // viento de cañón
+  mansion_sucesoria: { freqs: [50, 75, 100, 150], vol: 0.024, lfoRate: 0.35 },   // mansión inquieta
+  republica_administrativa: { freqs: [60, 120, 180, 240], vol: 0.02, lfoRate: 0.5 }, // electrónico
+  castillo_competencia: { freqs: [44, 66, 88], vol: 0.028, lfoRate: 0.25 },       // cavernoso
+  tribunal_supremo: { freqs: [65, 130, 195], vol: 0.024, lfoRate: 0.12 },         // sacro
+};
+
+export function startAmbientReino(region: string) {
+  stopAmbient();
+  if (muted) return;
+  const c = ctx();
+  if (!c || !masterGain) return;
+  const s = AMBIENTE_REINOS[region] ?? AMBIENTE_REINOS.bosque_obligaciones;
+  s.freqs.forEach((f) => {
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    const lfo = c.createOscillator();
+    const lfoGain = c.createGain();
+    osc.type = "sine";
+    osc.frequency.value = f;
+    gain.gain.setValueAtTime(0, c.currentTime);
+    gain.gain.linearRampToValueAtTime(s.vol, c.currentTime + 2);
+    lfo.frequency.value = s.lfoRate;
+    lfoGain.gain.value = s.vol * 0.4;
+    lfo.connect(lfoGain);
+    lfoGain.connect(gain.gain);
+    osc.connect(gain);
+    gain.connect(masterGain!);
+    osc.start();
+    lfo.start();
+    droneNodes.push({ osc, gain, lfo, lfoGain });
+  });
+}

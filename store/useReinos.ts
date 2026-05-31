@@ -36,6 +36,7 @@ type ReinosStore = EstadoReinos & {
     recompensa: { cristales?: number; articuloId?: string },
   ) => void;
   entrarRegion: (region: RegionId) => void;
+  gastarCristales: (n: number) => boolean;
   // selectores
   tieneArticulo: (articuloId: string) => boolean;
   desafioResuelto: (id: string) => boolean;
@@ -93,6 +94,13 @@ export const useReinos = create<ReinosStore>()(
         }),
 
       entrarRegion: (region) => set({ ultimaRegion: region, desbloqueado: true }),
+
+      gastarCristales: (n) => {
+        const s = get();
+        if (s.cristales < n) return false;
+        set({ cristales: s.cristales - n });
+        return true;
+      },
 
       tieneArticulo: (articuloId) => get().articulosDesbloqueados.includes(articuloId),
       desafioResuelto: (id) => get().desafiosResueltos.includes(id),

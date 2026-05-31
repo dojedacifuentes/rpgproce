@@ -120,16 +120,17 @@ export default function BibliotecaPage() {
                       {RAREZA_META[articuloSel.rareza].label} · {articuloSel.codigo}
                     </div>
                     <div className="font-display-grave text-2xl text-doc-aged leading-none">{articuloSel.etiqueta}</div>
-                    <div className="font-serif-juridica text-doc-aged/60 italic text-sm">{articuloSel.titulo}</div>
+                    <div className="reino-explain italic text-doc-aged/75 text-[15px]">{articuloSel.titulo}</div>
                   </div>
                 </div>
                 <button onClick={() => setSel(null)} className="text-doc-aged/40 hover:text-doc-aged font-mono-terminal">✕</button>
               </div>
-              <p className="font-serif-juridica text-doc-aged/85 text-sm leading-relaxed border-l-2 pl-3 my-4" style={{ borderColor: RAREZA_META[articuloSel.rareza].color }}>
+              <div className="font-mono-terminal text-[9px] uppercase tracking-[.2em] text-doc-aged/45 mt-4 mb-1">📖 Texto del artículo</div>
+              <p className="reino-explain text-doc-aged/90 text-[15px] md:text-base leading-relaxed border-l-2 pl-3 mb-3" style={{ borderColor: RAREZA_META[articuloSel.rareza].color }}>
                 «{articuloSel.texto}»
               </p>
-              <div className="font-mono-terminal text-[10px] reino-fg uppercase tracking-wider">
-                ✦ {articuloSel.efecto}
+              <div className="reino-lesson p-2.5 font-mono-terminal text-[11px] reino-fg flex items-center gap-2">
+                <span>✦</span><span className="text-doc-aged/80">{articuloSel.efecto}</span>
               </div>
             </motion.div>
           </motion.div>
