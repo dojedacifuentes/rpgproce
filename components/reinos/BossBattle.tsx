@@ -45,6 +45,7 @@ export default function BossBattle({ boss, onClose }: Props) {
   const [combo, setCombo] = useState(0);
   const [comboMax, setComboMax] = useState(0);
   const [bossHitting, setBossHitting] = useState(false);
+  const [disparo, setDisparo] = useState(0); // proyectil de ataque: incrementa en cada acierto
   const [arenaShake, setArenaShake] = useState(false);
   const [redFlash, setRedFlash] = useState(0);
   const [floats, setFloats] = useState<Float[]>([]);
@@ -98,6 +99,7 @@ export default function BossBattle({ boss, onClose }: Props) {
       setComboMax((m) => Math.max(m, nuevoCombo));
       setAcertada(true);
       setBossHitting(true);
+      setDisparo((d) => d + 1);
       setTimeout(() => setBossHitting(false), 420);
       spawnFloat(nuevoCombo > 1 ? `¡ACIERTO! ×${nuevoCombo}` : "¡ACIERTO!", "var(--zona-cautelares)", "boss");
       if (nuevoCombo > 1) sfx.combo?.(nuevoCombo); else sfx.oralCorrecta?.();
@@ -324,6 +326,28 @@ export default function BossBattle({ boss, onClose }: Props) {
           </AnimatePresence>
           <div className="hidden md:block font-mono-terminal text-[8px] text-doc-aged/40 mt-1">Ataque {idx + 1}/{totalGolpes}</div>
         </div>
+
+        {/* Proyectil de ataque del jugador → vuela hacia el jefe y revienta en impacto */}
+        {disparo > 0 && (
+          <motion.span
+            key={`proj-${disparo}`}
+            className="absolute z-30 rounded-full pointer-events-none"
+            initial={{ left: "20%", top: "64%", opacity: 0.95, scale: 0.5 }}
+            animate={{ left: "74%", top: "26%", opacity: [0.95, 1, 0], scale: [0.5, 1, 1.3] }}
+            transition={{ duration: 0.3, ease: "easeIn" }}
+            style={{ width: 16, height: 16, marginLeft: -8, marginTop: -8, background: "radial-gradient(circle, #fff 0%, var(--reino-primary) 70%)", boxShadow: "0 0 18px 4px var(--reino-primary)" }}
+          />
+        )}
+        {disparo > 0 && (
+          <motion.span
+            key={`imp-${disparo}`}
+            className="absolute z-30 rounded-full pointer-events-none"
+            initial={{ left: "74%", top: "26%", opacity: 0, scale: 0.2 }}
+            animate={{ opacity: [0, 0.85, 0], scale: [0.2, 1.7, 2.2] }}
+            transition={{ duration: 0.5, delay: 0.26, ease: "easeOut" }}
+            style={{ width: 54, height: 54, marginLeft: -27, marginTop: -27, border: "2.5px solid var(--reino-primary)", boxShadow: "0 0 20px var(--reino-primary)" }}
+          />
+        )}
       </div>
 
       {/* CAJA DE COMANDO: pregunta + opciones */}
