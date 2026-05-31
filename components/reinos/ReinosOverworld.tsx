@@ -36,7 +36,7 @@ export default function ReinosOverworld() {
       setAviso("El Tribunal Supremo permanece sellado. Vence a los 6 jefes de las regiones para abrir el último estrado.");
       return;
     }
-    sfx.confirm?.();
+    sfx.whoosh?.();
     router.push(`/reinos/${id}`);
   };
 

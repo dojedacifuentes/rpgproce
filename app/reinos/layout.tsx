@@ -14,5 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default function ReinosLayout({ children }: { children: React.ReactNode }) {
-  return <div className="reinos-scope reino-parchment">{children}</div>;
+  // pt en móvil: deja libre el HUD fijo del juego base (nivel/vida/reloj) para
+  // que no tape los botones de las cabeceras. En PC no hace falta.
+  return <div className="reinos-scope reino-parchment pt-12 md:pt-0">{children}</div>;
 }

@@ -49,6 +49,7 @@ export default function DesafioEngine({ desafio, yaResuelto, onCorrect, onWrong,
     if (op.correcta) {
       setResuelto(true);
       sfx.oralCorrecta?.();
+      if (desafio.recompensa.articuloId) setTimeout(() => sfx.unlock?.(), 350);
       onCorrect();
     } else {
       setIntentos((prev) => [...prev, i]);

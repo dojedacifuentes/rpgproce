@@ -54,7 +54,7 @@ export default function PerfilJurista({
           {AVATARES.map((a) => (
             <button
               key={a}
-              onClick={() => { setAvatar(a); sfx.hover?.(); }}
+              onClick={() => { setAvatar(a); sfx.select?.(); }}
               className="aspect-square flex items-center justify-center text-2xl border rounded-lg transition-all"
               style={{
                 borderColor: avatar === a ? "var(--reino-primary)" : "rgba(232,223,197,.12)",

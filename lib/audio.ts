@@ -187,6 +187,31 @@ export const sfx = {
     sweep(40, 110, 1.2, "sawtooth", 0.18);
     setTimeout(() => noiseBurst(0.8, 0.06, 200), 200);
   },
+
+  // Power-up — arpegio brillante ascendente (subir de nivel)
+  powerUp: () => {
+    [523, 659, 784, 1047, 1319].forEach((f, i) =>
+      setTimeout(() => tone(f, 0.12, "triangle", 0.12, 0.005, 0.14), i * 70));
+  },
+
+  // Select — blip nítido de dos tonos (elegir opción/avatar)
+  select: () => {
+    tone(740, 0.05, "square", 0.08, 0.001, 0.05);
+    setTimeout(() => tone(1100, 0.06, "square", 0.06, 0.001, 0.06), 45);
+  },
+
+  // Whoosh — barrido filtrado (transición / entrar a región)
+  whoosh: () => {
+    sweep(180, 900, 0.35, "sine", 0.1);
+    noiseBurst(0.3, 0.05, 1400);
+  },
+
+  // Unlock — campanita de tesoro (artículo desbloqueado)
+  unlock: () => {
+    tone(880, 0.1, "triangle", 0.1, 0.005, 0.12);
+    setTimeout(() => tone(1320, 0.14, "triangle", 0.1, 0.005, 0.18), 90);
+    setTimeout(() => tone(1760, 0.3, "sine", 0.08, 0.01, 0.35), 180);
+  },
 };
 
 // ─────────────────────────── AMBIENTES (drones) ───────────────────────────

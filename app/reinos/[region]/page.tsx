@@ -49,7 +49,7 @@ export default function RegionPage({ params }: { params: { region: string } }) {
     if (n > prevNivel.current) {
       prevNivel.current = n;
       setNivelToast(n);
-      sfx.casacion?.();
+      sfx.powerUp?.();
       const tt = setTimeout(() => setNivelToast(null), 3500);
       return () => clearTimeout(tt);
     }
