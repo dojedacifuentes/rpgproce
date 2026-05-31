@@ -24,6 +24,7 @@ export default function ReinosOverworld() {
   const [mounted, setMounted] = useState(false);
   const [aviso, setAviso] = useState<string | null>(null);
   const [foco, setFoco] = useState<string | null>(null);
+  const [viajando, setViajando] = useState<string | null>(null);
   useEffect(() => setMounted(true), []);
 
   const estaCompletada = (id: string) => mounted && completadas.includes(id as any);
@@ -52,7 +53,8 @@ export default function ReinosOverworld() {
       return;
     }
     sfx.whoosh?.();
-    router.push(`/reinos/${id}`);
+    setViajando(id);
+    setTimeout(() => router.push(`/reinos/${id}`), 650);
   };
 
   return (
@@ -207,6 +209,30 @@ export default function ReinosOverworld() {
         <span>▶ recomendada</span>
         <span>◷ {mounted ? completadas.length : 0}/{REGIONES.length} regiones</span>
       </div>
+
+      {/* ═══ TRANSICIÓN DE VIAJE (feel consola) ═══ */}
+      {viajando && (() => {
+        const rv = getRegion(viajando)!;
+        return (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            data-reino={viajando}
+            className="fixed inset-0 z-[70] flex flex-col items-center justify-center"
+            style={{ background: "radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--reino-primary) 24%, #06070b), #06070b 72%)" }}
+          >
+            <motion.div initial={{ scale: 0.5, rotate: -10 }} animate={{ scale: 1.12, rotate: 0 }} transition={{ type: "spring", stiffness: 200 }} className="text-7xl reino-bob">
+              {rv.icono}
+            </motion.div>
+            <div className="mt-5 font-display-grave text-2xl md:text-3xl text-doc-aged" style={{ textShadow: "0 2px 14px rgba(0,0,0,.85)" }}>
+              Viajando a {rv.nombre}
+            </div>
+            <div className="mt-3 w-40 h-1 rounded-full overflow-hidden bg-bg-steel">
+              <motion.div className="h-full reino-bar rounded-full" initial={{ width: "0%" }} animate={{ width: "100%" }} transition={{ duration: 0.62 }} />
+            </div>
+          </motion.div>
+        );
+      })()}
     </div>
   );
 }
