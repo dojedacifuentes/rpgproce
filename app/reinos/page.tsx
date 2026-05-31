@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { sfx } from "@/lib/audio";
 import ReinosOverworld from "@/components/reinos/ReinosOverworld";
+import PerfilJurista from "@/components/reinos/PerfilJurista";
 import { REGIONES } from "@/data/reinos/regiones";
 import { ARTICULOS } from "@/data/reinos/articulos";
 import { DESAFIOS } from "@/data/reinos/desafios";
@@ -23,8 +24,11 @@ export default function ReinosHome() {
   const resueltos = useReinos((s) => s.desafiosResueltos);
   const bosses = useReinos((s) => s.bossesDerrotados);
   const xp = useReinos((s) => s.xp);
+  const perfilNombre = useReinos((s) => s.perfilNombre);
+  const perfilAvatar = useReinos((s) => s.perfilAvatar);
 
   const [mounted, setMounted] = useState(false);
+  const [editarPerfil, setEditarPerfil] = useState(false);
   useEffect(() => {
     setMounted(true);
     if (!desbloqueado) desbloquearPortal(); // primera entrada: activa el portal en el mapa principal
@@ -47,6 +51,7 @@ export default function ReinosHome() {
   const logrosOk = mounted
     ? logrosDesbloqueados({ desafiosResueltos: resueltos, regionesCompletadas: completadas, articulosDesbloqueados: articulos, bossesDerrotados: bosses, cristales, xp })
     : [];
+  const mostrarEditor = mounted && (editarPerfil || !perfilNombre);
 
   return (
     <main className="min-h-screen px-4 md:px-8 py-6 max-w-6xl mx-auto">
@@ -79,25 +84,29 @@ export default function ReinosHome() {
           artículos legendarios y enfrenta al Guardián de la Cosa Juzgada en el Tribunal Supremo Final.
         </p>
 
-        {/* Rango RPG */}
+        {/* Rango RPG + perfil */}
         <div className="mt-4 reino-card p-3 flex items-center gap-3 max-w-md">
-          <div
-            className="w-11 h-11 rounded-full border-2 flex items-center justify-center font-display-grave text-lg shrink-0"
-            style={{ borderColor: rango.color, color: rango.color, boxShadow: `0 0 14px ${rango.color}45` }}
-          >
-            {rango.nivel}
+          <div className="relative shrink-0">
+            <div
+              className="w-12 h-12 rounded-full border-2 flex items-center justify-center text-2xl"
+              style={{ borderColor: rango.color, boxShadow: `0 0 14px ${rango.color}45` }}
+            >
+              {(mounted && perfilAvatar) || "🧑‍⚖️"}
+            </div>
+            <div className="absolute -bottom-1 -right-1 text-[9px] font-mono-terminal px-1 border rounded" style={{ borderColor: rango.color, color: rango.color, background: "var(--bg-deep)" }}>
+              {rango.nivel}
+            </div>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="font-mono-terminal text-[9px] uppercase tracking-widest" style={{ color: rango.color }}>
-              Rango · Nivel {rango.nivel}
+            <div className="flex items-center gap-2">
+              <span className="font-display-grave text-base text-doc-aged truncate">{(mounted && perfilNombre) || "Litigante Anónimo"}</span>
+              <button onClick={() => { sfx.click?.(); setEditarPerfil(true); }} className="shrink-0 text-[8px] font-mono-terminal text-doc-aged/45 hover:text-doc-aged border border-doc-aged/15 px-1.5 py-0.5 uppercase tracking-wider">editar</button>
             </div>
-            <div className="font-display-grave text-base text-doc-aged leading-tight">{rango.titulo}</div>
+            <div className="font-mono-terminal text-[9px] uppercase tracking-widest" style={{ color: rango.color }}>{rango.titulo} · Nivel {rango.nivel}</div>
             <div className="mt-1 h-1.5 bg-bg-steel rounded-full overflow-hidden">
               <div className="h-full rounded-full transition-all duration-500" style={{ width: `${rango.esMax ? 100 : rango.pct}%`, background: rango.color }} />
             </div>
-            <div className="font-mono-terminal text-[8px] text-doc-aged/50 mt-0.5">
-              {rango.esMax ? "Rango máximo alcanzado" : `${rango.xpEnNivel}/${rango.xpParaSiguiente} XP al siguiente nivel`}
-            </div>
+            <div className="font-mono-terminal text-[8px] text-doc-aged/50 mt-0.5">{rango.esMax ? "Rango máximo" : `${rango.xpEnNivel}/${rango.xpParaSiguiente} XP`}</div>
           </div>
         </div>
       </motion.div>
@@ -196,6 +205,10 @@ export default function ReinosHome() {
           <li>▸ Todo esto es contenido adicional: tu progreso, mecánicas y partidas del juego base siguen intactos.</li>
         </ul>
       </div>
+
+      {mostrarEditor && (
+        <PerfilJurista onClose={() => setEditarPerfil(false)} forzado={mounted && !perfilNombre} />
+      )}
     </main>
   );
 }

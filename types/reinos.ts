@@ -123,5 +123,7 @@ export interface EstadoReinos {
   regionesCompletadas: RegionId[];// regiones con boss vencido
   cristales: number;              // moneda de la expansión (Cristales de Justicia)
   xp: number;                     // experiencia → rango del jugador
+  perfilNombre?: string;          // nombre elegido por el jugador
+  perfilAvatar?: string;          // avatar (emoji) elegido
   ultimaRegion?: RegionId;        // para "continuar"
 }

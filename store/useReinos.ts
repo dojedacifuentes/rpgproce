@@ -37,6 +37,7 @@ type ReinosStore = EstadoReinos & {
   ) => void;
   entrarRegion: (region: RegionId) => void;
   gastarCristales: (n: number) => boolean;
+  setPerfil: (nombre: string, avatar: string) => void;
   // selectores
   tieneArticulo: (articuloId: string) => boolean;
   desafioResuelto: (id: string) => boolean;
@@ -101,6 +102,8 @@ export const useReinos = create<ReinosStore>()(
         set({ cristales: s.cristales - n });
         return true;
       },
+
+      setPerfil: (nombre, avatar) => set({ perfilNombre: nombre.trim().slice(0, 24) || "Litigante Anónimo", perfilAvatar: avatar }),
 
       tieneArticulo: (articuloId) => get().articulosDesbloqueados.includes(articuloId),
       desafioResuelto: (id) => get().desafiosResueltos.includes(id),

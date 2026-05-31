@@ -67,7 +67,7 @@ export default function BibliotecaPage() {
                       onClick={() => { if (unlocked) { sfx.confirm?.(); setSel(a.id); } else { sfx.warning?.(); } }}
                       onMouseEnter={() => unlocked && sfx.hover?.()}
                       className="reino-card p-3 text-left relative h-full"
-                      style={{ borderColor: unlocked ? `${rar.color}66` : undefined, cursor: unlocked ? "pointer" : "default" }}
+                      style={{ borderColor: unlocked ? `${rar.color}66` : undefined, boxShadow: unlocked ? `0 0 14px ${rar.color}22` : undefined, cursor: unlocked ? "pointer" : "default" }}
                     >
                       {unlocked ? (
                         <>
