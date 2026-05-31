@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { sfx } from "@/lib/audio";
 import { REGIONES, SENDERO, getRegion } from "@/data/reinos/regiones";
+import { desafiosPorRegion } from "@/data/reinos/desafios";
 import { useReinos } from "@/store/useReinos";
 
 // ============================================================================
@@ -16,6 +17,7 @@ import { useReinos } from "@/store/useReinos";
 export default function ReinosOverworld() {
   const router = useRouter();
   const completadas = useReinos((s) => s.regionesCompletadas);
+  const desafiosResueltos = useReinos((s) => s.desafiosResueltos);
   const [mounted, setMounted] = useState(false);
   const [aviso, setAviso] = useState<string | null>(null);
   useEffect(() => setMounted(true), []);
@@ -87,6 +89,9 @@ export default function ReinosOverworld() {
         {REGIONES.map((r, i) => {
           const done = estaCompletada(r.id);
           const locked = bloqueada(r.id);
+          const desRegion = desafiosPorRegion(r.id);
+          const hechos = mounted ? desRegion.filter((d) => desafiosResueltos.includes(d.id)).length : 0;
+          const total = desRegion.length;
           return (
             <motion.button
               key={r.id}
@@ -123,10 +128,19 @@ export default function ReinosOverworld() {
                   <span className="absolute -top-1.5 -right-1.5 text-sm" title="Región conquistada">👑</span>
                 )}
               </span>
+              {/* progreso de la región */}
+              {!locked && total > 0 && (
+                <span
+                  className="mt-1 px-1.5 rounded-full font-mono-terminal"
+                  style={{ fontSize: 8, lineHeight: "13px", background: "rgba(6,7,11,.85)", border: `1px solid ${r.paleta.primary}66`, color: done ? "#58F5B0" : r.paleta.primary }}
+                >
+                  {done ? "✓ lista" : `${hechos}/${total}`}
+                </span>
+              )}
               {/* etiqueta */}
               <span
-                className="mt-1.5 font-mono-terminal text-center leading-tight"
-                style={{ fontSize: 8.5, color: locked ? "rgba(180,180,190,0.5)" : r.paleta.primary, letterSpacing: ".04em", textShadow: "0 1px 2px #000" }}
+                className="mt-1 font-mono-terminal text-center leading-tight px-1 rounded"
+                style={{ fontSize: 9.5, color: locked ? "rgba(180,190,200,0.6)" : "#e8dfc5", background: "rgba(6,7,11,.5)", letterSpacing: ".03em", textShadow: "0 1px 3px #000" }}
               >
                 {r.orden}. {r.nombre.replace("de las ", "").replace("de la ", "").replace("de los ", "").replace("de el ", "")}
               </span>
@@ -148,7 +162,7 @@ export default function ReinosOverworld() {
       )}
 
       {/* Leyenda */}
-      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 font-mono-terminal text-[9px] text-doc-aged/40">
+      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 font-mono-terminal text-[10px] text-doc-aged/55">
         <span>👑 región conquistada</span>
         <span>◷ {mounted ? completadas.length : 0}/{REGIONES.length} regiones</span>
         <span>🔒 sellado hasta vencer las 6 regiones</span>

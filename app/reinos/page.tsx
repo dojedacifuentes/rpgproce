@@ -197,8 +197,8 @@ export default function ReinosHome() {
 
       {/* Pie: cómo se juega */}
       <div className="reino-card p-4">
-        <div className="font-mono-terminal text-[9px] uppercase tracking-widest text-doc-aged/40 mb-2">CÓMO SE JUEGA</div>
-        <ul className="font-serif-juridica text-doc-aged/60 text-sm space-y-1.5 leading-relaxed">
+        <div className="font-mono-terminal text-[10px] uppercase tracking-widest reino-fg mb-2">CÓMO SE JUEGA</div>
+        <ul className="reino-explain text-doc-aged/80 text-[14px] md:text-[15px] space-y-2 leading-relaxed">
           <li>▸ Cada región tiene estética, enemigos y desafíos propios. Acertar otorga cristales y artículos; fallar cuesta vida.</li>
           <li>▸ Supera los desafíos para abrir al jefe de la región. Vencerlo conquista la región y suelta un artículo legendario.</li>
           <li>▸ Los artículos se acumulan en tu <Link href="/reinos/biblioteca" className="reino-fg underline">Biblioteca</Link>. Vence las 6 regiones para sellar el camino al Tribunal Supremo.</li>
