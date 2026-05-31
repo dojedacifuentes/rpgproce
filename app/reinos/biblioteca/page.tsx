@@ -58,16 +58,17 @@ export default function BibliotecaPage() {
                 </span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                {arts.map((a) => {
+                {arts.map((a, i) => {
                   const unlocked = tiene(a.id);
                   const rar = RAREZA_META[a.rareza];
+                  const brilla = unlocked && (a.rareza === "epica" || a.rareza === "legendaria");
                   return (
                     <button
                       key={a.id}
                       onClick={() => { if (unlocked) { sfx.confirm?.(); setSel(a.id); } else { sfx.warning?.(); } }}
                       onMouseEnter={() => unlocked && sfx.hover?.()}
-                      className="reino-card p-3 text-left relative h-full"
-                      style={{ borderColor: unlocked ? `${rar.color}66` : undefined, boxShadow: unlocked ? `0 0 14px ${rar.color}22` : undefined, cursor: unlocked ? "pointer" : "default" }}
+                      className={`reino-card p-3 text-left relative h-full ${brilla ? "reino-cardshine" : ""}`}
+                      style={{ borderColor: unlocked ? `${rar.color}66` : undefined, boxShadow: unlocked ? `0 0 14px ${rar.color}22` : undefined, cursor: unlocked ? "pointer" : "default", ["--shine" as any]: brilla ? `${rar.color}55` : undefined, ["--shine-delay" as any]: `${(i % 4) * 0.7}s` }}
                     >
                       {unlocked ? (
                         <>
@@ -103,15 +104,30 @@ export default function BibliotecaPage() {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => setSel(null)}
             className="fixed inset-0 z-50 flex items-center justify-center p-5"
-            style={{ background: "rgba(6,7,11,0.86)", backdropFilter: "blur(4px)" }}
+            style={{ background: "rgba(6,7,11,0.86)", backdropFilter: "blur(4px)", perspective: 1100 }}
           >
+            {/* halo de rareza detrás de la carta */}
             <motion.div
-              initial={{ scale: 0.92, y: 12 }} animate={{ scale: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 0.5, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="absolute left-1/2 top-1/2 pointer-events-none rounded-full"
+              style={{ width: 460, height: 460, marginLeft: -230, marginTop: -230, filter: "blur(72px)", background: `radial-gradient(circle, ${RAREZA_META[articuloSel.rareza].color}, transparent 70%)` }}
+            />
+            <motion.div
+              initial={{ rotateY: 78, opacity: 0, scale: 0.9 }} animate={{ rotateY: 0, opacity: 1, scale: 1 }}
+              transition={{ type: "spring", stiffness: 85, damping: 13 }}
               onClick={(e) => e.stopPropagation()}
-              className="reino-card reino-parchment p-6 max-w-lg w-full"
+              className="reino-card reino-parchment p-6 max-w-lg w-full relative overflow-hidden"
               data-reino={articuloSel.region}
-              style={{ borderColor: `${RAREZA_META[articuloSel.rareza].color}77` }}
+              style={{ borderColor: `${RAREZA_META[articuloSel.rareza].color}77`, transformStyle: "preserve-3d" }}
             >
+              {/* destello que barre la carta al revelarla */}
+              <motion.span
+                initial={{ x: "-130%" }} animate={{ x: "160%" }}
+                transition={{ duration: 0.85, delay: 0.28, ease: "easeOut" }}
+                className="absolute inset-y-0 w-1/3 pointer-events-none z-10"
+                style={{ background: `linear-gradient(100deg, transparent, ${RAREZA_META[articuloSel.rareza].color}40, transparent)`, transform: "skewX(-18deg)" }}
+              />
               <div className="flex items-start justify-between gap-3 mb-3">
                 <div className="flex items-center gap-3">
                   <span className="text-4xl">{articuloSel.icono}</span>
