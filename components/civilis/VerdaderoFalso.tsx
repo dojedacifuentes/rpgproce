@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/audio";
 import { VOF_CIVIL } from "@/data/civilis/verdaderofalso";
@@ -12,11 +12,16 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default function VerdaderoFalso() {
-  const pool = useMemo(() => shuffle(VOF_CIVIL), []);
+  const [pool, setPool] = useState<typeof VOF_CIVIL>([]);
   const [idx, setIdx] = useState(0);
   const [resp, setResp] = useState<boolean | null>(null);
   const [aciertos, setAciertos] = useState(0);
   const [fin, setFin] = useState(false);
+  useEffect(() => { setPool(shuffle(VOF_CIVIL)); }, []);
+
+  if (pool.length === 0) {
+    return <div className="civ-panel p-8 text-center font-mono-terminal text-sm opacity-60 max-w-xl mx-auto">Barajando…</div>;
+  }
 
   const a = pool[idx];
   const region = a ? getRegionCivil(a.region) : undefined;
