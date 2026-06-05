@@ -1,5 +1,6 @@
 import type { EdificioId, EtapaProc } from "@/types/procesal";
 import { ETAPAS_ORDINARIO } from "./ordinario";
+import { ETAPAS_EJECUTIVO } from "./ejecutivo";
 
 // ============================================================================
 // REGISTRO de expedientes por edificio. A medida que se construyan los demás
@@ -9,6 +10,7 @@ import { ETAPAS_ORDINARIO } from "./ordinario";
 
 const REGISTRO: Partial<Record<EdificioId, EtapaProc[]>> = {
   ordinario: ETAPAS_ORDINARIO,
+  ejecutivo: ETAPAS_EJECUTIVO,
 };
 
 export const etapasDe = (id: EdificioId): EtapaProc[] => REGISTRO[id] ?? [];

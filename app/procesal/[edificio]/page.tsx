@@ -141,7 +141,7 @@ export default function EdificioPage({ params }: { params: { edificio: string } 
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl shrink-0">{etapa.icono}</span>
                     <div className="min-w-0">
-                      <div className="proc-tag">{etapa.grupo} · etapa {etapa.orden}</div>
+                      <div className="proc-tag">{etapa.rol ? `Personaje · ${etapa.rol}` : `${etapa.grupo} · etapa ${etapa.orden}`}</div>
                       <h2 className="proc-heading text-xl leading-tight">{etapa.nombre}</h2>
                     </div>
                   </div>

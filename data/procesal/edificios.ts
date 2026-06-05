@@ -46,7 +46,6 @@ export const EDIFICIOS: Edificio[] = [
     intro:
       "El procedimiento de ejecución por excelencia: requiere un título ejecutivo y se lleva en DOS cuadernos a la vez —el principal (discusión) y el de apremio (embargo y remate)—. El mundo más grande de la Ciudadela.",
     cuadernos: true,
-    enPrep: true,
   },
   {
     id: "incidental",
