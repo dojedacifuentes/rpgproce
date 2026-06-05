@@ -1,0 +1,121 @@
+/* ============================================================================
+   CIVILIS — estilos AISLADOS de la expansión de Derecho Civil.
+   Dirección de arte: JRPG cálido (Octopath / Sea of Stars): paneles ornados de
+   oro sobre azul-noche profundo, acento por región. Alto contraste, legible.
+   Todo bajo .civilis-scope para no filtrar a otras pantallas.
+   ============================================================================ */
+
+.civilis-scope {
+  --civ-primary: #d9b24c;
+  --civ-secondary: #4e86d6;
+  --civ-accent: #e6a23c;
+  --civ-ambient: rgba(217, 178, 76, 0.06);
+  --civ-ink: #f3e9cf;     /* pergamino claro */
+  --civ-deep: #0b0e17;
+  color: var(--civ-ink);
+}
+
+/* fondo cálido nocturno */
+.civ-bg {
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 700px at 50% -8%, var(--civ-ambient), transparent 62%),
+    radial-gradient(900px 600px at 90% 110%, rgba(78, 134, 214, 0.05), transparent 60%),
+    linear-gradient(180deg, #0a0c14 0%, #0d1018 60%, #0b0e16 100%);
+}
+
+/* ── Paletas por región ──────────────────────────────────────────────────── */
+[data-civ="obligaciones"] { --civ-primary:#5fb37a; --civ-secondary:#3f8f5f; --civ-accent:#8fe0a6; --civ-ambient:rgba(95,179,122,.10); }
+[data-civ="solidaridad"]  { --civ-primary:#4e86d6; --civ-secondary:#2f5fae; --civ-accent:#86b6ff; --civ-ambient:rgba(78,134,214,.10); }
+[data-civ="contratos"]    { --civ-primary:#e6a23c; --civ-secondary:#b97c20; --civ-accent:#ffd081; --civ-ambient:rgba(230,162,60,.10); }
+[data-civ="compraventa"]  { --civ-primary:#d9b24c; --civ-secondary:#a98a2e; --civ-accent:#ffe39a; --civ-ambient:rgba(217,178,76,.10); }
+[data-civ="promesa"]      { --civ-primary:#86c6dc; --civ-secondary:#4f93ad; --civ-accent:#c4ecf7; --civ-ambient:rgba(134,198,220,.10); }
+[data-civ="mandato"]      { --civ-primary:#a06cd5; --civ-secondary:#7344a8; --civ-accent:#cda6f0; --civ-ambient:rgba(160,108,213,.10); }
+[data-civ="hipoteca"]     { --civ-primary:#8a6fd0; --civ-secondary:#5a3f9e; --civ-accent:#b9a0f0; --civ-ambient:rgba(122,92,192,.12); }
+[data-civ="extincion"]    { --civ-primary:#c65b6e; --civ-secondary:#9a3a4c; --civ-accent:#f09aa8; --civ-ambient:rgba(198,91,110,.10); }
+[data-civ="biblioteca"]   { --civ-primary:#45b6a6; --civ-secondary:#2c8073; --civ-accent:#86e6d6; --civ-ambient:rgba(69,182,166,.10); }
+
+/* ── Panel ornado JRPG (doble borde de oro) ──────────────────────────────── */
+.civ-panel {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(18,16,12,0.94), rgba(10,9,7,0.97));
+  border: 1.5px solid color-mix(in srgb, var(--civ-primary) 55%, #2a2418);
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 0 1px rgba(243,233,207,0.06),
+    inset 0 0 24px rgba(0,0,0,0.5),
+    0 10px 30px -12px rgba(0,0,0,0.7);
+}
+.civ-panel::before {
+  content: "";
+  position: absolute; inset: 3px;
+  border: 1px solid color-mix(in srgb, var(--civ-primary) 28%, transparent);
+  border-radius: 4px; pointer-events: none;
+}
+
+.civ-card {
+  background: linear-gradient(180deg, rgba(20,17,12,0.92), rgba(11,9,7,0.96));
+  border: 1px solid color-mix(in srgb, var(--civ-primary) 40%, #241f15);
+  border-radius: 5px;
+}
+
+.civ-fg { color: var(--civ-primary); }
+.civ-accent { color: var(--civ-accent); }
+
+.civ-heading {
+  font-family: "Cinzel", serif;
+  letter-spacing: 0.02em;
+  color: var(--civ-ink);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+}
+
+.civ-tag {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--civ-primary);
+}
+
+/* botón JRPG */
+.civ-btn {
+  font-family: "Cinzel", serif;
+  border: 1.5px solid color-mix(in srgb, var(--civ-primary) 60%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--civ-primary) 16%, transparent), transparent);
+  color: var(--civ-primary);
+  border-radius: 5px;
+  transition: filter .15s ease, transform .1s ease;
+}
+.civ-btn:hover { filter: brightness(1.25); }
+.civ-btn:active { transform: scale(0.97); }
+
+/* opción del clasificador */
+.civ-opt {
+  text-align: left;
+  border: 1.4px solid rgba(243,233,207,0.14);
+  background: linear-gradient(180deg, rgba(20,17,12,0.7), rgba(11,9,7,0.85));
+  border-radius: 5px;
+  transition: border-color .15s ease, background .15s ease, filter .15s ease;
+  min-height: 48px;
+}
+.civ-opt:hover { border-color: color-mix(in srgb, var(--civ-primary) 60%, transparent); filter: brightness(1.1); }
+.civ-opt[data-state="ok"]   { border-color: #5fb37a; background: rgba(95,179,122,0.08); color: #bff0cd; }
+.civ-opt[data-state="bad"]  { border-color: #c65b6e; background: rgba(198,91,110,0.08); color: #f3b9c2; }
+.civ-opt[data-state="dim"]  { opacity: 0.45; }
+
+/* rareza */
+.rar-comun       { --rar:#9aa0aa; }
+.rar-rara        { --rar:#4e86d6; }
+.rar-epica       { --rar:#a06cd5; }
+.rar-legendaria  { --rar:#e6c14b; }
+
+/* animaciones */
+@keyframes civ-float { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-7px);} }
+@keyframes civ-glow  { 0%,100%{ filter: drop-shadow(0 0 6px var(--civ-primary)); } 50%{ filter: drop-shadow(0 0 16px var(--civ-primary)); } }
+@keyframes civ-twinkle { 0%,100%{ opacity:.3;} 50%{ opacity:1;} }
+.civ-float { animation: civ-float 5s ease-in-out infinite; }
+.civ-glow  { animation: civ-glow 3s ease-in-out infinite; }
+.civ-twinkle { animation: civ-twinkle 3s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .civ-float, .civ-glow, .civ-twinkle { animation: none; }
+}

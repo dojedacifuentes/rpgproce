@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { sfx } from "@/lib/audio";
 import GameWorldMap from "@/components/GameWorldMap";
 import PortalReinos from "@/components/reinos/PortalReinos";
+import PortalCivilis from "@/components/civilis/PortalCivilis";
 import GameNav, { type NavItem } from "@/components/game/GameNav";
 import { CAMPAÑA, getBoss } from "@/data/campaign";
 import { getRelicById, MAX_RELICS_EQUIPADAS } from "@/data/relics";
@@ -149,6 +150,7 @@ export default function Juego() {
       {/* ─── CONTENIDO ─── */}
       <div className="max-w-7xl mx-auto px-3 md:px-6 py-4 pb-28">
         <PortalReinos />
+        <PortalCivilis />
 
         <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[clamp(240px,22vw,280px)_minmax(0,1fr)_clamp(260px,24vw,320px)] lg:items-start mt-4">
 

@@ -1,0 +1,109 @@
+import type { BossCivil } from "@/types/civilis";
+import { casosPorRegion } from "./casos";
+
+// ============================================================================
+// CIVILIS — Jefes de región. El combate del jefe es un gauntlet del clasificador
+// con el pool de casos de su región.
+// ============================================================================
+
+export const BOSSES_CIVIL: BossCivil[] = [
+  {
+    id: "guardian_vinculo",
+    nombre: "El Guardián del Vínculo",
+    titulo: "Custodio de las Obligaciones",
+    region: "obligaciones",
+    icono: "🐲",
+    color: "#5fb37a",
+    descripcion: "Una bestia hecha de cadenas vivas. Cada eslabón es una obligación que exige ser clasificada.",
+    vidaMax: 100,
+    casosIds: casosPorRegion("obligaciones").map((c) => c.id),
+    recompensaOro: 40,
+  },
+  {
+    id: "lord_solidarius",
+    nombre: "Lord Solidarius",
+    titulo: "El Acreedor Absoluto",
+    region: "solidaridad",
+    icono: "🛡️",
+    color: "#4e86d6",
+    descripcion: "Cobra el todo a cualquiera. Para vencerlo hay que saber quién paga, quién cobra y quién se subroga.",
+    vidaMax: 140,
+    casosIds: casosPorRegion("solidaridad").map((c) => c.id),
+    recompensaOro: 60,
+  },
+  {
+    id: "oraculo_imprevision",
+    nombre: "El Oráculo de la Imprevisión",
+    titulo: "Voz del Caos Sobreviniente",
+    region: "contratos",
+    icono: "🌩️",
+    color: "#e6a23c",
+    descripcion: "Lanza tormentas imprevisibles sobre los contratos. Solo la buena fe y los principios lo contienen.",
+    vidaMax: 150,
+    casosIds: casosPorRegion("contratos").map((c) => c.id),
+    recompensaOro: 70,
+  },
+  {
+    id: "vendedor_fraudulento",
+    nombre: "El Vendedor Fraudulento",
+    titulo: "Mercader de Vicios Ocultos",
+    region: "compraventa",
+    icono: "🎭",
+    color: "#d9b24c",
+    descripcion: "Vende cosas evictas y defectuosas. Cae ante quien distingue evicción, vicios y pactos.",
+    vidaMax: 130,
+    casosIds: casosPorRegion("compraventa").map((c) => c.id),
+    recompensaOro: 60,
+  },
+  {
+    id: "guardian_puertas",
+    nombre: "El Guardián de las Cuatro Puertas",
+    titulo: "Centinela del Art. 1554",
+    region: "promesa",
+    icono: "🗝️",
+    color: "#86c6dc",
+    descripcion: "Cuatro puertas, cuatro requisitos. Falla uno y la promesa no produce obligación alguna.",
+    vidaMax: 120,
+    casosIds: casosPorRegion("promesa").map((c) => c.id),
+    recompensaOro: 55,
+  },
+  {
+    id: "mandatario_infiel",
+    nombre: "El Mandatario Infiel",
+    titulo: "Traidor del Encargo",
+    region: "mandato",
+    icono: "🃏",
+    color: "#a06cd5",
+    descripcion: "Excede sus facultades y traiciona al mandante. Cae ante quien domina la representación y la extinción.",
+    vidaMax: 130,
+    casosIds: casosPorRegion("mandato").map((c) => c.id),
+    recompensaOro: 60,
+  },
+  {
+    id: "tercer_poseedor",
+    nombre: "El Tercer Poseedor",
+    titulo: "Boss Final de las Catacumbas",
+    region: "hipoteca",
+    icono: "👤",
+    color: "#8a6fd0",
+    descripcion: "Posee la finca gravada sin haberse obligado. La hipoteca lo persigue por las criptas del Registro.",
+    vidaMax: 160,
+    casosIds: casosPorRegion("hipoteca").map((c) => c.id),
+    recompensaOro: 80,
+  },
+  {
+    id: "señor_extincion",
+    nombre: "El Señor de la Extinción",
+    titulo: "Guardián de la Torre",
+    region: "extincion",
+    icono: "🗼",
+    color: "#c65b6e",
+    descripcion: "Cada piso, un modo de morir de la deuda. Domina la torre quien los distingue todos.",
+    vidaMax: 150,
+    casosIds: casosPorRegion("extincion").map((c) => c.id),
+    recompensaOro: 70,
+  },
+];
+
+export const getBossCivil = (id: string) => BOSSES_CIVIL.find((b) => b.id === id);
+export const getBossDeRegion = (region: string) => BOSSES_CIVIL.find((b) => b.region === region);
