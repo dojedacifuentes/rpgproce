@@ -74,6 +74,18 @@ export const SECUENCIAS_CIVIL: Secuencia[] = [
       "Indicar la consecuencia procesal",
     ],
   },
+  {
+    id: "seq_dano",
+    titulo: "Reparación del daño: método de la responsabilidad",
+    articulo: "Arts. 1556, 2314, 2329 CC",
+    region: "contratos",
+    items: [
+      "Acreditar el daño (daño emergente y lucro cesante)",
+      "Acreditar el factor de imputación (dolo o culpa)",
+      "Acreditar el nexo causal entre el hecho y el daño",
+      "Determinar la reparación integral (incluido el daño moral)",
+    ],
+  },
 ];
 
 export const getSecuencia = (id: string) => SECUENCIAS_CIVIL.find((s) => s.id === id);

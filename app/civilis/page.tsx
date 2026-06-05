@@ -53,6 +53,7 @@ export default function CivilisHub() {
           <Link href="/civilis/cita" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🔢 Cita</Link>
           <Link href="/civilis/cartas" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🃏 Cartas</Link>
           <Link href="/civilis/bestiario" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">👹 Bestiario</Link>
+          <Link href="/civilis/logros" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🏆 Logros</Link>
           <Link href="/civilis/examen" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🎓 Examen Oral</Link>
         </div>
       </div>

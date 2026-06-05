@@ -449,6 +449,18 @@ export const CODEX_CIVIL: EntradaCodex[] = [
     preguntaGrado: "Enumere las incapacidades especiales para comprar y vender (1796-1800).",
     rareza: "rara",
   },
+  {
+    id: "responsabilidad_civil",
+    region: "contratos",
+    institucion: "Responsabilidad civil",
+    icono: "⚠️",
+    concepto: "Deber de reparar el daño causado, sea por incumplimiento de un contrato (contractual) o por un hecho ilícito sin contrato previo (extracontractual).",
+    fuente: "Arts. 1547-1559 (contractual) y 2314-2329 (extracontractual) CC",
+    clasificaciones: ["Contractual: incumplimiento de obligación preexistente", "Extracontractual: delito o cuasidelito civil"],
+    efectos: ["Reparación integral: daño emergente, lucro cesante y daño moral"],
+    preguntaGrado: "Distinga responsabilidad contractual y extracontractual y sus presupuestos.",
+    rareza: "epica",
+  },
 ];
 
 export const RAREZA_CIVIL: Record<EntradaCodex["rareza"], { label: string; color: string }> = {
