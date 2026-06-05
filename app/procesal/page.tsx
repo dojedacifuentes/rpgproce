@@ -20,10 +20,9 @@ const MODOS = [
   { href: "/procesal/ordena", icono: "🪜", nombre: "Ordena el Procedimiento", desc: "Reconstruye la secuencia de memoria" },
   { href: "/procesal/plazos", icono: "⏱️", nombre: "Plazos", desc: "Asocia cada actuación con su plazo" },
   { href: "/procesal/detecte", icono: "🔍", nombre: "Detecte el Error", desc: "Caza el vicio en el expediente" },
+  { href: "/procesal/examen", icono: "🎓", nombre: "Examen de Grado", desc: "Comisión oral: preguntas encadenadas de procesal" },
 ];
-const MODOS_PRONTO = [
-  { icono: "🎓", nombre: "Examen de Grado" },
-];
+const MODOS_PRONTO: { icono: string; nombre: string }[] = [];
 
 export default function ProcesalHub() {
   const [mounted, setMounted] = useState(false);
@@ -162,18 +161,22 @@ export default function ProcesalHub() {
             </Link>
           ))}
         </div>
-        <div className="proc-tag mb-2 mt-3 opacity-70">Próximamente</div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          {MODOS_PRONTO.map((m) => (
-            <div key={m.nombre} className="proc-card p-2.5 flex items-center gap-2.5 opacity-55">
-              <span className="text-xl shrink-0">{m.icono}</span>
-              <div className="min-w-0">
-                <div className="proc-heading text-[12px] leading-tight">{m.nombre}</div>
-                <div className="font-mono-terminal text-[8px] opacity-70">pronto</div>
-              </div>
+        {MODOS_PRONTO.length > 0 && (
+          <>
+            <div className="proc-tag mb-2 mt-3 opacity-70">Próximamente</div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {MODOS_PRONTO.map((m) => (
+                <div key={m.nombre} className="proc-card p-2.5 flex items-center gap-2.5 opacity-55">
+                  <span className="text-xl shrink-0">{m.icono}</span>
+                  <div className="min-w-0">
+                    <div className="proc-heading text-[12px] leading-tight">{m.nombre}</div>
+                    <div className="font-mono-terminal text-[8px] opacity-70">pronto</div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     </main>
   );
