@@ -26,6 +26,35 @@ export default function CivilisHub() {
     setTimeout(() => router.push(`/civilis/${id}`), 600);
   };
 
+  const MODOS: { titulo: string; modos: { href: string; icono: string; nombre: string; desc: string }[] }[] = [
+    {
+      titulo: "Aventura",
+      modos: [
+        { href: "/civilis/examen", icono: "🎓", nombre: "Examen Oral", desc: "Comisión de grado: Cabello · Montecinos · Silva" },
+        { href: "/civilis/practica", icono: "⚡", nombre: "Práctica libre", desc: "Clasificador infinito de casos" },
+      ],
+    },
+    {
+      titulo: "Estudio",
+      modos: [
+        { href: "/civilis/flashcards", icono: "🧠", nombre: "Flashcards", desc: "Memoriza con mazos temáticos" },
+        { href: "/civilis/relaciona", icono: "🔗", nombre: "Relaciona", desc: "Une institución con su artículo" },
+        { href: "/civilis/vof", icono: "⚖️", nombre: "Verdadero o Falso", desc: "Detecta el error en la afirmación" },
+        { href: "/civilis/ordena", icono: "🪜", nombre: "Ordena", desc: "Secuencias y requisitos en orden" },
+        { href: "/civilis/cita", icono: "🔢", nombre: "Completa la cita", desc: "Recuerda el número del artículo" },
+      ],
+    },
+    {
+      titulo: "Colección",
+      modos: [
+        { href: "/civilis/codex", icono: "📚", nombre: "Codex Civilis", desc: `Enciclopedia · ${mounted ? codexN : 0}/${CODEX_CIVIL.length} entradas` },
+        { href: "/civilis/cartas", icono: "🃏", nombre: "Cartas", desc: "Artículos del Código Civil" },
+        { href: "/civilis/bestiario", icono: "👹", nombre: "Bestiario", desc: "Enemigos del Reino" },
+        { href: "/civilis/logros", icono: "🏆", nombre: "Logros", desc: "Salón de trofeos" },
+      ],
+    },
+  ];
+
   return (
     <main className="px-3 md:px-6 py-4 max-w-6xl mx-auto pb-16">
       {/* header */}
@@ -43,19 +72,7 @@ export default function CivilisHub() {
         <p className="font-serif-juridica opacity-70 text-sm md:text-base max-w-2xl mt-1">
           El Reino de las Obligaciones. Recorre las nueve regiones, clasifica los casos que las habitan y completa el Codex para sobrevivir al examen de grado.
         </p>
-        <div className="flex flex-wrap gap-2 mt-3 font-mono-terminal text-[11px]">
-          <Link href="/civilis/codex" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">📚 Codex {mounted ? codexN : 0}/{CODEX_CIVIL.length}</Link>
-          <Link href="/civilis/flashcards" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🧠 Flashcards</Link>
-          <Link href="/civilis/practica" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">⚡ Práctica</Link>
-          <Link href="/civilis/relaciona" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🔗 Relaciona</Link>
-          <Link href="/civilis/vof" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">⚖️ V o F</Link>
-          <Link href="/civilis/ordena" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🪜 Ordena</Link>
-          <Link href="/civilis/cita" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🔢 Cita</Link>
-          <Link href="/civilis/cartas" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🃏 Cartas</Link>
-          <Link href="/civilis/bestiario" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">👹 Bestiario</Link>
-          <Link href="/civilis/logros" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🏆 Logros</Link>
-          <Link href="/civilis/examen" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🎓 Examen Oral</Link>
-        </div>
+        <p className="font-mono-terminal text-[10px] opacity-50 mt-2">▸ Toca una región del mapa para entrar · explora los modos de juego abajo</p>
       </div>
 
       {/* ── MAPA MUNDO ── */}
@@ -125,6 +142,36 @@ export default function CivilisHub() {
             </button>
           );
         })}
+      </div>
+
+      {/* ── MODOS DE JUEGO ── */}
+      <div className="mt-5">
+        <div className="civ-tag mb-2">Modos de juego</div>
+        <div className="space-y-3">
+          {MODOS.map((g) => (
+            <div key={g.titulo}>
+              <div className="font-mono-terminal text-[9px] uppercase tracking-[0.2em] opacity-45 mb-1.5">{g.titulo}</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {g.modos.map((m) => (
+                  <Link
+                    key={m.href}
+                    href={m.href}
+                    onClick={() => sfx.click?.()}
+                    onMouseEnter={() => sfx.hover?.()}
+                    className="civ-card p-3 flex items-center gap-3 transition-transform hover:-translate-y-0.5"
+                  >
+                    <span className="text-2xl shrink-0">{m.icono}</span>
+                    <div className="min-w-0">
+                      <div className="civ-heading text-[13px] leading-tight">{m.nombre}</div>
+                      <div className="font-serif-juridica text-[11px] opacity-60 leading-snug">{m.desc}</div>
+                    </div>
+                    <span className="ml-auto opacity-30 shrink-0">▸</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* ── COMPAÑÍA ── */}
