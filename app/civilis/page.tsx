@@ -33,6 +33,7 @@ export default function CivilisHub() {
           <span className="civ-card px-2 py-1">⭐ {mounted ? xp : 0} XP</span>
           <span className="civ-card px-2 py-1">🪙 {mounted ? oro : 0}</span>
           <Link href="/civilis/codex" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1">📚 Codex {mounted ? codexN : 0}/{CODEX_CIVIL.length}</Link>
+          <Link href="/civilis/examen" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1">🎓 Examen Oral</Link>
         </div>
       </header>
 

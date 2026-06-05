@@ -128,6 +128,7 @@ export interface EstadoCivilis {
   cartasObtenidas: string[];
   bossesDerrotados: string[];
   regionesCompletadas: RegionCivilId[];
+  examenesAprobados: string[];
   oro: number;
   xp: number;
   perfilNombre?: string;
