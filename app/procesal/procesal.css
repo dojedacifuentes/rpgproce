@@ -1,0 +1,152 @@
+/* ============================================================================
+   ARCHIVOS DEL TIEMPO PROCESAL — estilos AISLADOS de la expansión procesal.
+   Dirección de arte: "archivo judicial viviente" — tinta azul-noche, pergamino,
+   sellos de lacre brillando, legajos y folios. Alto contraste, muy legible.
+   Todo bajo .procesal-scope para no filtrar a otras pantallas.
+   ============================================================================ */
+
+.procesal-scope {
+  --proc-primary: #c8a24c;   /* sello dorado */
+  --proc-secondary: #4a7bb0; /* azul tribunal */
+  --proc-accent: #e6c878;
+  --proc-ambient: rgba(200, 162, 76, 0.06);
+  --proc-ink: #ece3cf;       /* pergamino claro */
+  --proc-deep: #0a0e18;
+  color: var(--proc-ink);
+}
+
+/* fondo nocturno de archivo */
+.proc-bg {
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 720px at 50% -10%, var(--proc-ambient), transparent 60%),
+    radial-gradient(900px 600px at 88% 112%, rgba(74, 123, 176, 0.06), transparent 60%),
+    linear-gradient(180deg, #090c14 0%, #0b0f1a 55%, #090c16 100%);
+}
+
+/* ── Paletas por edificio/procedimiento ─────────────────────────────────────
+   ordinario azul · sumario amarillo · ejecutivo rojo · incidental morado ·
+   recursos verde (según la dirección de arte del encargo). */
+[data-proc="ordinario"]  { --proc-primary:#3b6ea5; --proc-secondary:#2b5180; --proc-accent:#8fbce6; --proc-ambient:rgba(59,110,165,.12); }
+[data-proc="sumario"]    { --proc-primary:#d9a521; --proc-secondary:#a87d12; --proc-accent:#ffe08a; --proc-ambient:rgba(217,165,33,.12); }
+[data-proc="ejecutivo"]  { --proc-primary:#b3433a; --proc-secondary:#8a2f28; --proc-accent:#f0998f; --proc-ambient:rgba(179,67,58,.12); }
+[data-proc="incidental"] { --proc-primary:#7d5ba6; --proc-secondary:#5a3f7e; --proc-accent:#c0a3e6; --proc-ambient:rgba(125,91,166,.12); }
+[data-proc="recursos"]   { --proc-primary:#3f9d6b; --proc-secondary:#2c7350; --proc-accent:#8fe0b3; --proc-ambient:rgba(63,157,107,.12); }
+
+/* ── Panel tipo legajo (con lomo de carpeta a la izquierda) ───────────────── */
+.proc-panel {
+  position: relative;
+  background: linear-gradient(180deg, rgba(16,18,26,0.95), rgba(9,11,18,0.97));
+  border: 1.5px solid color-mix(in srgb, var(--proc-primary) 50%, #20242f);
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 0 1px rgba(236,227,207,0.05),
+    inset 0 0 26px rgba(0,0,0,0.5),
+    0 10px 30px -12px rgba(0,0,0,0.7);
+  overflow: hidden;
+}
+.proc-panel::before {
+  content: "";
+  position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: linear-gradient(180deg, var(--proc-primary), color-mix(in srgb, var(--proc-secondary) 70%, transparent));
+  opacity: 0.85;
+}
+
+.proc-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(18,20,28,0.94), rgba(10,12,19,0.96));
+  border: 1px solid color-mix(in srgb, var(--proc-primary) 36%, #1c2029);
+  border-radius: 5px;
+}
+
+.proc-fg { color: var(--proc-primary); }
+.proc-accent { color: var(--proc-accent); }
+
+.proc-heading {
+  font-family: "Cinzel", serif;
+  letter-spacing: 0.02em;
+  color: var(--proc-ink);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+}
+
+.proc-tag {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--proc-primary);
+}
+
+/* botón */
+.proc-btn {
+  font-family: "Cinzel", serif;
+  border: 1.5px solid color-mix(in srgb, var(--proc-primary) 58%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--proc-primary) 16%, transparent), transparent);
+  color: var(--proc-primary);
+  border-radius: 5px;
+  transition: filter .15s ease, transform .1s ease;
+}
+.proc-btn:hover { filter: brightness(1.25); }
+.proc-btn:active { transform: scale(0.97); }
+
+/* opción de minijuego */
+.proc-opt {
+  text-align: left;
+  border: 1.4px solid rgba(236,227,207,0.14);
+  background: linear-gradient(180deg, rgba(18,20,28,0.7), rgba(10,12,19,0.85));
+  border-radius: 5px;
+  transition: border-color .15s ease, background .15s ease, filter .15s ease;
+  min-height: 48px;
+}
+.proc-opt:hover { border-color: color-mix(in srgb, var(--proc-primary) 60%, transparent); filter: brightness(1.1); }
+.proc-opt[data-state="ok"]   { border-color: #5fb37a; background: rgba(95,179,122,0.08); color: #bff0cd; }
+.proc-opt[data-state="bad"]  { border-color: #c65b6e; background: rgba(198,91,110,0.08); color: #f3b9c2; }
+.proc-opt[data-state="dim"]  { opacity: 0.45; }
+
+/* ── Nodo del expediente (camino de etapas) ───────────────────────────────── */
+.proc-node {
+  position: relative;
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: 6px;
+  border: 1.3px solid color-mix(in srgb, var(--proc-primary) 30%, rgba(236,227,207,0.12));
+  background: linear-gradient(180deg, rgba(18,20,28,0.7), rgba(10,12,19,0.85));
+  text-align: left;
+  transition: border-color .15s ease, filter .15s ease, transform .1s ease;
+}
+.proc-node:hover { border-color: color-mix(in srgb, var(--proc-primary) 70%, transparent); filter: brightness(1.12); }
+.proc-node:active { transform: scale(0.99); }
+.proc-node[data-active="true"] {
+  border-color: var(--proc-primary);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--proc-primary) 40%, transparent), 0 0 18px color-mix(in srgb, var(--proc-primary) 30%, transparent);
+}
+.proc-node[data-seen="true"] .proc-node-dot { background: var(--proc-primary); color: #0a0e18; }
+
+.proc-node-dot {
+  flex-shrink: 0;
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "JetBrains Mono", monospace; font-size: 11px;
+  border: 1.4px solid var(--proc-primary);
+  color: var(--proc-primary);
+  background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--proc-primary) 22%, #0b0f1a), #0b0f1a);
+}
+
+/* sello de lacre */
+.proc-seal {
+  display: inline-flex; align-items: center; justify-content: center;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--proc-primary) 60%, transparent));
+}
+
+/* animaciones */
+@keyframes proc-float { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-7px);} }
+@keyframes proc-glow  { 0%,100%{ filter: drop-shadow(0 0 6px var(--proc-primary)); } 50%{ filter: drop-shadow(0 0 16px var(--proc-primary)); } }
+@keyframes proc-spin  { from{ transform: rotate(0deg);} to{ transform: rotate(360deg);} }
+@keyframes proc-tick  { 0%,100%{ opacity:.35;} 50%{ opacity:1;} }
+.proc-float { animation: proc-float 5s ease-in-out infinite; }
+.proc-glow  { animation: proc-glow 3s ease-in-out infinite; }
+.proc-spin  { animation: proc-spin 26s linear infinite; }
+.proc-tick  { animation: proc-tick 2.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .proc-float, .proc-glow, .proc-spin, .proc-tick { animation: none; }
+}
