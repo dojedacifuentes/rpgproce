@@ -9,6 +9,7 @@ import { casosPorRegion, getCaso } from "@/data/civilis/casos";
 import { getBossDeRegion } from "@/data/civilis/bosses";
 import { codexPorRegion } from "@/data/civilis/codex";
 import ClasificadorCivil from "@/components/civilis/ClasificadorCivil";
+import CivScenery from "@/components/civilis/CivScenery";
 
 export default function RegionCivilPage({ params }: { params: { region: string } }) {
   const region = getRegionCivil(params.region);
@@ -58,8 +59,9 @@ export default function RegionCivilPage({ params }: { params: { region: string }
       </header>
 
       {/* intro de región */}
-      <section className="civ-panel p-4 md:p-5 mb-4">
-        <div className="flex items-start gap-4">
+      <section className="civ-panel p-4 md:p-5 mb-4 relative overflow-hidden">
+        <CivScenery region={region.id} color={region.paleta.primary} />
+        <div className="relative z-[1] flex items-start gap-4">
           <motion.div className="text-5xl shrink-0 civ-float" style={{ filter: "drop-shadow(0 0 12px var(--civ-primary))" }}>{region.icono}</motion.div>
           <div className="min-w-0">
             <div className="civ-tag">{region.subtitulo}</div>
@@ -69,7 +71,7 @@ export default function RegionCivilPage({ params }: { params: { region: string }
         </div>
         {/* progreso + jefe */}
         {boss && (
-          <div className="civ-card p-3 mt-4 flex items-center gap-3">
+          <div className="civ-card p-3 mt-4 flex items-center gap-3 relative z-[1]">
             <span className="text-3xl shrink-0" style={{ filter: `drop-shadow(0 0 8px ${boss.color})` }}>{boss.icono}</span>
             <div className="min-w-0 flex-1">
               <div className="civ-tag" style={{ color: boss.color }}>{bossVencido ? "Jefe vencido ✓" : "Jefe de región"}</div>
