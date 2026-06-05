@@ -18,6 +18,7 @@ const INIT: EstadoCivilis = {
   bossesDerrotados: [],
   regionesCompletadas: [],
   examenesAprobados: [],
+  casosGradoResueltos: [],
   oro: 0,
   xp: 0,
   perfilNombre: undefined,
@@ -32,6 +33,7 @@ type CivilisStore = EstadoCivilis & {
   completarRegion: (region: RegionCivilId) => void;
   ganarCarta: (cartaId: string) => void;
   aprobarExamen: (profesorId: string, recompensa: { xp: number; oro: number }) => void;
+  completarCasoGrado: (id: string, recompensa: { xp: number; oro: number }) => void;
   gastarOro: (n: number) => boolean;
   setPerfil: (nombre: string) => void;
   reset: () => void;
@@ -79,6 +81,18 @@ export const useCivilis = create<CivilisStore>()(
           xp: s.xp + recompensa.xp,
           oro: s.oro + recompensa.oro,
         })),
+
+      completarCasoGrado: (id, recompensa) =>
+        set((s) =>
+          s.casosGradoResueltos.includes(id)
+            ? s
+            : {
+                casosGradoResueltos: [...s.casosGradoResueltos, id],
+                xp: s.xp + recompensa.xp,
+                oro: s.oro + recompensa.oro,
+                desbloqueado: true,
+              }
+        ),
 
       gastarOro: (n) => {
         if (get().oro < n) return false;

@@ -63,6 +63,31 @@ export interface CasoCivil {
   recompensa: { xp: number; oro: number; cartaId?: string };
 }
 
+/** Un paso de decisión dentro de un caso integrado de grado. */
+export interface OpcionGrado {
+  id: string;
+  texto: string;
+}
+export interface PasoGrado {
+  pregunta: string;
+  opciones: OpcionGrado[];
+  correcta: string; // id de la opción correcta
+  explicacion: string;
+  articulo?: string;
+}
+/**
+ * CASO DE GRADO — caso integrado multi-paso (estilo examen de grado):
+ * un relato de hechos seguido de decisiones secuenciales razonadas.
+ */
+export interface CasoGrado {
+  id: string;
+  titulo: string;
+  region: RegionCivilId;
+  relato: string;
+  pasos: PasoGrado[];
+  recompensa: { xp: number; oro: number };
+}
+
 /** Entrada del Codex Civilis (Pokédex jurídica). */
 export interface EntradaCodex {
   id: string;
@@ -129,6 +154,7 @@ export interface EstadoCivilis {
   bossesDerrotados: string[];
   regionesCompletadas: RegionCivilId[];
   examenesAprobados: string[];
+  casosGradoResueltos: string[];
   oro: number;
   xp: number;
   perfilNombre?: string;

@@ -3,6 +3,7 @@ import { CODEX_CIVIL } from "./codex";
 import { CARTAS_CIVIL } from "./cartas";
 import { CASOS_CIVIL } from "./casos";
 import { BOSSES_CIVIL } from "./bosses";
+import { CASOS_GRADO } from "./grado";
 
 // ============================================================================
 // LOGROS CIVILIS — metaprogresión. Derivados del estado (sin store extra).
@@ -27,6 +28,8 @@ export const LOGROS_CIVIL: LogroCivil[] = [
   { id: "cartas_full", nombre: "Coleccionista", desc: "Reúne todas las cartas de artículos.", icono: "🃏", check: (e) => e.cartasObtenidas.length >= CARTAS_CIVIL.length },
   { id: "examen", nombre: "Litigante titulado", desc: "Aprueba un examen oral de grado.", icono: "🎓", check: (e) => e.examenesAprobados.length >= 1 },
   { id: "tres_examenes", nombre: "A prueba de comisiones", desc: "Aprueba a Cabello, Montecinos y Silva.", icono: "⚖️", check: (e) => e.examenesAprobados.length >= 3 },
+  { id: "primer_grado", nombre: "Ante la comisión", desc: "Rinde tu primer caso de grado.", icono: "🏅", check: (e) => e.casosGradoResueltos.length >= 1 },
+  { id: "todos_grado", nombre: "Defensa integrada", desc: "Rinde todos los casos de grado.", icono: "🎖️", check: (e) => e.casosGradoResueltos.length >= CASOS_GRADO.length },
   { id: "regiones_full", nombre: "Señor del Reino", desc: "Completa las 8 regiones de combate.", icono: "🗺️", check: (e) => e.regionesCompletadas.length >= 8 },
   { id: "rico", nombre: "Arcas llenas", desc: "Acumula 500 de oro.", icono: "🪙", check: (e) => e.oro >= 500 },
 ];
