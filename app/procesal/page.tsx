@@ -18,10 +18,10 @@ const HABITANTES = [
 const MODOS = [
   { href: "/procesal/ordena", icono: "🪜", nombre: "Ordena el Procedimiento", desc: "Reconstruye la secuencia de memoria" },
   { href: "/procesal/plazos", icono: "⏱️", nombre: "Plazos", desc: "Asocia cada actuación con su plazo" },
+  { href: "/procesal/detecte", icono: "🔍", nombre: "Detecte el Error", desc: "Caza el vicio en el expediente" },
 ];
 const MODOS_PRONTO = [
   { icono: "🗂️", nombre: "Expediente Vivo" },
-  { icono: "🔍", nombre: "Detecte el Error" },
   { icono: "🎓", nombre: "Examen de Grado" },
 ];
 
