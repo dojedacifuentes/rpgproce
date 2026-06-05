@@ -32,10 +32,6 @@ export default function CivilisHub() {
         <div className="flex items-center justify-end gap-2 font-mono-terminal text-[11px] flex-wrap">
           <span className="civ-card px-2 py-1">⭐ {mounted ? xp : 0} XP</span>
           <span className="civ-card px-2 py-1">🪙 {mounted ? oro : 0}</span>
-          <Link href="/civilis/codex" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1">📚 Codex {mounted ? codexN : 0}/{CODEX_CIVIL.length}</Link>
-          <Link href="/civilis/cartas" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1">🃏 Cartas</Link>
-          <Link href="/civilis/bestiario" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1">👹 Bestiario</Link>
-          <Link href="/civilis/examen" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1">🎓 Examen Oral</Link>
         </div>
       </header>
 
@@ -45,6 +41,14 @@ export default function CivilisHub() {
         <p className="font-serif-juridica opacity-70 text-sm md:text-base max-w-2xl mt-1">
           El Reino de las Obligaciones. Recorre las nueve regiones, clasifica los casos que las habitan y completa el Codex para sobrevivir al examen de grado.
         </p>
+        <div className="flex flex-wrap gap-2 mt-3 font-mono-terminal text-[11px]">
+          <Link href="/civilis/codex" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">📚 Codex {mounted ? codexN : 0}/{CODEX_CIVIL.length}</Link>
+          <Link href="/civilis/flashcards" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🧠 Flashcards</Link>
+          <Link href="/civilis/practica" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">⚡ Práctica</Link>
+          <Link href="/civilis/cartas" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🃏 Cartas</Link>
+          <Link href="/civilis/bestiario" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">👹 Bestiario</Link>
+          <Link href="/civilis/examen" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🎓 Examen Oral</Link>
+        </div>
       </div>
 
       {/* ── MAPA MUNDO ── */}
