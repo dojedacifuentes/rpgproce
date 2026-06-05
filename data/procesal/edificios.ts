@@ -31,7 +31,6 @@ export const EDIFICIOS: Edificio[] = [
     orden: 2,
     intro:
       "Procedimiento breve y concentrado para los casos que requieren tramitación rápida (art. 680 CPC). Audiencia, prueba y sentencia en pocos pasos.",
-    enPrep: true,
   },
   {
     id: "ejecutivo",
@@ -59,7 +58,6 @@ export const EDIFICIOS: Edificio[] = [
     orden: 4,
     intro:
       "Cumplimiento incidental del fallo ante el mismo tribunal que lo dictó, dentro de un año desde que la ejecución se hizo exigible. La vía más expedita de la acción de cosa juzgada.",
-    enPrep: true,
   },
   {
     id: "recursos",
@@ -73,7 +71,6 @@ export const EDIFICIOS: Edificio[] = [
     orden: 5,
     intro:
       "Donde se aprende a impugnar: reposición, apelación, casación en la forma y en el fondo, queja y revisión. Cada maestro custodia un recurso, sus causales y —sobre todo— sus plazos fatales.",
-    enPrep: true,
   },
 ];
 
