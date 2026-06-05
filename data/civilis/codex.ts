@@ -420,6 +420,35 @@ export const CODEX_CIVIL: EntradaCodex[] = [
     preguntaGrado: "Concepto, requisitos y plazos de la prescripción extintiva. Interrupción y suspensión.",
     rareza: "epica",
   },
+
+  // ── CONTRATOS / COMPRAVENTA (extra) ───────────────────────────────────────
+  {
+    id: "enriquecimiento_sin_causa",
+    region: "contratos",
+    institucion: "Enriquecimiento sin causa",
+    icono: "⚱️",
+    concepto: "Nadie puede enriquecerse injustamente a costa de otro sin una razón legal que lo justifique; obliga a restituir lo obtenido sin fundamento.",
+    fuente: "Principio general (arts. 1437, 2295, 2316 CC)",
+    caracteristicas: ["No regulado como figura autónoma", "Origen romano: nemo locupletari potest aliena iactura", "Da una acción de restitución (in rem verso)"],
+    casoFrecuente: "Pago de lo no debido (2295), gestión de negocios ajenos (2286), construcción en terreno ajeno (669).",
+    preguntaGrado: "Concepto, fundamento y manifestaciones del enriquecimiento sin causa.",
+    rareza: "rara",
+  },
+  {
+    id: "capacidad_cv",
+    region: "compraventa",
+    institucion: "Capacidad en la compraventa",
+    icono: "🚫",
+    concepto: "Incapacidades especiales para comprar y/o vender que limitan la regla general de capacidad.",
+    fuente: "Arts. 1795-1800 CC",
+    clasificaciones: [
+      "Comprar y vender: entre cónyuges no separados judicialmente; entre padre/madre e hijo bajo patria potestad",
+      "Vender: administradores de establecimientos públicos respecto de sus bienes",
+      "Comprar: empleados públicos sobre bienes que venden por su ministerio; jueces, abogados, procuradores y notarios sobre bienes del litigio",
+    ],
+    preguntaGrado: "Enumere las incapacidades especiales para comprar y vender (1796-1800).",
+    rareza: "rara",
+  },
 ];
 
 export const RAREZA_CIVIL: Record<EntradaCodex["rareza"], { label: string; color: string }> = {

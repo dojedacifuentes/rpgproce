@@ -13,6 +13,7 @@ import { casosPorRegion } from "@/data/civilis/casos";
 export default function CivilisHub() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [viajando, setViajando] = useState<string | null>(null);
   const oro = useCivilis((s) => s.oro);
   const xp = useCivilis((s) => s.xp);
   const completadas = useCivilis((s) => s.regionesCompletadas);
@@ -21,7 +22,8 @@ export default function CivilisHub() {
 
   const viajar = (id: string) => {
     sfx.whoosh?.();
-    router.push(`/civilis/${id}`);
+    setViajando(id);
+    setTimeout(() => router.push(`/civilis/${id}`), 600);
   };
 
   return (
@@ -133,6 +135,27 @@ export default function CivilisHub() {
           ))}
         </div>
       </div>
+
+      {/* ── TRANSICIÓN DE VIAJE (fluidez al entrar a una región) ── */}
+      {viajando && (() => {
+        const rv = getRegionCivil(viajando);
+        if (!rv) return null;
+        return (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            data-civ={viajando}
+            className="fixed inset-0 z-[70] flex flex-col items-center justify-center"
+            style={{ background: "radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--civ-primary) 26%, #0a0c14), #0a0c14 72%)" }}
+          >
+            <motion.div initial={{ scale: 0.5, rotate: -8 }} animate={{ scale: 1.1, rotate: 0 }} transition={{ type: "spring", stiffness: 200 }} className="text-7xl civ-float">{rv.icono}</motion.div>
+            <div className="civ-heading text-2xl md:text-3xl mt-5" style={{ color: "var(--civ-primary)" }}>Viajando a {rv.nombre}</div>
+            <div className="mt-3 w-44 h-1 rounded-full overflow-hidden bg-black/40">
+              <motion.div className="h-full rounded-full" style={{ background: "var(--civ-primary)" }} initial={{ width: "0%" }} animate={{ width: "100%" }} transition={{ duration: 0.58 }} />
+            </div>
+          </motion.div>
+        );
+      })()}
     </main>
   );
 }
