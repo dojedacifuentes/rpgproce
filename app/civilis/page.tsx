@@ -47,6 +47,8 @@ export default function CivilisHub() {
           <Link href="/civilis/codex" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">📚 Codex {mounted ? codexN : 0}/{CODEX_CIVIL.length}</Link>
           <Link href="/civilis/flashcards" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🧠 Flashcards</Link>
           <Link href="/civilis/practica" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">⚡ Práctica</Link>
+          <Link href="/civilis/relaciona" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🔗 Relaciona</Link>
+          <Link href="/civilis/vof" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">⚖️ V o F</Link>
           <Link href="/civilis/cartas" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🃏 Cartas</Link>
           <Link href="/civilis/bestiario" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">👹 Bestiario</Link>
           <Link href="/civilis/examen" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1.5">🎓 Examen Oral</Link>
