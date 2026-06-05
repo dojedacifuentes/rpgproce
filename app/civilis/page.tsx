@@ -29,10 +29,12 @@ export default function CivilisHub() {
       {/* header */}
       <header className="flex items-center justify-between gap-3 flex-wrap mb-3">
         <Link href="/juego" className="civ-btn text-xs px-3 py-1.5" onClick={() => sfx.click?.()}>◂ Ciudad Judicial</Link>
-        <div className="flex items-center gap-2 font-mono-terminal text-[11px]">
+        <div className="flex items-center justify-end gap-2 font-mono-terminal text-[11px] flex-wrap">
           <span className="civ-card px-2 py-1">⭐ {mounted ? xp : 0} XP</span>
           <span className="civ-card px-2 py-1">🪙 {mounted ? oro : 0}</span>
           <Link href="/civilis/codex" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1">📚 Codex {mounted ? codexN : 0}/{CODEX_CIVIL.length}</Link>
+          <Link href="/civilis/cartas" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1">🃏 Cartas</Link>
+          <Link href="/civilis/bestiario" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1">👹 Bestiario</Link>
           <Link href="/civilis/examen" onClick={() => sfx.click?.()} className="civ-btn px-3 py-1">🎓 Examen Oral</Link>
         </div>
       </header>

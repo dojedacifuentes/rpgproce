@@ -26,7 +26,7 @@ export const CASOS_CIVIL: CasoCivil[] = [
     articulo: "Art. 1438 CC",
     dificultad: 1,
     codexId: "clasificacion_obligaciones",
-    recompensa: { xp: 24, oro: 10 },
+    recompensa: { xp: 24, oro: 10, cartaId: "art_1438" },
   },
   {
     id: "ob_caballo",
@@ -88,7 +88,7 @@ export const CASOS_CIVIL: CasoCivil[] = [
     articulo: "Art. 1552 CC",
     dificultad: 2,
     codexId: "excepcion_contrato",
-    recompensa: { xp: 34, oro: 15 },
+    recompensa: { xp: 34, oro: 15, cartaId: "art_1552" },
   },
   {
     id: "co_riesgos",
@@ -108,7 +108,7 @@ export const CASOS_CIVIL: CasoCivil[] = [
     articulo: "Art. 1550 CC",
     dificultad: 3,
     codexId: "teoria_riesgos",
-    recompensa: { xp: 40, oro: 18 },
+    recompensa: { xp: 40, oro: 18, cartaId: "art_1550" },
   },
   {
     id: "co_resolucion",
@@ -128,7 +128,7 @@ export const CASOS_CIVIL: CasoCivil[] = [
     articulo: "Art. 1489 CC",
     dificultad: 2,
     codexId: "resolucion_inejecucion",
-    recompensa: { xp: 34, oro: 15 },
+    recompensa: { xp: 34, oro: 15, cartaId: "art_1489" },
   },
   {
     id: "co_buenafe",
@@ -148,7 +148,7 @@ export const CASOS_CIVIL: CasoCivil[] = [
     articulo: "Art. 1546 CC",
     dificultad: 2,
     codexId: "buena_fe",
-    recompensa: { xp: 34, oro: 15 },
+    recompensa: { xp: 34, oro: 15, cartaId: "art_1546" },
   },
   {
     id: "co_relativo",
@@ -336,7 +336,7 @@ export const CASOS_CIVIL: CasoCivil[] = [
     articulo: "Art. 2428 CC",
     dificultad: 2,
     codexId: "tercer_poseedor",
-    recompensa: { xp: 36, oro: 16 },
+    recompensa: { xp: 36, oro: 16, cartaId: "art_2428" },
   },
   {
     id: "hi_extincion",
@@ -356,7 +356,7 @@ export const CASOS_CIVIL: CasoCivil[] = [
     articulo: "Art. 2434 CC",
     dificultad: 2,
     codexId: "extincion_hipoteca",
-    recompensa: { xp: 34, oro: 15 },
+    recompensa: { xp: 34, oro: 15, cartaId: "art_2434" },
   },
 
   // ── OBLIGACIONES (extra) ──────────────────────────────────────────────────
@@ -440,7 +440,7 @@ export const CASOS_CIVIL: CasoCivil[] = [
     articulo: "Art. 1522 CC",
     dificultad: 2,
     codexId: "contribucion_deuda",
-    recompensa: { xp: 36, oro: 16 },
+    recompensa: { xp: 36, oro: 16, cartaId: "art_1522" },
   },
   {
     id: "so_insolvente",
@@ -482,7 +482,7 @@ export const CASOS_CIVIL: CasoCivil[] = [
     articulo: "Art. 1655 CC",
     dificultad: 2,
     codexId: "compensacion",
-    recompensa: { xp: 34, oro: 15 },
+    recompensa: { xp: 34, oro: 15, cartaId: "art_1655" },
   },
   {
     id: "ex_confusion",
@@ -522,7 +522,7 @@ export const CASOS_CIVIL: CasoCivil[] = [
     articulo: "Art. 1628 CC",
     dificultad: 2,
     codexId: "novacion",
-    recompensa: { xp: 34, oro: 15 },
+    recompensa: { xp: 34, oro: 15, cartaId: "art_1628" },
   },
   {
     id: "ex_prescripcion",

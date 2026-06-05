@@ -17,6 +17,7 @@ export const BOSSES_CIVIL: BossCivil[] = [
     descripcion: "Una bestia hecha de cadenas vivas. Cada eslabón es una obligación que exige ser clasificada.",
     vidaMax: 100,
     casosIds: casosPorRegion("obligaciones").map((c) => c.id),
+    recompensaArticuloId: "art_578",
     recompensaOro: 40,
   },
   {
@@ -29,6 +30,7 @@ export const BOSSES_CIVIL: BossCivil[] = [
     descripcion: "Cobra el todo a cualquiera. Para vencerlo hay que saber quién paga, quién cobra y quién se subroga.",
     vidaMax: 140,
     casosIds: casosPorRegion("solidaridad").map((c) => c.id),
+    recompensaArticuloId: "art_1511",
     recompensaOro: 60,
   },
   {
@@ -41,6 +43,7 @@ export const BOSSES_CIVIL: BossCivil[] = [
     descripcion: "Lanza tormentas imprevisibles sobre los contratos. Solo la buena fe y los principios lo contienen.",
     vidaMax: 150,
     casosIds: casosPorRegion("contratos").map((c) => c.id),
+    recompensaArticuloId: "art_1545",
     recompensaOro: 70,
   },
   {
@@ -53,6 +56,7 @@ export const BOSSES_CIVIL: BossCivil[] = [
     descripcion: "Vende cosas evictas y defectuosas. Cae ante quien distingue evicción, vicios y pactos.",
     vidaMax: 130,
     casosIds: casosPorRegion("compraventa").map((c) => c.id),
+    recompensaArticuloId: "art_1793",
     recompensaOro: 60,
   },
   {
@@ -65,6 +69,7 @@ export const BOSSES_CIVIL: BossCivil[] = [
     descripcion: "Cuatro puertas, cuatro requisitos. Falla uno y la promesa no produce obligación alguna.",
     vidaMax: 120,
     casosIds: casosPorRegion("promesa").map((c) => c.id),
+    recompensaArticuloId: "art_1554",
     recompensaOro: 55,
   },
   {
@@ -77,6 +82,7 @@ export const BOSSES_CIVIL: BossCivil[] = [
     descripcion: "Excede sus facultades y traiciona al mandante. Cae ante quien domina la representación y la extinción.",
     vidaMax: 130,
     casosIds: casosPorRegion("mandato").map((c) => c.id),
+    recompensaArticuloId: "art_2116",
     recompensaOro: 60,
   },
   {
@@ -89,6 +95,7 @@ export const BOSSES_CIVIL: BossCivil[] = [
     descripcion: "Posee la finca gravada sin haberse obligado. La hipoteca lo persigue por las criptas del Registro.",
     vidaMax: 160,
     casosIds: casosPorRegion("hipoteca").map((c) => c.id),
+    recompensaArticuloId: "art_2407",
     recompensaOro: 80,
   },
   {
@@ -101,6 +108,7 @@ export const BOSSES_CIVIL: BossCivil[] = [
     descripcion: "Cada piso, un modo de morir de la deuda. Domina la torre quien los distingue todos.",
     vidaMax: 150,
     casosIds: casosPorRegion("extincion").map((c) => c.id),
+    recompensaArticuloId: "art_1567",
     recompensaOro: 70,
   },
 ];
