@@ -15,10 +15,12 @@ const HABITANTES = [
   { icono: "👨‍⚖️", nombre: "Juez" },
 ];
 
+const MODOS = [
+  { href: "/procesal/ordena", icono: "🪜", nombre: "Ordena el Procedimiento", desc: "Reconstruye la secuencia de memoria" },
+  { href: "/procesal/plazos", icono: "⏱️", nombre: "Plazos", desc: "Asocia cada actuación con su plazo" },
+];
 const MODOS_PRONTO = [
   { icono: "🗂️", nombre: "Expediente Vivo" },
-  { icono: "🪜", nombre: "Ordena el Procedimiento" },
-  { icono: "⏱️", nombre: "Plazos" },
   { icono: "🔍", nombre: "Detecte el Error" },
   { icono: "🎓", nombre: "Examen de Grado" },
 ];
@@ -145,10 +147,23 @@ export default function ProcesalHub() {
         </div>
       </div>
 
-      {/* modos (próximamente) */}
+      {/* modos de juego */}
       <div className="mt-5">
-        <div className="proc-tag mb-2">Modos de juego · próximamente</div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+        <div className="proc-tag mb-2">Modos de juego</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {MODOS.map((m) => (
+            <Link key={m.href} href={m.href} onClick={() => sfx.click?.()} onMouseEnter={() => sfx.hover?.()} className="proc-card p-3 flex items-center gap-3 transition-transform hover:-translate-y-0.5">
+              <span className="text-2xl shrink-0">{m.icono}</span>
+              <div className="min-w-0">
+                <div className="proc-heading text-[13px] leading-tight">{m.nombre}</div>
+                <div className="font-serif-juridica text-[11px] opacity-60 leading-snug">{m.desc}</div>
+              </div>
+              <span className="ml-auto opacity-30 shrink-0">▸</span>
+            </Link>
+          ))}
+        </div>
+        <div className="proc-tag mb-2 mt-3 opacity-70">Próximamente</div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           {MODOS_PRONTO.map((m) => (
             <div key={m.nombre} className="proc-card p-2.5 flex items-center gap-2.5 opacity-55">
               <span className="text-xl shrink-0">{m.icono}</span>

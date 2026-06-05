@@ -26,6 +26,7 @@ type ProcStore = EstadoProcesal & {
   completarEdificio: (id: EdificioId, recompensa?: { xp: number; sellos: number }) => void;
   aprobarExamen: (id: string, recompensa: { xp: number; sellos: number }) => void;
   ganarSellos: (n: number) => void;
+  premio: (xp: number, sellos: number) => void;
   setPerfil: (nombre: string) => void;
   reset: () => void;
 };
@@ -64,6 +65,8 @@ export const useProcesal = create<ProcStore>()(
         })),
 
       ganarSellos: (n) => set((s) => ({ sellos: s.sellos + n })),
+
+      premio: (xp, sellos) => set((s) => ({ xp: s.xp + xp, sellos: s.sellos + sellos, desbloqueado: true })),
 
       setPerfil: (nombre) => set({ perfilNombre: nombre, desbloqueado: true }),
 
