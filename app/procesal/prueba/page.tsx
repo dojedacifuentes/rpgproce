@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { sfx } from "@/lib/audio";
 import { useProcesal } from "@/store/useProcesal";
-import { NARRADOR, MEDIOS_PRUEBA, DECKS_CLASIFICA, MC_PRUEBA, VF_PRUEBA } from "@/data/procesal/prueba";
+import { NARRADOR, MEDIOS_PRUEBA, DECKS_CLASIFICA, MC_PRUEBA, VF_PRUEBA, CASOS_PRUEBA } from "@/data/procesal/prueba";
 
 const MODOS = [
   { href: "/procesal/prueba/clasifica", icono: "🧪", nombre: "Clasifica la Prueba", desc: "Arrastra cada elemento de una columna a otra", tag: `${DECKS_CLASIFICA.length} tableros` },
   { href: "/procesal/prueba/alternativas", icono: "🎯", nombre: "Alternativas de la Verdad", desc: "Preguntas de alternativas difíciles", tag: `${MC_PRUEBA.length} preguntas` },
   { href: "/procesal/prueba/vof", icono: "⚖️", nombre: "Verdadero o Falso", desc: "Detecta el matiz que reprueba a muchos", tag: `${VF_PRUEBA.length} afirmaciones` },
+  { href: "/procesal/prueba/casos", icono: "🔎", nombre: "Casos de la Verdad", desc: "Resuelve un problema probatorio paso a paso", tag: `${CASOS_PRUEBA.length} casos` },
   { href: "/procesal/prueba/codex", icono: "📚", nombre: "Archivo de Medios", desc: "Los medios de prueba y su valoración", tag: `${MEDIOS_PRUEBA.length} fichas` },
 ];
 

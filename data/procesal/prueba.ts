@@ -378,3 +378,67 @@ export const VF_PRUEBA: VFItem[] = [
   { id: "vf11", afirmacion: "Los hechos admitidos expresamente por la contraparte deben igualmente probarse.", verdadero: false, explicacion: "Los hechos admitidos no son controvertidos y, por tanto, no requieren prueba.", articulo: "Art. 318 CPC" },
   { id: "vf12", afirmacion: "El instrumento privado emanado de la parte y no objetado en plazo puede tenerse por reconocido.", verdadero: true, explicacion: "Acompañado bajo apercibimiento del art. 346 N°3, si no se objeta dentro del plazo se tiene por reconocido.", articulo: "Art. 346 N°3 CPC" },
 ];
+
+// ── RESOLUCIÓN DE CASOS PROBATORIOS ─────────────────────────────────────────
+export interface PregCaso {
+  eje: string;
+  pregunta: string;
+  opciones: { id: string; texto: string }[];
+  correcta: string;
+  explicacion: string;
+  articulo: string;
+}
+export interface CasoPrueba {
+  id: string;
+  titulo: string;
+  situacion: string;
+  preguntas: PregCaso[];
+}
+
+export const CASOS_PRUEBA: CasoPrueba[] = [
+  {
+    id: "caso_mutuo",
+    titulo: "El préstamo en efectivo",
+    situacion: "Pedro cobra a Juan $5.000.000 que dice haberle prestado en efectivo, sin documento alguno. Juan niega lisa y llanamente la deuda. Pedro solo ofrece tres testigos que 'vieron' la entrega.",
+    preguntas: [
+      { eje: "Carga", pregunta: "¿A quién corresponde probar la existencia del préstamo?", opciones: [ { id: "a", texto: "A Pedro, que alega la obligación" }, { id: "b", texto: "A Juan, que la niega" }, { id: "c", texto: "A ninguno: la entrega se presume" } ], correcta: "a", explicacion: "Incumbe probar la obligación a quien la alega; Pedro debe acreditar el préstamo (art. 1698).", articulo: "Art. 1698 CC" },
+      { eje: "Medio", pregunta: "¿Puede Pedro probar el préstamo solo con testigos?", opciones: [ { id: "a", texto: "No: el acto debía constar por escrito y no se admite prueba de testigos" }, { id: "b", texto: "Sí, tres testigos contestes hacen plena prueba" }, { id: "c", texto: "Sí, porque la testimonial siempre es admisible" } ], correcta: "a", explicacion: "Los actos que contienen la entrega de una cosa que vale más de 2 UTM deben constar por escrito; no se admite prueba testimonial sobre ellos.", articulo: "Arts. 1708-1709 CC" },
+      { eje: "Consecuencia", pregunta: "Si Pedro no logra acreditar el préstamo, ¿qué resolverá el tribunal?", opciones: [ { id: "a", texto: "Rechazará la demanda: el hecho no probado se tiene por inexistente" }, { id: "b", texto: "Acogerá la demanda por equidad" }, { id: "c", texto: "Citará a una nueva audiencia de prueba" } ], correcta: "a", explicacion: "No probado el hecho por quien tenía la carga, se falla en su contra: la demanda se rechaza.", articulo: "Art. 1698 CC" },
+    ],
+  },
+  {
+    id: "caso_escritura",
+    titulo: "La escritura impugnada",
+    situacion: "Se acompaña una escritura pública de compraventa. La contraparte sostiene que lo declarado por las partes en ella es falso.",
+    preguntas: [
+      { eje: "Valor", pregunta: "¿Qué hace plena fe la escritura pública entre las partes?", opciones: [ { id: "a", texto: "El hecho de otorgarse, su fecha y la verdad de las declaraciones, contra los declarantes" }, { id: "b", texto: "Solo la firma del notario" }, { id: "c", texto: "Nada: requiere ratificación posterior" } ], correcta: "a", explicacion: "Entre las partes hace plena fe del otorgamiento, fecha y de la verdad de las declaraciones (contra los declarantes).", articulo: "Art. 1700 CC" },
+      { eje: "Medio", pregunta: "¿Cómo puede atacarse la veracidad de esas declaraciones?", opciones: [ { id: "a", texto: "Con prueba en contrario (p. ej. simulación o nulidad); no basta negarlas" }, { id: "b", texto: "Basta negarlas en la contestación" }, { id: "c", texto: "No pueden atacarse jamás" } ], correcta: "a", explicacion: "La fe del instrumento público se destruye con prueba en contrario idónea; la sola negación no basta.", articulo: "Arts. 1700 y 1876 CC" },
+    ],
+  },
+  {
+    id: "caso_testigo",
+    titulo: "El testigo sospechoso",
+    situacion: "El actor presenta como testigo a su propio cónyuge para acreditar los hechos de la demanda.",
+    preguntas: [
+      { eje: "Acción", pregunta: "¿Qué puede hacer la contraparte?", opciones: [ { id: "a", texto: "Tacharlo por inhabilidad relativa (cónyuge)" }, { id: "b", texto: "Nada: el cónyuge es testigo plenamente hábil" }, { id: "c", texto: "Pedir su arresto" } ], correcta: "a", explicacion: "El cónyuge figura entre las inhabilidades relativas para tachar al testigo (art. 358).", articulo: "Art. 358 CPC" },
+      { eje: "Oportunidad", pregunta: "¿Cuándo debe oponerse la tacha?", opciones: [ { id: "a", texto: "Antes de que el testigo preste su declaración" }, { id: "b", texto: "En los alegatos finales" }, { id: "c", texto: "En el recurso de apelación" } ], correcta: "a", explicacion: "Las tachas se hacen valer antes de que el testigo declare (art. 373).", articulo: "Art. 373 CPC" },
+    ],
+  },
+  {
+    id: "caso_perito",
+    titulo: "El perito categórico",
+    situacion: "El perito caligráfico concluye, con certeza absoluta, que la firma del documento es falsa. El juez, al examinar el documento, alberga serias dudas.",
+    preguntas: [
+      { eje: "Valor", pregunta: "¿Está el juez obligado a fallar conforme al peritaje?", opciones: [ { id: "a", texto: "No: aprecia el informe conforme a la sana crítica" }, { id: "b", texto: "Sí: el peritaje técnico lo vincula" }, { id: "c", texto: "Sí, salvo que las partes lo objeten" } ], correcta: "a", explicacion: "El dictamen pericial se aprecia según la sana crítica; no obliga al tribunal.", articulo: "Art. 425 CPC" },
+    ],
+  },
+  {
+    id: "caso_privado",
+    titulo: "El documento no objetado",
+    situacion: "La parte acompaña un instrumento privado emanado de la contraria, bajo apercibimiento del art. 346 N°3. Transcurre el plazo y la contraria no lo objeta.",
+    preguntas: [
+      { eje: "Consecuencia", pregunta: "¿Qué efecto produce el silencio de la contraria?", opciones: [ { id: "a", texto: "El documento se tiene por reconocido" }, { id: "b", texto: "El documento se excluye del juicio" }, { id: "c", texto: "Debe citarse a reconocimiento de firma" } ], correcta: "a", explicacion: "Acompañado bajo el apercibimiento del 346 N°3, no objetado en plazo, se tiene por reconocido.", articulo: "Art. 346 N°3 CPC" },
+      { eje: "Valor", pregunta: "Reconocido el instrumento privado, ¿qué valor adquiere respecto de quien lo firmó?", opciones: [ { id: "a", texto: "El de escritura pública respecto de los que lo suscribieron" }, { id: "b", texto: "Ninguno: sigue siendo un simple borrador" }, { id: "c", texto: "Solo sirve como base de presunción" } ], correcta: "a", explicacion: "El instrumento privado reconocido tiene el valor de escritura pública respecto de los que lo suscribieron.", articulo: "Art. 1702 CC" },
+    ],
+  },
+];
