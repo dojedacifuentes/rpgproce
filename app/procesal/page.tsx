@@ -146,6 +146,19 @@ export default function ProcesalHub() {
         </div>
       </Link>
 
+      {/* ── SECCIÓN ESPECIAL: ATLAS JURÍDICO (geografía de los códigos) ── */}
+      <Link href="/procesal/atlas" onClick={() => sfx.click?.()} onMouseEnter={() => sfx.hover?.()} className="block proc-panel p-4 md:p-5 mt-3 transition-transform hover:-translate-y-0.5">
+        <div className="flex items-center gap-4">
+          <motion.div className="text-4xl md:text-5xl shrink-0 proc-float" style={{ filter: "drop-shadow(0 0 12px var(--proc-primary))" }}>🗺️</motion.div>
+          <div className="flex-1 min-w-0">
+            <div className="proc-tag">Sección especial · Geografía de los códigos</div>
+            <h2 className="proc-heading text-xl md:text-2xl mt-0.5">Atlas Jurídico</h2>
+            <p className="font-serif-juridica text-[13px] opacity-70 mt-0.5 leading-snug">La estructura sistemática del Código Civil, el CPC, la Constitución y las leyes 18.575 y 19.880: libros, capítulos, materias y la lógica de cada uno, con respuesta de grado. Conoce el mapa antes de recorrer el territorio.</p>
+          </div>
+          <div className="proc-btn px-4 py-2 text-sm shrink-0 self-center">Abrir ▸</div>
+        </div>
+      </Link>
+
       {/* habitantes del archivo */}
       <div className="mt-5">
         <div className="proc-tag mb-2">Habitantes del Archivo</div>
