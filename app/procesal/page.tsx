@@ -147,6 +147,19 @@ export default function ProcesalHub() {
         </div>
       </Link>
 
+      {/* ── SECCIÓN ESPECIAL: COMPARADOR DE PROCEDIMIENTOS ── */}
+      <Link href="/procesal/comparador" onClick={() => sfx.click?.()} onMouseEnter={() => sfx.hover?.()} className="block proc-panel p-4 md:p-5 mt-3 transition-transform hover:-translate-y-0.5">
+        <div className="flex items-center gap-4">
+          <motion.div className="text-4xl md:text-5xl shrink-0 proc-float" style={{ filter: "drop-shadow(0 0 12px var(--proc-primary))" }}>📊</motion.div>
+          <div className="flex-1 min-w-0">
+            <div className="proc-tag">Sección especial · Vista comparada</div>
+            <h2 className="proc-heading text-xl md:text-2xl mt-0.5">Comparador de Procedimientos</h2>
+            <p className="font-serif-juridica text-[13px] opacity-70 mt-0.5 leading-snug">Ordinario, sumario, ejecutivo, ejecución incidental y apelación, lado a lado: etapas, plazos y rasgos alineados por aspecto para verlos de un vistazo.</p>
+          </div>
+          <div className="proc-btn px-4 py-2 text-sm shrink-0 self-center">Comparar ▸</div>
+        </div>
+      </Link>
+
       {/* ── SECCIÓN ESPECIAL: ATLAS JURÍDICO (geografía de los códigos) ── */}
       <Link href="/procesal/atlas" onClick={() => sfx.click?.()} onMouseEnter={() => sfx.hover?.()} className="block proc-panel p-4 md:p-5 mt-3 transition-transform hover:-translate-y-0.5">
         <div className="flex items-center gap-4">
