@@ -12,7 +12,8 @@ export type RegionCivilId =
   | "mandato"
   | "hipoteca"
   | "extincion"
-  | "biblioteca";
+  | "biblioteca"
+  | "actojuridico";
 
 export type Rareza = "comun" | "rara" | "epica" | "legendaria";
 

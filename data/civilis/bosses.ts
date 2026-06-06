@@ -111,6 +111,19 @@ export const BOSSES_CIVIL: BossCivil[] = [
     recompensaArticuloId: "art_1567",
     recompensaOro: 70,
   },
+  {
+    id: "juez_nulidad",
+    nombre: "El Juez de la Nulidad",
+    titulo: "Verdugo de los Actos Viciados",
+    region: "actojuridico",
+    icono: "⚖️",
+    color: "#7c83e6",
+    descripcion: "Examina cada acto y fulmina los que nacen viciados. Cae ante quien distingue existencia y validez, vicios del consentimiento y clases de nulidad.",
+    vidaMax: 140,
+    casosIds: casosPorRegion("actojuridico").map((c) => c.id),
+    recompensaArticuloId: "art_1445",
+    recompensaOro: 65,
+  },
 ];
 
 export const getBossCivil = (id: string) => BOSSES_CIVIL.find((b) => b.id === id);

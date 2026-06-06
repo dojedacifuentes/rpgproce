@@ -95,6 +95,16 @@ export const REGIONES_CIVIL: RegionCivil[] = [
     paleta: { primary: "#45b6a6", secondary: "#2c8073", accent: "#86e6d6", ambient: "rgba(69,182,166,.10)" },
     lore: "El corazón del Reino. Cada institución dominada se inscribe aquí, viva, para el examen de grado.",
   },
+  {
+    id: "actojuridico",
+    nombre: "Génesis del Acto Jurídico",
+    subtitulo: "Voluntad, objeto y causa",
+    icono: "✨",
+    x: 30, y: 9, orden: 10,
+    paleta: { primary: "#7c83e6", secondary: "#4f56b8", accent: "#aeb4ff", ambient: "rgba(124,131,230,.12)" },
+    lore: "El origen de todo: donde la voluntad se vuelve derecho. Aquí se forjan —y se fulminan— los actos según nazcan sanos o viciados.",
+    bossId: "juez_nulidad",
+  },
 ];
 
 export const SENDERO_CIVIL: [RegionCivilId, RegionCivilId][] = [
@@ -108,6 +118,8 @@ export const SENDERO_CIVIL: [RegionCivilId, RegionCivilId][] = [
   ["promesa", "hipoteca"],
   ["compraventa", "extincion"],
   ["hipoteca", "extincion"],
+  ["actojuridico", "obligaciones"],
+  ["actojuridico", "contratos"],
 ];
 
 export const getRegionCivil = (id: string) => REGIONES_CIVIL.find((r) => r.id === id);

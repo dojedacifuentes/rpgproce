@@ -34,6 +34,7 @@
 [data-civ="hipoteca"]     { --civ-primary:#8a6fd0; --civ-secondary:#5a3f9e; --civ-accent:#b9a0f0; --civ-ambient:rgba(122,92,192,.12); }
 [data-civ="extincion"]    { --civ-primary:#c65b6e; --civ-secondary:#9a3a4c; --civ-accent:#f09aa8; --civ-ambient:rgba(198,91,110,.10); }
 [data-civ="biblioteca"]   { --civ-primary:#45b6a6; --civ-secondary:#2c8073; --civ-accent:#86e6d6; --civ-ambient:rgba(69,182,166,.10); }
+[data-civ="actojuridico"] { --civ-primary:#7c83e6; --civ-secondary:#4f56b8; --civ-accent:#aeb4ff; --civ-ambient:rgba(124,131,230,.12); }
 
 /* ── Panel ornado JRPG (doble borde de oro) ──────────────────────────────── */
 .civ-panel {

@@ -81,6 +81,14 @@ function Motivo({ region, c }: { region: RegionCivilId; c: string }) {
           {Array.from({ length: 22 }).map((_, i) => (<rect key={i} x={94 + i * 10} y={74 + (i % 3) * 14} width="6" height="10" fill={`${s}40`} />))}
         </g>
       );
+    case "actojuridico": // génesis: estrella de la voluntad + pilares (voluntad/objeto/causa)
+      return (
+        <g>
+          <path d="M200 58 L205 74 L222 74 L208 84 L213 100 L200 90 L187 100 L192 84 L178 74 L195 74 Z" fill={`${s}44`} className="civ-twinkle" />
+          {[150, 200, 250].map((x, i) => (<rect key={i} x={x - 5} y={96} width="10" height="22" fill={`${s}${["2a", "38", "2a"][i]}`} />))}
+          <rect x="120" y="116" width="160" height="2" fill={`${s}40`} />
+        </g>
+      );
     default:
       return <path d={`M0 ${GROUND} L400 ${GROUND} L400 130 L0 130 Z`} fill={`${s}22`} />;
   }
