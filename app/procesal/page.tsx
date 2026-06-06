@@ -20,6 +20,7 @@ const MODOS = [
   { href: "/procesal/ordena", icono: "🪜", nombre: "Ordena el Procedimiento", desc: "Reconstruye la secuencia de memoria" },
   { href: "/procesal/plazos", icono: "⏱️", nombre: "Plazos", desc: "Asocia cada actuación con su plazo" },
   { href: "/procesal/detecte", icono: "🔍", nombre: "Detecte el Error", desc: "Caza el vicio en el expediente" },
+  { href: "/procesal/alzada", icono: "🏛️", nombre: "El Tribunal de Alzada", desc: "Apelación: efectos, en cuenta/vista, casación conjunta" },
   { href: "/procesal/examen", icono: "🎓", nombre: "Examen de Grado", desc: "Comisión oral: preguntas encadenadas de procesal" },
 ];
 const MODOS_PRONTO: { icono: string; nombre: string }[] = [];
