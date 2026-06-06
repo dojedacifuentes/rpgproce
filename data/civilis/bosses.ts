@@ -124,6 +124,19 @@ export const BOSSES_CIVIL: BossCivil[] = [
     recompensaArticuloId: "art_1445",
     recompensaOro: 65,
   },
+  {
+    id: "usurpador_dominio",
+    nombre: "El Usurpador",
+    titulo: "Poseedor de Mala Fe",
+    region: "bienes",
+    icono: "🏴",
+    color: "#c98a52",
+    descripcion: "Detenta lo ajeno con ánimo de dueño. Cae ante quien domina los modos de adquirir, la posesión, la prescripción y la reivindicación.",
+    vidaMax: 140,
+    casosIds: casosPorRegion("bienes").map((c) => c.id),
+    recompensaArticuloId: "art_582",
+    recompensaOro: 65,
+  },
 ];
 
 export const getBossCivil = (id: string) => BOSSES_CIVIL.find((b) => b.id === id);

@@ -105,6 +105,16 @@ export const REGIONES_CIVIL: RegionCivil[] = [
     lore: "El origen de todo: donde la voluntad se vuelve derecho. Aquí se forjan —y se fulminan— los actos según nazcan sanos o viciados.",
     bossId: "juez_nulidad",
   },
+  {
+    id: "bienes",
+    nombre: "Tierras del Dominio",
+    subtitulo: "Bienes y derechos reales",
+    icono: "🏔️",
+    x: 88, y: 16, orden: 11,
+    paleta: { primary: "#c98a52", secondary: "#9a6536", accent: "#f0c79a", ambient: "rgba(201,138,82,.12)" },
+    lore: "Montañas, fundos y registros. Aquí se conquista el dominio: por ocupación, por tradición o por el lento poder del tiempo.",
+    bossId: "usurpador_dominio",
+  },
 ];
 
 export const SENDERO_CIVIL: [RegionCivilId, RegionCivilId][] = [
@@ -120,6 +130,8 @@ export const SENDERO_CIVIL: [RegionCivilId, RegionCivilId][] = [
   ["hipoteca", "extincion"],
   ["actojuridico", "obligaciones"],
   ["actojuridico", "contratos"],
+  ["compraventa", "bienes"],
+  ["bienes", "extincion"],
 ];
 
 export const getRegionCivil = (id: string) => REGIONES_CIVIL.find((r) => r.id === id);

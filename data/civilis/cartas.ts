@@ -10,6 +10,8 @@ export const CARTAS_CIVIL: CartaArticulo[] = [
     texto: "Derechos personales o créditos son los que solo pueden reclamarse de ciertas personas que han contraído las obligaciones correlativas." },
   { id: "art_1445", articulo: "Art. 1445 CC", nombre: "Requisitos del Acto", region: "actojuridico", rareza: "legendaria",
     texto: "Para que una persona se obligue a otra por un acto o declaración de voluntad es necesario: que sea legalmente capaz; que consienta y su consentimiento no adolezca de vicio; que recaiga sobre un objeto lícito; y que tenga una causa lícita." },
+  { id: "art_582", articulo: "Art. 582 CC", nombre: "El Dominio", region: "bienes", rareza: "legendaria",
+    texto: "El dominio (que se llama también propiedad) es el derecho real en una cosa corporal, para gozar y disponer de ella arbitrariamente, no siendo contra la ley o contra derecho ajeno." },
   { id: "art_1438", articulo: "Art. 1438 CC", nombre: "El Contrato", region: "contratos", rareza: "comun",
     texto: "Contrato o convención es un acto por el cual una parte se obliga para con otra a dar, hacer o no hacer alguna cosa." },
   { id: "art_1489", articulo: "Art. 1489 CC", nombre: "Condición Resolutoria Tácita", region: "contratos", rareza: "epica",

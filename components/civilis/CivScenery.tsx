@@ -89,6 +89,16 @@ function Motivo({ region, c }: { region: RegionCivilId; c: string }) {
           <rect x="120" y="116" width="160" height="2" fill={`${s}40`} />
         </g>
       );
+    case "bienes": // tierras del dominio: montañas + hito/bandera
+      return (
+        <g>
+          <path d="M30 118 L100 72 L160 118 Z" fill={`${s}2a`} />
+          <path d="M140 118 L228 60 L312 118 Z" fill={`${s}38`} />
+          <path d="M252 118 L322 82 L384 118 Z" fill={`${s}26`} />
+          <rect x="226" y="46" width="2" height="16" fill={s} />
+          <path d="M228 46 L244 51 L228 56 Z" fill={`${s}66`} className="civ-twinkle" />
+        </g>
+      );
     default:
       return <path d={`M0 ${GROUND} L400 ${GROUND} L400 130 L0 130 Z`} fill={`${s}22`} />;
   }
