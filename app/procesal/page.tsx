@@ -133,6 +133,19 @@ export default function ProcesalHub() {
         })}
       </div>
 
+      {/* ── SECCIÓN ESPECIAL: LA SALA DE LA VERDAD (Prueba) ── */}
+      <Link href="/procesal/prueba" onClick={() => sfx.click?.()} onMouseEnter={() => sfx.hover?.()} data-proc="prueba" className="block proc-panel proc-scan p-4 md:p-5 mt-5 transition-transform hover:-translate-y-0.5">
+        <div className="flex items-center gap-4">
+          <motion.div className="text-4xl md:text-5xl shrink-0 proc-float" style={{ filter: "drop-shadow(0 0 12px var(--proc-primary))" }}>⚖️</motion.div>
+          <div className="flex-1 min-w-0">
+            <div className="proc-tag">Sección especial · Derecho Probatorio</div>
+            <h2 className="proc-heading text-xl md:text-2xl mt-0.5">La Sala de la Verdad</h2>
+            <p className="font-serif-juridica text-[13px] opacity-70 mt-0.5 leading-snug">La prueba en el proceso civil, gamificada: clasifica de columna a columna, alternativas y V/F difíciles, y el archivo de medios. Un hecho no probado es un hecho que jamás ocurrió.</p>
+          </div>
+          <div className="proc-btn px-4 py-2 text-sm shrink-0 self-center">Entrar ▸</div>
+        </div>
+      </Link>
+
       {/* habitantes del archivo */}
       <div className="mt-5">
         <div className="proc-tag mb-2">Habitantes del Archivo</div>

@@ -32,6 +32,7 @@
 [data-proc="ejecutivo"]  { --proc-primary:#b3433a; --proc-secondary:#8a2f28; --proc-accent:#f0998f; --proc-ambient:rgba(179,67,58,.12); }
 [data-proc="incidental"] { --proc-primary:#7d5ba6; --proc-secondary:#5a3f7e; --proc-accent:#c0a3e6; --proc-ambient:rgba(125,91,166,.12); }
 [data-proc="recursos"]   { --proc-primary:#3f9d6b; --proc-secondary:#2c7350; --proc-accent:#8fe0b3; --proc-ambient:rgba(63,157,107,.12); }
+[data-proc="prueba"]     { --proc-primary:#2fb6c0; --proc-secondary:#1f7d86; --proc-accent:#8ff0f5; --proc-ambient:rgba(47,182,192,.13); }
 
 /* ── Panel tipo legajo (con lomo de carpeta a la izquierda) ───────────────── */
 .proc-panel {
@@ -147,6 +148,37 @@
 .proc-spin  { animation: proc-spin 26s linear infinite; }
 .proc-tick  { animation: proc-tick 2.4s ease-in-out infinite; }
 
+/* ── Sala de la Verdad: clasificador + estética forense ──────────────────── */
+@keyframes proc-scanmove { from { background-position: 0 0; } to { background-position: 0 8px; } }
+.proc-scan { position: relative; }
+.proc-scan::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: repeating-linear-gradient(180deg, rgba(143,240,245,0.06) 0px, rgba(143,240,245,0.06) 1px, transparent 1px, transparent 4px);
+  opacity: .45; animation: proc-scanmove 1.1s linear infinite;
+}
+.proc-bin {
+  border: 1.5px dashed color-mix(in srgb, var(--proc-primary) 45%, transparent);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(18,20,28,0.5), rgba(10,12,19,0.6));
+  transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+.proc-bin[data-active="true"] {
+  border-color: var(--proc-primary);
+  background: color-mix(in srgb, var(--proc-primary) 10%, transparent);
+  box-shadow: inset 0 0 18px color-mix(in srgb, var(--proc-primary) 18%, transparent);
+}
+.proc-chip {
+  border: 1.3px solid color-mix(in srgb, var(--proc-primary) 40%, rgba(236,227,207,0.14));
+  background: linear-gradient(180deg, rgba(20,22,30,0.92), rgba(12,14,20,0.96));
+  border-radius: 6px;
+  transition: border-color .15s ease, transform .1s ease, filter .15s ease;
+}
+.proc-chip:hover { filter: brightness(1.1); }
+.proc-chip[data-sel="true"] { border-color: var(--proc-accent); box-shadow: 0 0 14px color-mix(in srgb, var(--proc-primary) 35%, transparent); }
+.proc-chip[data-ok="true"]  { border-color: #5fb37a; background: rgba(95,179,122,0.10); }
+.proc-chip[data-ok="false"] { border-color: #c65b6e; background: rgba(198,91,110,0.10); }
+
 @media (prefers-reduced-motion: reduce) {
   .proc-float, .proc-glow, .proc-spin, .proc-tick { animation: none; }
+  .proc-scan::after { animation: none; }
 }
