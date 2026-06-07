@@ -39,6 +39,7 @@ export default function CivilisHub() {
       titulo: "Estudio",
       modos: [
         { href: "/civilis/flashcards", icono: "🧠", nombre: "Flashcards", desc: "Memoriza con mazos temáticos" },
+        { href: "/civilis/mnemotecnia", icono: "🖼️", nombre: "Mnemotecnia", desc: "Estampas visuales con ganchos para recordar" },
         { href: "/civilis/relaciona", icono: "🔗", nombre: "Relaciona", desc: "Une institución con su artículo" },
         { href: "/civilis/vof", icono: "⚖️", nombre: "Verdadero o Falso", desc: "Detecta el error en la afirmación" },
         { href: "/civilis/ordena", icono: "🪜", nombre: "Ordena", desc: "Secuencias y requisitos en orden" },
