@@ -12,6 +12,7 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 const N = 10;
+const PENSAR_SEG = 5;
 
 export default function VofPruebaPage() {
   const [items, setItems] = useState<VFItem[]>([]);
@@ -20,12 +21,24 @@ export default function VofPruebaPage() {
   const [aciertos, setAciertos] = useState(0);
   const [seed, setSeed] = useState(0);
   const [claimed, setClaimed] = useState(false);
+  const [fase, setFase] = useState<"pensar" | "responder">("pensar");
+  const [seg, setSeg] = useState(PENSAR_SEG);
   const premio = useProcesal((s) => s.premio);
 
   useEffect(() => {
     setItems(shuffle(VF_PRUEBA).slice(0, N));
     setIdx(0); setElegida(null); setAciertos(0); setClaimed(false);
   }, [seed]);
+
+  // "Pensar primero": cuenta regresiva para razonar antes de habilitar la respuesta.
+  useEffect(() => {
+    if (items.length === 0 || idx >= items.length) return;
+    setFase("pensar"); setSeg(PENSAR_SEG);
+    const t = setInterval(() => {
+      setSeg((s) => { if (s <= 1) { clearInterval(t); setFase("responder"); return 0; } return s - 1; });
+    }, 1000);
+    return () => clearInterval(t);
+  }, [idx, items.length]);
 
   useEffect(() => {
     if (items.length > 0 && idx >= items.length && !claimed) { setClaimed(true); premio(aciertos * 5, aciertos); sfx.unlock?.(); }
@@ -61,17 +74,31 @@ export default function VofPruebaPage() {
           <div className="proc-card p-4 mb-4">
             <p className="font-serif-juridica text-[16px] leading-relaxed">{it.afirmacion}</p>
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            {[true, false].map((v) => {
-              let state: string | undefined;
-              if (revelado) state = v === it.verdadero ? "ok" : v === elegida ? "bad" : "dim";
-              return (
-                <button key={String(v)} onClick={() => responder(v)} onMouseEnter={() => !revelado && sfx.hover?.()} disabled={revelado} data-state={state} className="proc-opt px-3 py-3 font-serif-juridica text-[15px] text-center">
-                  {v ? "✓ Verdadero" : "✗ Falso"}
-                </button>
-              );
-            })}
-          </div>
+          {fase === "pensar" && !revelado ? (
+            <div className="text-center py-2">
+              <div className="proc-tag mb-2">Lee y formula tu hipótesis… ¿verdadero o falso?</div>
+              <div className="relative w-16 h-16 mx-auto mb-2">
+                <svg viewBox="0 0 36 36" className="w-16 h-16" style={{ transform: "rotate(-90deg)" }}>
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="3" />
+                  <circle cx="18" cy="18" r="15" fill="none" stroke="var(--proc-primary)" strokeWidth="3" strokeLinecap="round" strokeDasharray={94.2} strokeDashoffset={94.2 * (1 - seg / PENSAR_SEG)} style={{ transition: "stroke-dashoffset 1s linear" }} />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center proc-heading text-xl">{seg}</div>
+              </div>
+              <button onClick={() => { setFase("responder"); sfx.click?.(); }} className="proc-btn px-4 py-2 text-sm">Responder ahora ▸</button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              {[true, false].map((v) => {
+                let state: string | undefined;
+                if (revelado) state = v === it.verdadero ? "ok" : v === elegida ? "bad" : "dim";
+                return (
+                  <button key={String(v)} onClick={() => responder(v)} onMouseEnter={() => !revelado && sfx.hover?.()} disabled={revelado} data-state={state} className="proc-opt px-3 py-3 font-serif-juridica text-[15px] text-center">
+                    {v ? "✓ Verdadero" : "✗ Falso"}
+                  </button>
+                );
+              })}
+            </div>
+          )}
           {revelado && (
             <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="mt-3">
               <div className="proc-card p-3" style={{ borderColor: acerto ? "#5fb37a66" : "#c65b6e66" }}>

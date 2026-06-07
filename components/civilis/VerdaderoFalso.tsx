@@ -11,13 +11,33 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
+const PENSAR_SEG = 5;
+
 export default function VerdaderoFalso() {
   const [pool, setPool] = useState<typeof VOF_CIVIL>([]);
   const [idx, setIdx] = useState(0);
   const [resp, setResp] = useState<boolean | null>(null);
   const [aciertos, setAciertos] = useState(0);
   const [fin, setFin] = useState(false);
+  const [fase, setFase] = useState<"pensar" | "responder">("pensar");
+  const [seg, setSeg] = useState(PENSAR_SEG);
   useEffect(() => { setPool(shuffle(VOF_CIVIL)); }, []);
+
+  // "Pensar primero": al aparecer cada afirmación corre una cuenta regresiva
+  // para formular la hipótesis ANTES de habilitar la respuesta. El jugador
+  // puede adelantarse con el botón "Responder ahora".
+  useEffect(() => {
+    if (pool.length === 0 || fin) return;
+    setFase("pensar");
+    setSeg(PENSAR_SEG);
+    const t = setInterval(() => {
+      setSeg((s) => {
+        if (s <= 1) { clearInterval(t); setFase("responder"); return 0; }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(t);
+  }, [idx, pool.length, fin]);
 
   if (pool.length === 0) {
     return <div className="civ-panel p-8 text-center font-mono-terminal text-sm opacity-60 max-w-xl mx-auto">Barajando…</div>;
@@ -66,12 +86,7 @@ export default function VerdaderoFalso() {
         <p className="font-serif-juridica text-lg md:text-xl leading-relaxed">«{a.texto}»</p>
       </motion.div>
 
-      {resp === null ? (
-        <div className="grid grid-cols-2 gap-3 mt-4">
-          <button onClick={() => responder(true)} className="civ-opt py-4 civ-heading text-base" style={{ borderColor: "#5fb37a66", color: "#9fe0b2" }}>✓ Verdadero</button>
-          <button onClick={() => responder(false)} className="civ-opt py-4 civ-heading text-base" style={{ borderColor: "#c65b6e66", color: "#f0a8b2" }}>✗ Falso</button>
-        </div>
-      ) : (
+      {resp !== null ? (
         <AnimatePresence>
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4">
             <div className="civ-card p-3" style={{ borderColor: acerto ? "#5fb37a66" : "#c65b6e66" }}>
@@ -83,6 +98,23 @@ export default function VerdaderoFalso() {
             <button onClick={siguiente} className="civ-btn w-full py-2.5 text-sm mt-2">{idx + 1 >= pool.length ? "Ver resultado ▸" : "Siguiente ▸"}</button>
           </motion.div>
         </AnimatePresence>
+      ) : fase === "pensar" ? (
+        <motion.div key="pensar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 text-center">
+          <div className="civ-tag mb-2">Lee y formula tu hipótesis… ¿verdadero o falso?</div>
+          <div className="relative w-16 h-16 mx-auto mb-2">
+            <svg viewBox="0 0 36 36" className="w-16 h-16" style={{ transform: "rotate(-90deg)" }}>
+              <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="3" />
+              <circle cx="18" cy="18" r="15" fill="none" stroke="var(--civ-primary)" strokeWidth="3" strokeLinecap="round" strokeDasharray={94.2} strokeDashoffset={94.2 * (1 - seg / PENSAR_SEG)} style={{ transition: "stroke-dashoffset 1s linear" }} />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center civ-heading text-xl">{seg}</div>
+          </div>
+          <button onClick={() => { setFase("responder"); sfx.click?.(); }} className="civ-btn px-4 py-2 text-sm">Responder ahora ▸</button>
+        </motion.div>
+      ) : (
+        <motion.div key="resp" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-2 gap-3 mt-4">
+          <button onClick={() => responder(true)} className="civ-opt py-4 civ-heading text-base" style={{ borderColor: "#5fb37a66", color: "#9fe0b2" }}>✓ Verdadero</button>
+          <button onClick={() => responder(false)} className="civ-opt py-4 civ-heading text-base" style={{ borderColor: "#c65b6e66", color: "#f0a8b2" }}>✗ Falso</button>
+        </motion.div>
       )}
     </div>
   );
