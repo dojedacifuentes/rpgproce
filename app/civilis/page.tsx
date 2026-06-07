@@ -33,6 +33,7 @@ export default function CivilisHub() {
         { href: "/civilis/grado", icono: "⚖️", nombre: "Casos de Grado", desc: "Casos integrados multi-paso ante la comisión" },
         { href: "/civilis/examen", icono: "🎓", nombre: "Examen Oral", desc: "Comisión de grado: Cabello · Montecinos · Silva" },
         { href: "/civilis/practica", icono: "⚡", nombre: "Práctica libre", desc: "Clasificador infinito de casos" },
+        { href: "/civilis/cascada", icono: "🔥", nombre: "Cascada Jurídica", desc: "Contrarreloj con combos: clasifica rápido y encadena" },
       ],
     },
     {

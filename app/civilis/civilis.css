@@ -135,7 +135,17 @@
 .civ-flip-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .civ-flip-back { transform: rotateY(180deg); }
 
+/* ── Cascada: combos estilo arcade ── */
+@keyframes civ-pop { 0%{ transform: scale(.4); opacity: 0; } 60%{ transform: scale(1.25); } 100%{ transform: scale(1); opacity: 1; } }
+.civ-pop { animation: civ-pop .35s cubic-bezier(.2,.8,.2,1.2); }
+@keyframes civ-shake { 0%,100%{ transform: translateX(0);} 20%{ transform: translateX(-7px);} 40%{ transform: translateX(7px);} 60%{ transform: translateX(-5px);} 80%{ transform: translateX(5px);} }
+.civ-shake { animation: civ-shake .4s ease-in-out; }
+@keyframes civ-rise { 0%{ transform: translateY(0) scale(1); opacity: 1; } 100%{ transform: translateY(-54px) scale(1.35); opacity: 0; } }
+.civ-rise { animation: civ-rise 1s ease-out forwards; }
+@keyframes civ-fire { 0%,100%{ filter: drop-shadow(0 0 6px #ff8c3a) drop-shadow(0 0 14px #ff5a2a); } 50%{ filter: drop-shadow(0 0 12px #ffd23a) drop-shadow(0 0 26px #ff7a2a); } }
+.civ-fire { animation: civ-fire 1s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
-  .civ-float, .civ-glow, .civ-twinkle, .civ-aura, .civ-orbit, .civ-shimmer { animation: none; }
+  .civ-float, .civ-glow, .civ-twinkle, .civ-aura, .civ-orbit, .civ-shimmer, .civ-pop, .civ-rise, .civ-fire { animation: none; }
   .civ-flip-inner { transition: none; }
 }

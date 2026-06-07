@@ -34,6 +34,7 @@ type CivilisStore = EstadoCivilis & {
   ganarCarta: (cartaId: string) => void;
   aprobarExamen: (profesorId: string, recompensa: { xp: number; oro: number }) => void;
   completarCasoGrado: (id: string, recompensa: { xp: number; oro: number }) => void;
+  recompensa: (xp: number, oro: number) => void;
   gastarOro: (n: number) => boolean;
   setPerfil: (nombre: string) => void;
   reset: () => void;
@@ -93,6 +94,8 @@ export const useCivilis = create<CivilisStore>()(
                 desbloqueado: true,
               }
         ),
+
+      recompensa: (xp, oro) => set((s) => ({ xp: s.xp + xp, oro: s.oro + oro, desbloqueado: true })),
 
       gastarOro: (n) => {
         if (get().oro < n) return false;
