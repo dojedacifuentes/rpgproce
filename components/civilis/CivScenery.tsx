@@ -99,6 +99,15 @@ function Motivo({ region, c }: { region: RegionCivilId; c: string }) {
           <path d="M228 46 L244 51 L228 56 Z" fill={`${s}66`} className="civ-twinkle" />
         </g>
       );
+    case "familia": // hogar: casa + corazón
+      return (
+        <g>
+          <path d="M150 118 L150 90 L200 64 L250 90 L250 118 Z" fill={`${s}30`} />
+          <path d="M146 92 L200 62 L254 92" fill="none" stroke={`${s}55`} strokeWidth="2" />
+          <rect x="191" y="100" width="18" height="18" fill={`${s}55`} />
+          <path d="M200 52 q-6 -9 -13 0 q-6 9 13 17 q19 -8 13 -17 q-7 -9 -13 0 Z" fill={`${s}66`} className="civ-twinkle" />
+        </g>
+      );
     default:
       return <path d={`M0 ${GROUND} L400 ${GROUND} L400 130 L0 130 Z`} fill={`${s}22`} />;
   }

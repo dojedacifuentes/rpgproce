@@ -115,6 +115,16 @@ export const REGIONES_CIVIL: RegionCivil[] = [
     lore: "Montañas, fundos y registros. Aquí se conquista el dominio: por ocupación, por tradición o por el lento poder del tiempo.",
     bossId: "usurpador_dominio",
   },
+  {
+    id: "familia",
+    nombre: "Comarca de la Familia",
+    subtitulo: "Matrimonio, filiación y alimentos",
+    icono: "👨‍👩‍👧",
+    x: 10, y: 90, orden: 12,
+    paleta: { primary: "#d96f93", secondary: "#a84a6c", accent: "#f5aecb", ambient: "rgba(217,111,147,.12)" },
+    lore: "El hogar del Reino: donde nacen los vínculos más íntimos —matrimonio, filiación, alimentos— y donde a veces se rompen.",
+    bossId: "juez_familia",
+  },
 ];
 
 export const SENDERO_CIVIL: [RegionCivilId, RegionCivilId][] = [
@@ -132,6 +142,8 @@ export const SENDERO_CIVIL: [RegionCivilId, RegionCivilId][] = [
   ["actojuridico", "contratos"],
   ["compraventa", "bienes"],
   ["bienes", "extincion"],
+  ["solidaridad", "familia"],
+  ["familia", "mandato"],
 ];
 
 export const getRegionCivil = (id: string) => REGIONES_CIVIL.find((r) => r.id === id);

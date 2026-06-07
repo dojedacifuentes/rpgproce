@@ -137,6 +137,19 @@ export const BOSSES_CIVIL: BossCivil[] = [
     recompensaArticuloId: "art_582",
     recompensaOro: 65,
   },
+  {
+    id: "juez_familia",
+    nombre: "El Juez de Familia",
+    titulo: "Árbitro del Vínculo",
+    region: "familia",
+    icono: "💔",
+    color: "#d96f93",
+    descripcion: "Decide sobre los vínculos más íntimos: matrimonio, filiación y alimentos. Cae ante quien domina regímenes, filiación y causales de término.",
+    vidaMax: 140,
+    casosIds: casosPorRegion("familia").map((c) => c.id),
+    recompensaArticuloId: "art_102",
+    recompensaOro: 65,
+  },
 ];
 
 export const getBossCivil = (id: string) => BOSSES_CIVIL.find((b) => b.id === id);

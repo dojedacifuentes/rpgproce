@@ -36,6 +36,7 @@
 [data-civ="biblioteca"]   { --civ-primary:#45b6a6; --civ-secondary:#2c8073; --civ-accent:#86e6d6; --civ-ambient:rgba(69,182,166,.10); }
 [data-civ="actojuridico"] { --civ-primary:#7c83e6; --civ-secondary:#4f56b8; --civ-accent:#aeb4ff; --civ-ambient:rgba(124,131,230,.12); }
 [data-civ="bienes"]       { --civ-primary:#c98a52; --civ-secondary:#9a6536; --civ-accent:#f0c79a; --civ-ambient:rgba(201,138,82,.12); }
+[data-civ="familia"]      { --civ-primary:#d96f93; --civ-secondary:#a84a6c; --civ-accent:#f5aecb; --civ-ambient:rgba(217,111,147,.12); }
 
 /* ── Panel ornado JRPG (doble borde de oro) ──────────────────────────────── */
 .civ-panel {
